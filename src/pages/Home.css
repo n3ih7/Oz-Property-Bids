@@ -1,0 +1,20 @@
+.jumbo{
+    background-image: url('../assets/main-home.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100%;
+    height: auto;
+    z-index: -4;
+}
+
+.overlay{
+    /* background-color: black;
+    opacity: 0.6;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    z-index: 2; */
+}
