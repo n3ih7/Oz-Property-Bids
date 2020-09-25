@@ -25,5 +25,14 @@
     color: white;
     position: relative;
     z-index: 2;
-    font-family: cursive;
+    
+}
+
+.custom-icon{
+    height: 50px;
+    width: auto;
+}
+
+.dropdown-toggle{
+    color: #17a2b8;
 }
