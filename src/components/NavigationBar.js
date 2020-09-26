@@ -5,7 +5,7 @@ class NavigationBar extends Component{
     render(){
         return(
             <Navbar bg="light" variant="light">
-            <Navbar.Brand href="/">Auction House</Navbar.Brand>
+            <Navbar.Brand href="/">Aussie Bids</Navbar.Brand>
               <Nav className="container-fluid" >
                 <Nav.Link href="/buy">Buy</Nav.Link>
                 <Nav.Link href="/sell">Sell</Nav.Link>
