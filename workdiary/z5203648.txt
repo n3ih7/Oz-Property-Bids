@@ -1,7 +1,8 @@
 Week 1
 
 Our group last_bus was formed. We've met on the week1 lab and scheduled weekly meetings, decided on our project is to build up a online property acution website.
-I've learnt about Scrum and how to make user stoies properly to fit our requirement. I've worte a specific senario which helped to recognize our goals. There were lots of things to discuss and, still unclear.
+I've learnt about Scrum and how to make user stoies properly to fit our requirement. I've worte a specific senario which helped to recognize our goals. 
+There were lots of things to discuss and, still unclear.
 
 Week 2
 
