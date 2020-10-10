@@ -1,3 +1,7 @@
 .card-style{
-   margin-top: 500px;
+margin: 0;
+  position: relative;
+  top: 30%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }

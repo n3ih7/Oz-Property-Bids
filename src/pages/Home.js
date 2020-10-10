@@ -65,13 +65,13 @@ class Home extends Component{
                   </Col>
                 </Row>
                     
-                <Row className="justify-content-md-center">
+                {/* <Row className="justify-content-md-center">
                   <InputLabel id="label"><img src = {bed} className="custom-icon"/></InputLabel>
                   <Select labelId="label" id="select" value="?" className="dropdown-toggle">
                     <MenuItem value="10" >Ten</MenuItem>
                     <MenuItem value="20">Twenty</MenuItem>
                   </Select>
-                </Row>
+                </Row> */}
 
             </Container>
           </Jumbotron>
