@@ -9,7 +9,7 @@ class Home extends Component{
   constructor(props) {
     super(props);
 
-    this.cookies = this.props.cookies.cookies;
+    this.cookies = this.props.cookies;
   }
 
   // CustomToggle = React.forwardRef(({ children, onClick }, ref) => (

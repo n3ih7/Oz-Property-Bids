@@ -15,7 +15,8 @@ class SignUp extends Component{
             authenticated: null,
             redirect: false
         }
-
+        this.firstName = React.createRef();
+        this.lastName = React.createRef();
         this.username = React.createRef();
         this.password = React.createRef();
         this.address1 = React.createRef();
@@ -54,6 +55,18 @@ class SignUp extends Component{
                     </Card.Title>
                 <Card.Body>
                     <Form>
+                    <Form.Row>
+                            <Form.Group as={Col} controlId="formGridFirstName">
+                            <Form.Label>First Name</Form.Label>
+                            <Form.Control type="" placeholder="" ref={this.firstName}/>
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridLastName">
+                            <Form.Label>Last Name</Form.Label>
+                            <Form.Control type="" placeholder="" ref={this.lastName} />
+                            </Form.Group>
+                        </Form.Row>
+
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridEmail">
                             <Form.Label>Email</Form.Label>
@@ -130,6 +143,8 @@ class SignUp extends Component{
 
         this.setState({
             loading : true,
+            firstName: this.firstName.current.value,
+            lastName : this.lastName.current.value,
             username : this.username.current.value,
             password : this.password.current.value,
             address1 : this.address1.current.value,

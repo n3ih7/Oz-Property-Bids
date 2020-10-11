@@ -5,15 +5,18 @@ class NavigationBar extends Component{
 
   constructor(props){
     super(props);
-    this.cookies = this.props.cookies.cookies;
+    this.cookies = this.props.cookies;
 
     this.accountPage = this.accountPage.bind(this);
   }
   
   accountPage(){
-    if(this.cookies.authenticated === "true"){
+    if(this.cookies.get("authenticated") === "true"){
       return(
+        <>
         <Nav.Link className = "ml-auto" href="/account">My Account</Nav.Link>
+        <Nav.Link href="/logout">Log Out</Nav.Link>
+        </>
       );
     }
     else{
