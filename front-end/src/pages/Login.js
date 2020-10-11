@@ -17,6 +17,7 @@ class Login extends Component{
         }
 
         this.cookies = this.props.cookies;
+        this.cookies.set('authenticated', true, {path:'/'})
 
         this.username = React.createRef();
         this.password = React.createRef();
@@ -34,42 +35,45 @@ class Login extends Component{
 
         else if (this.state.loading === true){
             return(
-                <Spinner animation="border" role="status"></Spinner>
+                <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
             );
         }
 
         else if (this.state.authenticated === null && this.state.loading === false){
             return(
-            <Card>
-                <Card.Body>
-                    <Card.Title>Login</Card.Title>
-                    <Form>
-                        <Form.Group controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" ref={this.username} />
-                        </Form.Group>
+            <Col md="6">
+                <Card>
+                    <Card.Body>
+                        <Card.Title>Login</Card.Title>
+                        <Form>
+                            <Form.Group controlId="formBasicEmail">
+                                <Form.Label>Email address</Form.Label>
+                                <Form.Control type="email" placeholder="Enter email" ref={this.username} />
+                            </Form.Group>
 
-                        <Form.Group controlId="formBasicPassword">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" ref={this.password} />
-                        </Form.Group>
-                        <Button variant="primary" type="submit" onClick = {this.handleSubmit} >
-                            Submit
-                        </Button>
-                    </Form>
-                </Card.Body>
-            </Card>);
+                            <Form.Group controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" placeholder="Password" ref={this.password} />
+                            </Form.Group>
+                            <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {this.handleSubmit} >
+                                Submit
+                            </Button>
+                        </Form>
+                    </Card.Body>
+                </Card>
+            </Col>
+            );
         }
     };
     
     handleSubmit(){
 
         this.setState({
-            loading : false,
+            loading : true,
             username : this.username.current.value,
             password : this.password.current.value,
             authenticated: true,
-            redirect : true
+            redirect : false
         });
 
 
@@ -83,7 +87,6 @@ class Login extends Component{
         //             this.cookies.set('password', this.state.password ,{path:'/'});
         //             // this.cookies.set('token', response.data.token ,{path:'/'});
         //             this.cookies.set('authenticated', true ,{path:'/'});
-        //             history.pushState("/");
         //         }
         //     }
         // )
@@ -94,10 +97,8 @@ class Login extends Component{
         return(
             
             <Container className ="card-style">
-                <Row className="justify-content-md-center">
-                    <Col md="6">
+                <Row className="justify-content-md-center">                    
                         {this.pageContent()}
-                    </Col>
                 </Row>
             </Container>
         );

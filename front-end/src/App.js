@@ -4,6 +4,7 @@ import { withCookies } from 'react-cookie';
 import NavigationBar from './components/NavigationBar';
 import Home from './pages/Home';
 import Login from './pages/Login'
+import SignUp from './pages/SignUp';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -14,11 +15,11 @@ class App extends Component{
     return(
       <Router>
         <div className="App-background">
-        <NavigationBar/>
+        <NavigationBar cookies = {this.props.cookies}/>
         <Switch>
           <Route exact path ="/"><Home cookies= {this.props.cookies} /></Route>
           <Route exact path ="/login" ><Login cookies= {this.props.cookies} /></Route>
-          <Route path ="/user/:id"></Route>
+          <Route exact path="/signup"><SignUp cookies = {this.props.cookies}/></Route>
         </Switch>
         </div>
       </Router>

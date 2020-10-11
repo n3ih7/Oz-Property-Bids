@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Container, Jumbotron, Form, Col, Row, Button, Dropdown} from 'react-bootstrap';
 import './Home.css';
 import bed from '../assets/bed.png';
-import {Select, InputLabel, MenuItem} from '@material-ui/core';
+
 
 class Home extends Component{
 
@@ -10,7 +10,6 @@ class Home extends Component{
     super(props);
 
     this.cookies = this.props.cookies;
-    this.cookies.set('test', 'success', {path:'/'})
   }
 
   // CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
@@ -64,7 +63,7 @@ class Home extends Component{
                         <Col>
                           <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" />
                         </Col>
-                        <Button column="lg" variant="info" lg={2}>
+                        <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", border: "#05445E"}}>
                           Search
                         </Button>
                       </Form.Row>
@@ -72,14 +71,6 @@ class Home extends Component{
                   </Col>
                 </Row>
                     
-                {/* <Row className="justify-content-md-center">
-                  <InputLabel id="label"><img src = {bed} className="custom-icon"/></InputLabel>
-                  <Select labelId="label" id="select" value="?" className="dropdown-toggle">
-                    <MenuItem value="10" >Ten</MenuItem>
-                    <MenuItem value="20">Twenty</MenuItem>
-                  </Select>
-                </Row> */}
-
             </Container>
           </Jumbotron>
           </>
