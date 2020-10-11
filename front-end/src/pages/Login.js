@@ -16,7 +16,7 @@ class Login extends Component{
             redirect: false
         }
 
-        this.cookies = this.props.cookies;
+        this.cookies = this.props.cookies.cookies;
         this.cookies.set('authenticated', true, {path:'/'})
 
         this.username = React.createRef();
