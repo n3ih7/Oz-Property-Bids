@@ -6,20 +6,27 @@ import {Select, InputLabel, MenuItem} from '@material-ui/core';
 
 class Home extends Component{
 
-  CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-    <a
-      href=""
-      ref={ref}
-      className ="dropdown-toggle"
-      onClick={e => {
-        e.preventDefault();
-        onClick(e);
-      }}
-    >
-      <img src = {this.props.feature} className = "custom-icon"/>
-      {children}
-    </a>
-  ));
+  constructor(props) {
+    super(props);
+
+    this.cookies = this.props.cookies;
+    this.cookies.set('test', 'success', {path:'/'})
+  }
+
+  // CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
+  //   <a
+  //     href=""
+  //     ref={ref}
+  //     className ="dropdown-toggle"
+  //     onClick={e => {
+  //       e.preventDefault();
+  //       onClick(e);
+  //     }}
+  //   >
+  //     <img src = {this.props.feature} className = "custom-icon"/>
+  //     {children}
+  //   </a>
+  // ));
 
 //   <Dropdown fluid>
 //   <Row className="justify-content-md-center">
