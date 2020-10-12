@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Container, Jumbotron, Form, Col, Row, Button} from 'react-bootstrap';
 import './Home.css';
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+
 
 class Home extends Component{
 
@@ -17,7 +17,6 @@ class Home extends Component{
     this.numberBeds = React.createRef();
   }
 
-
     render(){
       return(
           <Jumbotron fluid className ="jumbo">
@@ -25,7 +24,7 @@ class Home extends Component{
             </div>
             <Container className ="overlay-content">
                 <Row><Col><h1>Welcome to Aussie Bids</h1></Col></Row>
-                <Row><Col><h4>Helping you with your Home</h4></Col></Row>
+                <Row><Col><h4>Helping you with your home</h4></Col></Row>
                 <br/>
 
                 <Row>
@@ -43,7 +42,7 @@ class Home extends Component{
                   </Col>
                 </Row>
 
-              <Row className="justify-content-md-center">
+              <Row className="">
                 <Col md="auto">
                     <Form.Control as="select" placeholder="Beds" size ="sm">
                       <option value="null">Beds</option>
@@ -69,8 +68,16 @@ class Home extends Component{
                     </Form.Control>
                 </Col>
                 <Col md="auto">
-                  <DatePicker selected = {this.state.date} />
-                </Col>  
+                  <DatePicker className = "calendar" selected = {this.state.date} onChange={date => this.setState({date : date})}/>
+                </Col>
+                <Col md="auto">
+                    <Form.Control as="input" placeholder="Max Price $" size ="sm">
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                    <Form.Control as="input" placeholder="Min Price $" size ="sm">
+                    </Form.Control>
+                </Col>   
               </Row>
             </Container>
           </Jumbotron>

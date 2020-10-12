@@ -119,12 +119,16 @@ class SignUp extends Component{
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridEmail">
                             <Form.Label>BSB</Form.Label>
-                            <Form.Control placeholder="We will only share these details if you win at auction" ref={this.bsb} />
+                            <Form.Control placeholder="" ref={this.bsb} />
+                            <Form.Text className="text-muted">
+                                We will only share these details if you win at auction
+                                </Form.Text>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridPassword" ref={this.accountNumber}>
                             <Form.Label>Account Number</Form.Label>
                             <Form.Control type="password" placeholder="" />
+                                
                             </Form.Group>
                         </Form.Row>
 
