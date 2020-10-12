@@ -1,53 +1,25 @@
 import React, {Component} from 'react';
-import {Container, Jumbotron, Form, Col, Row, Button, Dropdown} from 'react-bootstrap';
+import {Container, Jumbotron, Form, Col, Row, Button} from 'react-bootstrap';
 import './Home.css';
-import bed from '../assets/bed.png';
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 class Home extends Component{
 
   constructor(props) {
     super(props);
 
+    this.state = {
+      date :  new Date()
+    }
+
     this.cookies = this.props.cookies;
+    this.numberBeds = React.createRef();
   }
 
-  // CustomToggle = React.forwardRef(({ children, onClick }, ref) => (
-  //   <a
-  //     href=""
-  //     ref={ref}
-  //     className ="dropdown-toggle"
-  //     onClick={e => {
-  //       e.preventDefault();
-  //       onClick(e);
-  //     }}
-  //   >
-  //     <img src = {this.props.feature} className = "custom-icon"/>
-  //     {children}
-  //   </a>
-  // ));
-
-//   <Dropdown fluid>
-//   <Row className="justify-content-md-center">
-//     {['Bed','Bath','PriceMin','PriceMax'].map((feature) =>
-//     (
-//     <Col md="auto">
-//     <Dropdown.Toggle as={this.CustomToggle} id={`dropdown-${feature}`}></Dropdown.Toggle>
-//       <Dropdown.Menu>
-//         <Dropdown.Item eventKey="1">1</Dropdown.Item>
-//         <Dropdown.Item eventKey="2">2</Dropdown.Item>
-//         <Dropdown.Item eventKey="3">3</Dropdown.Item>
-//         <Dropdown.Item eventKey="4">4+</Dropdown.Item>
-//       </Dropdown.Menu>
-//     </Col>
-//     ),
-//     )}            
-//   </Row>
-// </Dropdown>
 
     render(){
       return(
-          <>
           <Jumbotron fluid className ="jumbo">
             <div className ="overlay">
             </div>
@@ -70,10 +42,38 @@ class Home extends Component{
                     </Form.Group>
                   </Col>
                 </Row>
-                    
+
+              <Row className="justify-content-md-center">
+                <Col md="auto">
+                    <Form.Control as="select" placeholder="Beds" size ="sm">
+                      <option value="null">Beds</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3+">3+</option>
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                    <Form.Control as="select" placeholder="Bathrooms" size ="sm">
+                      <option value="null">Bathrooms</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3+">3+</option>
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                    <Form.Control as="select" placeholder="Garage" size ="sm">
+                      <option value="null">Car Spots</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3+">3+</option>
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                  <DatePicker selected = {this.state.date} />
+                </Col>  
+              </Row>
             </Container>
           </Jumbotron>
-          </>
       );
     }
 }

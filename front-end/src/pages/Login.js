@@ -17,7 +17,6 @@ class Login extends Component{
         }
 
         this.cookies = this.props.cookies;
-        this.cookies.set('authenticated', true, {path:'/'})
 
         this.username = React.createRef();
         this.password = React.createRef();
@@ -71,10 +70,18 @@ class Login extends Component{
         this.setState({
             loading : true,
             username : this.username.current.value,
-            password : this.password.current.value,
-            authenticated: true,
-            redirect : false
+            password : this.password.current.value
         });
+
+        setTimeout(()=>
+            {
+                this.cookies.set('authenticated', true, {path:'/'});
+                this.setState({
+                    loading : false,
+                    authenticated: true,
+                    redirect : true
+                });
+            }, 50);
 
 
         // axios.post("/login",{

@@ -28,7 +28,7 @@ class Account extends Component{
         else{
             return(
                 <>
-                <Card>
+                <Card style={{padding:'10px'}}>
                     <Card.Title>
                         User Name Here
                     </Card.Title>
@@ -91,16 +91,50 @@ class Account extends Component{
                     </Card.Body>
                 </Card>
                 <br/>
-                <Card>
+                <Card style={{padding:'10px'}}>
                     <Card.Title>
                         Change Password
                     </Card.Title>
+                    <Card.Body>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridCurrentPassword">
+                            <Form.Label>Current Password</Form.Label>
+                            <Form.Control type="password" placeholder="" ref={this.oldPassword} />
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridNewPassword">
+                            <Form.Label>New Password</Form.Label>
+                            <Form.Control type="password" placeholder="" ref={this.newPassword} />
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridVerifyNewPassword">
+                            <Form.Label>Verify Password</Form.Label>
+                            <Form.Control type="password" placeholder="" ref={this.verifyPassword} />
+                            </Form.Group>
+                        </Form.Row>
+                    </Card.Body>
                 </Card>
                 <br/>
-                <Card>
+                <Card style={{padding:'10px'}}>
                     <Card.Title>
                         Change Payment Details
                     </Card.Title>
+                    <Form.Row>
+                            <Form.Group as={Col} controlId="formGridCurrentPasswordBSB">
+                            <Form.Label>Current Password</Form.Label>
+                            <Form.Control type="password" placeholder="" ref={this.passwordBSB} />
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridNewPassword">
+                            <Form.Label>New BSB</Form.Label>
+                            <Form.Control type="password" placeholder="" ref={this.newBSB} />
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridVerifyNewPassword">
+                            <Form.Label>New Account Number</Form.Label>
+                            <Form.Control type="password" placeholder="" ref={this.newAccountNumber} />
+                            </Form.Group>
+                        </Form.Row>
                 </Card>
                 </>
             );

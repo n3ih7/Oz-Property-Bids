@@ -8,6 +8,18 @@ class NavigationBar extends Component{
     this.cookies = this.props.cookies;
 
     this.accountPage = this.accountPage.bind(this);
+    this.userOnlyOptions = this.userOnlyOptions.bind(this);
+  }
+  
+  userOnlyOptions(){
+    if(this.cookies.get("authenticated") === "true"){
+      return(
+        <>
+            <Nav.Link href="/saved">Saved Houses</Nav.Link>
+            <Nav.Link href="/sell">Sell Houses</Nav.Link>
+        </>
+      );
+    }
   }
   
   accountPage(){
@@ -35,9 +47,7 @@ class NavigationBar extends Component{
           <Navbar bg="light" variant="light">
           <Navbar.Brand href="/">Aussie Bids</Navbar.Brand>
             <Nav className="container-fluid" >
-              <Nav.Link href="/buy">Buy</Nav.Link>
-              <Nav.Link href="/sell">Sell</Nav.Link>
-              <Nav.Link href="/about">About</Nav.Link>
+              {this.userOnlyOptions()}
               {this.accountPage()}
             </Nav>
         </Navbar>
