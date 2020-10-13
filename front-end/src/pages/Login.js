@@ -9,20 +9,23 @@ class Login extends Component{
     constructor(props){
         super(props);
         this.state = {
-            username:"",
+            email:"",
             password:"",
             loading: false,
             authenticated: null,
-            redirect: false
+            redirect: false,
+            attemptLogin: false
         }
 
         this.cookies = this.props.cookies;
 
-        this.username = React.createRef();
+        this.email = React.createRef();
         this.password = React.createRef();
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.pageContent = this.pageContent.bind(this);
+        this.attemptLogin = this.attemptLogin.bind(this);
+        this.setUserCookies = this.setUserCookies.bind(this);
     };
 
     pageContent(){
@@ -47,7 +50,7 @@ class Login extends Component{
                         <Form>
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email address</Form.Label>
-                                <Form.Control type="email" placeholder="Enter email" ref={this.username} />
+                                <Form.Control type="email" placeholder="Enter email" ref={this.email} />
                             </Form.Group>
 
                             <Form.Group controlId="formBasicPassword">
@@ -69,36 +72,33 @@ class Login extends Component{
 
         this.setState({
             loading : true,
-            username : this.username.current.value,
-            password : this.password.current.value
+            email : this.email.current.value,
+            password : this.password.current.value,
+            attemptLogin: true
         });
-
-        setTimeout(()=>
-            {
-                this.cookies.set('authenticated', true, {path:'/'});
-                this.setState({
-                    loading : false,
-                    authenticated: true,
-                    redirect : true
-                });
-            }, 50);
-
-
-        // axios.post("/login",{
-        //     email: this.state.email,
-        //     password: this.state.password
-        // }).then(
-        //     function(response){
-        //         if(response.status === 200){
-        //             this.cookies.set('username', this.state.username ,{path:'/'});
-        //             this.cookies.set('password', this.state.password ,{path:'/'});
-        //             // this.cookies.set('token', response.data.token ,{path:'/'});
-        //             this.cookies.set('authenticated', true ,{path:'/'});
-        //         }
-        //     }
-        // )
-        
     };
+
+    setUserCookies(data){
+        this.cookies.set('authenticated',true,{path:'/'});
+        this.cookies.set('token',data.message,{path:'/'});
+    }
+
+    attemptLogin(setUserCookies){
+        if (this.state.attemptLogin){
+            axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+            axios.post('/login', {email : this.state.email, password: this.state.password})
+            .then((response) => {
+                console.log(response);
+                if (response.status === 200){
+                    setUserCookies(response.data)
+                    this.setState({redirect : true});
+                }
+            }).catch((error) =>{
+                console.log(error);
+            });
+        }
+    }
     
     render(){
         return(
@@ -106,6 +106,7 @@ class Login extends Component{
             <Container className ="card-style">
                 <Row className="justify-content-md-center">                    
                         {this.pageContent()}
+                        {this.attemptLogin(this.setUserCookies)}
                 </Row>
             </Container>
         );

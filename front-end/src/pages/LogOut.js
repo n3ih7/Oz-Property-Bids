@@ -34,12 +34,21 @@ class LogOut extends Component{
     }
 
     logOutBuffer(){
-        if (this.state.loading === true){
-            setTimeout(()=>
-            {this.setState({loading : false });
+
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+        axios.put('/logout', {cookie : this.state.email})
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200){
+                this.setState({loading : false });
+                window.location.reload(false);
+            }
+        }).catch((error) =>{
+            console.log(error);
+            this.setState({loading : false });
             window.location.reload(false);
-        }, 2000);
-        }
+        });
     }
 
     render(){

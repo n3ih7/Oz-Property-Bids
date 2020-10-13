@@ -13,11 +13,12 @@ class SignUp extends Component{
         this.state = {
             loading: false,
             authenticated: null,
-            redirect: false
+            redirect: false,
+            attemptSignUp : false
         }
         this.firstName = React.createRef();
         this.lastName = React.createRef();
-        this.username = React.createRef();
+        this.email = React.createRef();
         this.password = React.createRef();
         this.address1 = React.createRef();
         this.address2 = React.createRef();
@@ -31,6 +32,7 @@ class SignUp extends Component{
 
         this.pageContent = this.pageContent.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.attemptSignUp = this.attemptSignUp.bind(this);
     }
 
     pageContent(){
@@ -40,6 +42,7 @@ class SignUp extends Component{
             )
         }
         else if (this.state.loading === true){
+            
             return(
                 <Row className="justify-content-md-center">
                 <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
@@ -70,7 +73,7 @@ class SignUp extends Component{
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridEmail">
                             <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" ref={this.username}/>
+                            <Form.Control type="email" placeholder="Enter email" ref={this.email}/>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridPassword">
@@ -149,7 +152,7 @@ class SignUp extends Component{
             loading : true,
             firstName: this.firstName.current.value,
             lastName : this.lastName.current.value,
-            username : this.username.current.value,
+            email : this.email.current.value,
             password : this.password.current.value,
             address1 : this.address1.current.value,
             address2 : this.address2.current.value,
@@ -158,13 +161,34 @@ class SignUp extends Component{
             postCode : this.postCode .current.value,
             bsb : this.bsb.current.value,
             accountNumber : this.accountNumber.current.value,
+            attemptSignUp : true
         });
+    }
+
+    attemptSignUp(){
+        if(this.state.attemptSignUp === true){
+
+            axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+            axios.post('/signup', {email : this.state.email, password: this.state.password})
+            .then((response) => {
+                console.log(response);
+                if (response.status === 200){
+                    this.cookies.set('authenticated',true,{path:'/'});
+                    this.cookies.set('user',this.state.email,{path:'/'});
+                    this.setState({redirect : true});
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
     }
 
     render(){
         return(
             <Container className = "pageContent">
                 {this.pageContent()}
+                {this.attemptSignUp()}
             </Container>
         );
     }
