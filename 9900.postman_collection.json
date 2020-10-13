@@ -15,12 +15,12 @@
 					"formdata": [
 						{
 							"key": "email",
-							"value": "",
+							"value": "1111",
 							"type": "text"
 						},
 						{
 							"key": "password",
-							"value": "",
+							"value": "11111",
 							"type": "text"
 						}
 					]
@@ -48,19 +48,13 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "email",
-							"value": "",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"zakc@nono.fi\",\n    \"password\": \"dasdawda\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "http://127.0.0.1:5000/login",
@@ -74,18 +68,39 @@
 					"port": "5000",
 					"path": [
 						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "123",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "userlistfortesting",
+			"name": "profile",
 			"request": {
-				"method": "GET",
+				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"zack@nono.fi\",\n    \"password\": \"dasdawda\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/userlist",
+					"raw": "http://127.0.0.1:5000/profile",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -95,7 +110,128 @@
 					],
 					"port": "5000",
 					"path": [
-						"userlist"
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\":\"zack@nono.fi\",\n    \"password\": \"dasdawda\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/profile",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remote-signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/signup",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remote-login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/login",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remote-profile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"www\",\n    \"lastname\": \"111\",\n    \"birthYear\": 1144444411,\n    \"gender\": 1,\n    \"phone\": \"wwwwwwwwww\",\n    \"bidderTag\" : 0\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/profile",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"profile"
 					]
 				}
 			},
