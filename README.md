@@ -2,17 +2,17 @@
 
 ### back-end development schedule 
 
-#### User and Basic Serarch Function - due by 11 Oct
+#### User and Basic Serarch Function - till 13 Oct
 
-Weicheng: user login
+Weicheng: user login FINISHED!
 
-Tianzeng: user logout
+Tianzeng: user logout FINISHED!
 
-Weicheng: user authentication
+Weicheng: user authentication FINISHED!
 
-Weicheng: user registration
+Weicheng: user registration FINISHED!
 
-Linwei: user profile update
+Linwei: user profile update FINISHED! by Weicheng
 
 Shurong: property search by postcode
 
