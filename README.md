@@ -2,7 +2,7 @@
 
 ### back-end development schedule 
 
-#### User and Basic Serarch Function - till 13 Oct
+#### User and Basic Serarch Function - till 14 Oct night
 
 Weicheng: user login FINISHED!
 
@@ -14,7 +14,7 @@ Weicheng: user registration FINISHED!
 
 Linwei: user profile update FINISHED! by Weicheng
 
-Shurong: property search by postcode
+Shurong: property search by postcode FINISHED! by Shurong & Weicheng not fully integrated yet
 
 ## How to run the code
 
