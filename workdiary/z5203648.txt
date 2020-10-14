@@ -12,3 +12,7 @@ My part was to meet the cirteria of the user stories of the proposal. I have int
 Week 3
 
 We've managed to work out our sprint schedule, system architecture, flow diagrams, decided the novel part and finally, made our proposal at Saturday noon. My part was to describe the novel part in the proposal.
+
+Week 4
+
+My part is to develop conditional search function in the back end
