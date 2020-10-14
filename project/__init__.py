@@ -1,3 +1,4 @@
+import datetime
 import os
 from flask import Flask
 from flask_cors import CORS
@@ -12,6 +13,7 @@ def create_app():
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['REMEMBER_COOKIE_DURATION'] = datetime.timedelta(days=14)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.urandom(24)
 

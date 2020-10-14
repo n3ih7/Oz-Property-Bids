@@ -63,3 +63,25 @@ GET api.nono.fi:5000/logout
 no attributes needed
 response code: 
 200 success
+
+
+POST api.nono.fi:5000/sell
+{
+    "propertyType": "House",
+    "streetAddress": "16 Murray Road",
+    "suburb": "Pagewood",
+    "state": "NSW",
+    "postcode": "2035",
+    "beds": "3",
+    "baths": "2",
+    "parkingSpace": "2",
+    "landSize": "405",
+    "introTitle": "Newly Renovated Freestanding Family Home In Prime Locale",
+    "introDetails": "About The Home - Three generous bedrooms, all with built-ins, main with ensuite"
+}
+
+
+GET 
+api.nono.fi:5000/buy?keyword=2020 for muti records
+api.nono.fi:5000/buy?keyword=2035 for a record with image 
+api.nono.fi:5000/buy?keyword=2020 for a single record
