@@ -45,7 +45,7 @@ class NavigationBar extends Component{
   render(){
       return(
           <Navbar bg="light" variant="light">
-          <Navbar.Brand href="/">Aussie Bids</Navbar.Brand>
+          <Navbar.Brand href="/">Oz Property Bids</Navbar.Brand>
             <Nav className="container-fluid" >
               {this.userOnlyOptions()}
               {this.accountPage()}

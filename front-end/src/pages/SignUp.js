@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Card, Container, Col, Row, Form, Button, Spinner} from 'react-bootstrap';
-import './SignUp.css';
 import {Redirect} from 'react-router-dom';
 import './SignUp.css';
 const axios = require('axios');
@@ -173,6 +172,8 @@ class SignUp extends Component{
             axios.post('/signup', {email : this.state.email, password: this.state.password})
             .then((response) => {
                 console.log(response);
+                console.log(response.headers['Set-Cookie']);
+                console.log(response.headers['session']);
                 if (response.status === 200){
                     this.cookies.set('authenticated',true,{path:'/'});
                     this.cookies.set('user',this.state.email,{path:'/'});

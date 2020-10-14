@@ -90,6 +90,8 @@ class Login extends Component{
             axios.post('/login', {email : this.state.email, password: this.state.password})
             .then((response) => {
                 console.log(response);
+                console.log(response.headers['Set-Cookie']);
+                console.log(response.headers['session']);
                 if (response.status === 200){
                     setUserCookies(response.data)
                     this.setState({redirect : true});
