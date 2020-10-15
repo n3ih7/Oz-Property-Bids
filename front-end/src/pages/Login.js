@@ -60,9 +60,24 @@ class Login extends Component{
                             <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {this.handleSubmit} >
                                 Submit
                             </Button>
+                            <Form.Text className="text-muted" style={{textAlign:"right"}}>
+                                <a href="/">Forgot your password?</a>
+                            </Form.Text>
                         </Form>
                     </Card.Body>
                 </Card>
+                <br/>
+                <Row className="justify-content-md-center">
+                    <Card className="text-center" style={{width:"290px", height:"50px"}}>
+                        <Card.Body>
+                            <Card.Subtitle className="mb-2 text-muted">
+                                <a>Not a member?</a>
+                                <a style={{paddingLeft:"30px"}}> </a>
+                                <Card.Link href="http://localhost:3000/signup">Sign Up!</Card.Link>
+                            </Card.Subtitle>
+                        </Card.Body>
+                    </Card>
+                </Row>
             </Col>
             );
         }

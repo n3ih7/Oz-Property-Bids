@@ -26,6 +26,7 @@ class SignUp extends Component{
         this.postCode = React.createRef();
         this.bsb = React.createRef();
         this.accountNumber = React.createRef();
+        this.phone = React.createRef();
 
         this.cookies = this.props.cookies;
 
@@ -81,6 +82,11 @@ class SignUp extends Component{
                             </Form.Group>
                         </Form.Row>
 
+                        <Form.Group controlId="formPhone">
+                            <Form.Label>Phone</Form.Label>
+                            <Form.Control placeholder="" ref={this.phone} />
+                        </Form.Group>
+                        
                         <Form.Group controlId="formGridAddress1">
                             <Form.Label>Address</Form.Label>
                             <Form.Control placeholder="1234 Main St" ref={this.address1} />
@@ -124,7 +130,7 @@ class SignUp extends Component{
                             <Form.Control placeholder="" ref={this.bsb} />
                             <Form.Text className="text-muted">
                                 We will only share these details if you win at auction
-                                </Form.Text>
+                            </Form.Text>
                             </Form.Group>
 
                             <Form.Group as={Col} controlId="formGridPassword" ref={this.accountNumber}>
@@ -137,6 +143,10 @@ class SignUp extends Component{
                         <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {this.handleSubmit}>
                             Submit
                         </Button>
+
+                        <Form.Text className="text-muted" style={{textAlign:"right"}}>
+                                <a href="/login">Already have an account?</a>
+                        </Form.Text>
                     </Form>
                 </Card.Body>
                 </Card>

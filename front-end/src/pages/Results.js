@@ -12,13 +12,17 @@ class Results extends Component{
         console.log(this.props.results.result);
     }
 
-    pageContent(){
+    searchBar(){
+        
+    }
 
+
+    pageContent(){
         if(this.state.results){
             return(
                 this.state.properties.map(property =>(
                     <>
-                    <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={(property.image.substring(2,property.image.length-1))}/>
+                    <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image ? property.image.substring(2,property.image.length-1) : ' '}/>
                     <br/>
                     </>
                 ))
