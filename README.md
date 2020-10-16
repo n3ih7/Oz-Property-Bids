@@ -1,22 +1,8 @@
 ## COMP9900-H16A-last_bus
 
-### back-end development schedule 
 
-#### User and Basic Serarch Function - due by 11 Oct
 
-Weicheng: user login
-
-Tianzeng: user logout
-
-Weicheng: user authentication
-
-Weicheng: user registration
-
-Linwei: user profile update
-
-Shurong: property search by postcode
-
-## How to run the code
+## How to run the back-end code
 
 `git clone git@github.com:unsw-cse-capstone-project/capstone-project-comp9900-h16a-last_bus.git`
 
@@ -42,6 +28,7 @@ Shurong: property search by postcode
 
 `python app.py`
 
+
 ## How to test
 
 **Note: this is a temporary method for now**
@@ -63,3 +50,24 @@ You'll see the sample requests under 9900 collections, try yourself to test if y
 `git push`
 
 Then I will manually merge to the current branch
+
+## How to run the front-end code
+Make sure you have Node.js installed on your machine/
+https://nodejs.org/en/download/
+
+Afterwards...
+
+`git checkout front-end`
+
+`git pull`
+
+Make sure you are in the 'front-end' directory.
+
+`npm install`
+
+Wait for all modules to install
+
+`npm start`
+
+Should start the program! Hosted on localhost:3000
+
