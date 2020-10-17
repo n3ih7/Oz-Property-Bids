@@ -3,6 +3,7 @@ import {Container, Jumbotron, Form, Col, Row, Button} from 'react-bootstrap';
 import './Home.css';
 import DatePicker from "react-datepicker";
 import {Redirect} from 'react-router-dom';
+import AutoResults from '../components/AutoResults';
 const axios = require('axios');
 
 class Home extends Component{
@@ -12,19 +13,86 @@ class Home extends Component{
 
     this.state = {
       date :  new Date(),
-      results : false
+      results : false,
+      autofillResults : null,
     }
 
     this.cookies = this.props.cookies;
     this.numberBeds = React.createRef();
     this.numberBaths = React.createRef();
     this.numberCarSpots = React.createRef();
-    this.maxPrice = React.createRef();
-    this.minPrice = React.createRef();
     this.location = React.createRef();
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.pageContent = this.pageContent.bind(this);
+    this.autoFill = this.autoFill.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
+  }
+
+  handleKeyPress(event){
+   let key = event.keyCode || event.charCode;
+
+    if (key === 13){
+      this.handleSubmit();
+    }
+    else if(key === 46 || key === 8){
+      this.setState({searchValue: null});
+    }
+  }
+  
+  getAutoSelect = (result) => {
+    if(result != null){
+      this.setState({
+        searchValue: result,
+        autofillResults: null
+      })
+    }
+  }
+  
+  autoFill(){
+    let userInput = this.location.current.value;
+    axios.defaults.baseURL = 'http://api.jsacreative.com.au/';
+
+    if(userInput.length === 0){
+      this.setState({
+        autofillResults: null
+      });
+      return;
+    }
+
+    if (isNaN(userInput)){
+
+      axios.get('v1/suburbs', {params:{
+        q: userInput,
+      }})
+      .then((response) => {
+        // console.log(response.data.slice(0,6));
+          
+        if (response.status === 200){
+          this.setState({
+            autofillResults : response.data.slice(0,6)
+          });
+        }
+      }).catch((error) =>{
+          console.log(error);
+      });
+    }
+
+    else {
+      axios.get('v1/suburbs', {params:{
+        postcode: userInput,
+      }})
+      .then((response) => {
+          
+        if (response.status === 200){
+          this.setState({
+            autofillResults : response.data.slice(0,6)
+          });
+        }
+      }).catch((error) =>{
+          console.log(error);
+      });
+    }
   }
 
   pageContent(){
@@ -48,13 +116,14 @@ class Home extends Component{
                   <Form.Group>
                     <Form.Row>
                       <Col>
-                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} />
+                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.autoFill} onKeyDown = {this.handleKeyPress} />
                       </Col>
                       <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", border: "#05445E"}} onClick = {this.handleSubmit}>
                         Search
                       </Button>
                     </Form.Row>
                   </Form.Group>
+                  <AutoResults suggestions = {this.state.autofillResults} selectCallback ={this.getAutoSelect.bind(this)}/>
                 </Col>
               </Row>
 
@@ -86,14 +155,6 @@ class Home extends Component{
               <Col md="auto">
                 <DatePicker className = "calendar" selected = {this.state.date} onChange={date => this.setState({date : date})}/>
               </Col>
-              <Col md="auto">
-                  <Form.Control as="input" placeholder="Max Price $" size ="sm" ref ={this.maxPrice}>
-                  </Form.Control>
-              </Col>
-              <Col md="auto">
-                  <Form.Control as="input" placeholder="Min Price $" size ="sm" ref ={this.minPrice}>
-                  </Form.Control>
-              </Col>   
             </Row>
           </Container>
         </Jumbotron>
@@ -105,7 +166,7 @@ class Home extends Component{
     axios.defaults.baseURL = 'http://api.nono.fi:5000';
 
     axios.get('/buy', {params:{
-      keyword: this.location.current.value,
+      keyword: this.location.current.value.slice(this.location.current.value.length - 4),
       // bedrooms : this.numberBeds.current.value,
       // bathrooms : this.numberBaths.current.value,
       // minprice: this.minPrice.current.value,

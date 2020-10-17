@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
+import {Container, Row} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
 
 class Results extends Component{
