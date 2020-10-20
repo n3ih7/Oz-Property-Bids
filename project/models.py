@@ -48,6 +48,10 @@ class PROPERTY_INFO(db.Model):
     image = db.Column('image', db.Text)
     accessDate = db.Column('accessdate', db.Text)
 
+    compare_addr = db.Column('compare_addr', db.Text)
+    auction_start = db.Column('auction_start', db.Text)
+    auction_end = db.Column('auction_end', db.Text)
+    # image = db.Column('image', db.LargeBinary)
 
 class PROPERTY_BID_EXTENDED(db.Model):
     __tablename__ = 'PROPERTY_BID_EXTENDED'

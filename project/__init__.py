@@ -12,12 +12,20 @@ def create_app():
     app = Flask(__name__)
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbBinary.sqlite'
     app.config['REMEMBER_COOKIE_DURATION'] = datetime.timedelta(days=14)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.urandom(24)
 
+
     db.init_app(app)
+
+    # with app.app_context():
+    #     db.drop_all()
+    #     db.create_all()
+
+
+
 
     login_manager = LoginManager()
     login_manager.init_app(app)
@@ -28,5 +36,7 @@ def create_app():
     @login_manager.user_loader
     def load_user(email):
         return USER_INFO.query.get(str(email))
+
+
 
     return app
