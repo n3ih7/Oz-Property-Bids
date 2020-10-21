@@ -12,14 +12,14 @@ Can test for conditional search under certain filters from the front-end
 
 Then post the json below, notice the values can be changed.
 
-{
-    "beds": "Any",
-    "baths": "Any",
-    "carspots": "Any",
-    "auction_start": "2020-01-10",
-    "auction_end": "2021-1-10"
-
-}
+{  
+    "beds": "Any",  
+    "baths": "Any",  
+    "carspots": "Any",  
+    "auction_start": "2020-01-10",  
+    "auction_end": "2021-1-10"  
+  
+}  
 
 the result should be like:
 
@@ -48,7 +48,7 @@ the result should be like:
 
 
   
-## Image with different stroage method
+## Image with different storage method
 
 There are two database are used for test. db.sqlite stores the image information as their path, not the image itself.
 
