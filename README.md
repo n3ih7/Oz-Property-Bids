@@ -23,28 +23,28 @@ Then post the json below, notice the values can be changed.
 
 the result should be like:
 
-[
-    {
-        "auction_end": "2020-12-10",
-        "auction_start": "2020-07-10",
-        "baths": 3,
-        "beds": 3,
-        "compare_addr": "Kingsford New South Wales 2032",
-        "id": 1,
-        "image": "C:\\Users\\Administrator\\Desktop\\9900\\test_images\\images.jpg",
-        "introDetails": null,
-        "introTitle": null,
-        "landSize": 260,
-        "parkingSpace": 2,
-        "postcode": 2032,
-        "propertyType": "House",
-        "sellerEmail": "12345@gmail.com",
-        "startPrice": 500000,
-        "state": "New South Wales",
-        "streetAddress": null,
-        "suburb": "Kingsford",
-        "unitNumber": "21B"
-    }
+[  
+    {  
+        "auction_end": "2020-12-10",  
+        "auction_start": "2020-07-10",  
+        "baths": 3,  
+        "beds": 3,  
+        "compare_addr": "Kingsford New South Wales 2032",  
+        "id": 1,  
+        "image": "C:\\Users\\Administrator\\Desktop\\9900\\test_images\\images.jpg",  
+        "introDetails": null,  
+        "introTitle": null,  
+        "landSize": 260,  
+        "parkingSpace": 2,  
+        "postcode": 2032,  
+        "propertyType": "House",  
+        "sellerEmail": "12345@gmail.com",  
+        "startPrice": 500000,  
+        "state": "New South Wales",  
+        "streetAddress": null,  
+        "suburb": "Kingsford",  
+        "unitNumber": "21B"  
+    }  
 
 
   
