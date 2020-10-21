@@ -8,16 +8,16 @@ Can test for conditional search under certain filters from the front-end
 
 2. Run code app.py
 
-3. Open postman, use the link given by app.py : http://127.0.0.1:5000/buy?keyword=???? the ???? needed to be replaced by postcode, such as 2032.
+3. Open postman, use the link given by app.py : http://127.0.0.1:5000/buy?keyword=*????* the ???? needed to be replaced by postcode, such as 2032.
 
 Then post the json below, notice the values can be changed.
 
 {  
-    "beds": "Any",  
-    "baths": "Any",  
-    "carspots": "Any",  
-    "auction_start": "2020-01-10",  
-    "auction_end": "2021-1-10"  
+    &ensp"beds": "Any",  
+    &ensp"baths": "Any",  
+    &ensp"carspots": "Any",  
+    &ensp"auction_start": "2020-01-10",  
+    &ensp"auction_end": "2021-1-10"  
   
 }  
 
@@ -25,25 +25,25 @@ the result should be like:
 
 [  
     {  
-        "auction_end": "2020-12-10",  
-        "auction_start": "2020-07-10",  
-        "baths": 3,  
-        "beds": 3,  
-        "compare_addr": "Kingsford New South Wales 2032",  
-        "id": 1,  
-        "image": "C:\\Users\\Administrator\\Desktop\\9900\\test_images\\images.jpg",  
-        "introDetails": null,  
-        "introTitle": null,  
-        "landSize": 260,  
-        "parkingSpace": 2,  
-        "postcode": 2032,  
-        "propertyType": "House",  
-        "sellerEmail": "12345@gmail.com",  
-        "startPrice": 500000,  
-        "state": "New South Wales",  
-        "streetAddress": null,  
-        "suburb": "Kingsford",  
-        "unitNumber": "21B"  
+       &ensp "auction_end": "2020-12-10",  
+       &ensp "auction_start": "2020-07-10",  
+       &ensp "baths": 3,  
+       &ensp "beds": 3,  
+       &ensp "compare_addr": "Kingsford New South Wales 2032",  
+       &ensp "id": 1,  
+       &ensp "image": "C:\\Users\\Administrator\\Desktop\\9900\\test_images\\images.jpg",  
+       &ensp "introDetails": null,  
+       &ensp "introTitle": null,  
+       &ensp "landSize": 260,  
+       &ensp "parkingSpace": 2,  
+       &ensp "postcode": 2032,  
+       &ensp "propertyType": "House",  
+       &ensp "sellerEmail": "12345@gmail.com",  
+       &ensp "startPrice": 500000,  
+       &ensp "state": "New South Wales",  
+       &ensp "streetAddress": null,  
+       &ensp "suburb": "Kingsford",  
+       &ensp "unitNumber": "21B"  
     }  
 
 
