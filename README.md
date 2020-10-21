@@ -8,7 +8,7 @@ Can test for conditional search under certain filters from the front-end
 
 2. Run code app.py
 
-3. Open postman, use the link given by app.py : http://127.0.0.1:5000/buy?keyword=`????` the ???? needed to be replaced by postcode, such as 2032.
+3. Open postman, use the link given by app.py : http://127.0.0.1:5000/buy?keyword=???? the ???? needed to be replaced by postcode, such as 2032.
 
 Then post the json below, notice the values can be changed.
 
