@@ -126,14 +126,14 @@ def search():
     print("initial_filter:", req_filter)
     print()
     #
-    #
+    # Processing conditions to query readable format
     req_filter_dict = {
                     "beds": str(req_filter.get('beds')),
                     "baths": str(req_filter.get('baths')),
                     "parkingSpace": str(req_filter.get('carspots')),
                     # "auction_start": req_filter.get['auction_start'],
                     # "compare_addr": req_filter.get['address'],
-                    "propertyType": req_filter.get('propertyType')
+                    # "propertyType": req_filter.get('propertyType')
                     }
 
 
@@ -142,10 +142,10 @@ def search():
         if req_filter_dict[i] == 'Any':
             del req_filter_dict[i]
 
-    if 'propertyType' in req_filter_dict.keys():
-        propertytype_recorder = req_filter_dict.pop('propertyType')
-    else:
-        propertytype_recorder = 0
+    # if 'propertyType' in req_filter_dict.keys():
+    #     propertytype_recorder = req_filter_dict.pop('propertyType')
+    # else:
+    #     propertytype_recorder = 0
 
     more_than_three = []
 
@@ -154,29 +154,35 @@ def search():
             more_than_three.append(i)
             del req_filter_dict[i]
 
-    if propertytype_recorder:
-        req_filter_dict['propertyType'] = propertytype_recorder
+    # if propertytype_recorder:
+    #     req_filter_dict['propertyType'] = propertytype_recorder
 
     print("more than three features:", more_than_three)
     print("filtered dict:", req_filter_dict)
     print()
 
-    if req_filter.get('compare_addr'):
-        compare_addr = '%' + req_filter.get('compare_addr') + '%'
-    else:
-        compare_addr = '%'
+    # if req_filter.get('compare_addr'):
+    #     compare_addr = '%' + req_filter.get('compare_addr') + '%'
+    # else:
+    #     compare_addr = '%'
 
     auction_start = req_filter.get('auction_start')
+    auction_end = req_filter.get('auction_end')
     print("auction start:", auction_start)
     # auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
     # print(auction_start)
     print(type(auction_start))
-    print('compare_addr:', compare_addr)
+    # print('compare_addr:', compare_addr)
     print()
-    #filtering
-    query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict)\
-                .filter(PROPERTY_INFO.compare_addr.like(compare_addr))\
-                .filter(PROPERTY_INFO.auction_start >= auction_start)
+
+
+
+    #Query with the filters
+    query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
+            .filter(PROPERTY_INFO.auction_start >= auction_start) \
+            .filter(PROPERTY_INFO.auction_end <= auction_end)
+            # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
+
 
     if 'beds' in more_than_three:
         query_res = query_res.filter(PROPERTY_INFO.beds > 3)
@@ -185,12 +191,12 @@ def search():
     if 'parkingSpace' in more_than_three:
         query_res = query_res.filter(PROPERTY_INFO.parkingSpace > 3)
 
-
+    #Return result to front-end
     result_list = []
     if query_res:
         for i in query_res:
-            encoded = base64.b64encode(i.image)
-            image_converted = encoded.decode('utf-8')
+            # encoded = base64.b64encode(i.image)
+            # image_converted = encoded.decode('utf-8')
             result_dict = {
                 "id" : i.propertyId,
                 "propertyType": i.propertyType,
@@ -207,8 +213,8 @@ def search():
                 "introTitle": i.introTitle,
                 "introDetails": i.introDetails,
                 "startPrice": i.startPrice,
-                # "image": i.image,
-                "image": image_converted,
+                "image": i.image,
+                # "image": image_converted,
 
                 "auction_start": i.auction_start,
                 "auction_end": i.auction_end,
@@ -270,26 +276,39 @@ def property_search():
         db.session.add(mov)
         db.session.commit()
 
+        searchKeyword = request.args.get('keyword')
+
+
+
+
+
+
+        #search_filter
+
         req_filter = request.get_json()
 
         print(type(req_filter))
         print("initial_filter:", req_filter)
+        print()
         #
-        #
+        # Processing conditions to query readable format
         req_filter_dict = {
             "beds": str(req_filter.get('beds')),
             "baths": str(req_filter.get('baths')),
             "parkingSpace": str(req_filter.get('carspots')),
             # "auction_start": req_filter.get['auction_start'],
             # "compare_addr": req_filter.get['address'],
-            "propertyType": req_filter.get('propertyType')
+            # "propertyType": req_filter.get('propertyType')
         }
 
         for i in list(req_filter_dict):
             if req_filter_dict[i] == 'Any':
                 del req_filter_dict[i]
 
-        propertytype_recorder = req_filter_dict.pop('propertyType')
+        # if 'propertyType' in req_filter_dict.keys():
+        #     propertytype_recorder = req_filter_dict.pop('propertyType')
+        # else:
+        #     propertytype_recorder = 0
 
         more_than_three = []
 
@@ -298,26 +317,33 @@ def property_search():
                 more_than_three.append(i)
                 del req_filter_dict[i]
 
-        req_filter_dict['propertyType'] = propertytype_recorder
+        # if propertytype_recorder:
+        #     req_filter_dict['propertyType'] = propertytype_recorder
 
         print("more than three features:", more_than_three)
+        print("filtered dict:", req_filter_dict)
+        print()
 
-        if req_filter.get('compare_addr'):
-            compare_addr = '%' + req_filter.get('compare_addr') + '%'
-        else:
-            compare_addr = '%'
+        # if req_filter.get('compare_addr'):
+        #     compare_addr = '%' + req_filter.get('compare_addr') + '%'
+        # else:
+        #     compare_addr = '%'
+
         auction_start = req_filter.get('auction_start')
-        print(auction_start)
-        auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
-        print(auction_start)
+        auction_end = req_filter.get('auction_end')
+        print("auction start:", auction_start)
+        # auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
+        # print(auction_start)
         print(type(auction_start))
+        # print('compare_addr:', compare_addr)
+        print()
 
-        print(req_filter_dict)
-        print('compare_addr:', compare_addr)
-        # filtering
+        # Query with the filters
         query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
-            .filter(PROPERTY_INFO.compare_addr.like(compare_addr)) \
-            .filter(PROPERTY_INFO.auction_start >= auction_start)
+            .filter(PROPERTY_INFO.auction_start >= auction_start) \
+            .filter(PROPERTY_INFO.auction_end <= auction_end)\
+            .filter_by(postcode=int(searchKeyword))
+        # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
 
         if 'beds' in more_than_three:
             query_res = query_res.filter(PROPERTY_INFO.beds > 3)
@@ -326,13 +352,14 @@ def property_search():
         if 'parkingSpace' in more_than_three:
             query_res = query_res.filter(PROPERTY_INFO.parkingSpace > 3)
 
+        # Return result to front-end
         result_list = []
         if query_res:
             for i in query_res:
                 # encoded = base64.b64encode(i.image)
-                # image_converted = encoded.decode('ascii')
+                # image_converted = encoded.decode('utf-8')
                 result_dict = {
-
+                    "id": i.propertyId,
                     "propertyType": i.propertyType,
                     "unitNumber": i.unitNumber,
                     "streetAddress": i.streetAddress,
@@ -353,9 +380,16 @@ def property_search():
                     "auction_start": i.auction_start,
                     "auction_end": i.auction_end,
                     "compare_addr": i.compare_addr
+
                 }
                 result_list.append(result_dict)
-            print(len(result_list))
+                print("result_dict:", result_dict)
+            print("result:", len(result_list))
+            print()
+
+            if not result_list:
+                return jsonify(message="nothing found", status="failed"), 404
+
             resp = make_response(jsonify(result_list), 200)
             return resp
         else:
