@@ -1,6 +1,6 @@
 ## This is the extension part of the back-end
 
-Can test for conditional search under certain filters from front-end
+Can test for conditional search under certain filters from the front-end
 
 ## How to test
 
