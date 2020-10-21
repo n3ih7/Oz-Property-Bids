@@ -6,7 +6,7 @@ Can test for conditional search under certain filters from the front-end
 
 1. Download postman 
 
-2. Run code app.py
+2. Run code `app.py`
 
 3. Open postman, use the link given by app.py : http://127.0.0.1:5000/buy?keyword=???? the ???? needed to be replaced by postcode, such as 2032.
 
@@ -59,8 +59,8 @@ They will return different values for image only.
 ## Change to dbBinary.sqlite for test
 The default database is db.sqlit. If you want to change to dbBinary.db, follow these steps:
 
-1. Unpound the line 54 in models.py, and pound the line 48.
+1. Unpound the line 54 in `models.py`, and pound the line 48.
 
-2. unpound line 359, 360 and 378 in auth.py, and pound line 377.
+2. unpound line 359, 360 and 378 in `auth.py`, and pound line 377.
 
 3. run the code
