@@ -48,7 +48,7 @@ the result should be like:
 
 
   
-## Image with different storage method
+## Image with different storage methods
 
 There are two database are used for test. db.sqlite stores the image information as their path, not the image itself.
 
