@@ -57,7 +57,7 @@ dbBinary.sqlite stores the images itself for every record, in bytes format.
 They will return different values for image only.
 
 ## Change to dbBinary.sqlite for test
-The default database is db.sqlit. If you want to change to dbBinary.db, follow these steps:
+The default database is db.sqlite. If you want to change to dbBinary.sqlite, follow these steps:
 
 1. Unpound the line 54 in `models.py`, and pound the line 48.
 
