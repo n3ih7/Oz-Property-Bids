@@ -181,7 +181,7 @@ class Home extends Component{
     axios.get('/buy', {params:{
       keyword: this.location.current.value.slice(this.location.current.value.length - 4),
       // beds : this.numberBeds.current.value,
-      // bathss : this.numberBaths.current.value,
+      // baths : this.numberBaths.current.value,
       // carSpots:
       // auction-start: yyyy-mm-dd,
       // auction-end: yyyy-mm-dd

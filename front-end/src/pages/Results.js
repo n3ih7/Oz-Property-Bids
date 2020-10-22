@@ -42,7 +42,7 @@ class Results extends Component{
                         <Col>
                         <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.autoFill} onKeyDown = {this.handleKeyPress} />
                         </Col>
-                        <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", border: "#05445E"}} onClick = {this.handleSubmit}>
+                        <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", borderColor: "white"}} onClick = {this.handleSubmit}>
                         Search
                         </Button>
                     </Form.Row>
