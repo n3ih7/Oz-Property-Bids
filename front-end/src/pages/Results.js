@@ -3,6 +3,8 @@ import {Container, Row, Col, Form, Button} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
 import AutoResults from '../components/AutoResults';
 import DatePicker from "react-datepicker";
+import house1 from "./test-data/house_1.jpg";
+import house2 from "./test-data/house_2.jpg";
 const axios = require('axios');
 
 class Results extends Component{
@@ -10,14 +12,14 @@ class Results extends Component{
         super(props);
 
         this.state = {
-            results : false,
+            // results : false,
+            results : true,
+            properties: [{streetAddress : "123 Apple Street", postcode : "2012", image : house1, introTitle:"A wonderful home in the town of Watonnga"}, {streetAddress : "44 Era Street", postcode : "2209", image : house2}],
             autofillResults : null,
             date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
             date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :(new Date()).setTime((new Date()).getTime() + 7 * 86400000),
             searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null
         }
-
-        console.log(this.props);
 
         this.cookies = this.props.cookies;
         this.numberBeds = React.createRef();
@@ -175,7 +177,7 @@ class Results extends Component{
                
              if (response.status === 200){
                this.setState({
-                 autofillResults : response.data.slice(0,6)
+                 autofillResults : response.data.slice(0,3)
                });
              }
            }).catch((error) =>{
@@ -188,10 +190,12 @@ class Results extends Component{
         if(this.state.results){
             return(
                 this.state.properties.map(property =>(
+                  <>
                     <Row>
-                        <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image ? property.image.substring(2,property.image.length-1) : ' '}/>
-                        <br/>
+                        <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image /*? property.image.substring(2,property.image.length-1) : ' '*/}/>
                     </Row>
+                    <br/>
+                    </>
                 ))
             );
         }
