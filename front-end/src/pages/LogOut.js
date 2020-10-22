@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
+import {Container, Row, Spinner} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
 const axios = require('axios');
 

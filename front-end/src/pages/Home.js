@@ -134,6 +134,7 @@ class Home extends Component{
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3+">3+</option>
+                    <option value="3+">Any</option>
                   </Form.Control>
               </Col>
               <Col md="auto">
@@ -167,10 +168,12 @@ class Home extends Component{
 
     axios.get('/buy', {params:{
       keyword: this.location.current.value.slice(this.location.current.value.length - 4),
-      // bedrooms : this.numberBeds.current.value,
-      // bathrooms : this.numberBaths.current.value,
-      // minprice: this.minPrice.current.value,
-      // maxprice: this.maxPrice.current.value
+      // beds : this.numberBeds.current.value,
+      // bathss : this.numberBaths.current.value,
+      // carSpots:
+      // auction-start: yyyy-mm-dd,
+      // auction-end: yyyy-mm-dd
+      
     }})
     .then((response) => {
         // console.log(response);

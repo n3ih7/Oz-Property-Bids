@@ -13,12 +13,15 @@ class SignUp extends Component{
             loading: false,
             authenticated: null,
             redirect: false,
-            attemptSignUp : false
+            attemptSignUp : false,
+            buyer : false,
+            seller : false
         }
         this.firstName = React.createRef();
         this.lastName = React.createRef();
         this.email = React.createRef();
-        this.password = React.createRef();
+        this.password1 = React.createRef();
+        this.password2 = React.createRef();
         this.address1 = React.createRef();
         this.address2 = React.createRef();
         this.city = React.createRef();
@@ -35,6 +38,46 @@ class SignUp extends Component{
         this.attemptSignUp = this.attemptSignUp.bind(this);
     }
 
+    formCheckbox(){
+        if(this.state.buyer === false && this.state.seller === false){
+            return(
+                <Form.Row>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="I'm looking to buy a house" onClick={() => {this.setState({buyer: !this.state.buyer})}}></Form.Check>
+                    </Form.Group>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="I'm looking to sell a house" onClick={() => {this.setState({seller: !this.state.seller})}}></Form.Check>
+                    </Form.Group>
+                </Form.Row>
+            );
+
+        }
+        else if(this.state.buyer === true && this.state.seller === false){
+            return(
+                <Form.Row>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="I'm looking to buy a house" onClick={() => {this.setState({buyer: !this.state.buyer})}}></Form.Check>
+                    </Form.Group>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="I'm looking to sell a house" disabled onClick={() => {this.setState({seller: !this.state.seller})}}></Form.Check>
+                    </Form.Group>
+                </Form.Row>
+            );
+        }
+        else if(this.state.buyer === false && this.state.seller === true){
+            return(
+                <Form.Row>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="I'm looking to buy a house" disabled onClick={() => {this.setState({buyer: !this.state.buyer})}}></Form.Check>
+                    </Form.Group>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="I'm looking to sell a house" onClick={() => {this.setState({seller: !this.state.seller})}}></Form.Check>
+                    </Form.Group>
+                </Form.Row>
+            );
+        }
+    }
+    
     pageContent(){
         if (this.state.redirect === true){
             return(
@@ -76,16 +119,25 @@ class SignUp extends Component{
                             <Form.Control type="email" placeholder="Enter email" ref={this.email}/>
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridPassword">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" ref={this.password} />
+                            <Form.Group as={Col} controlId="formPhone">
+                            <Form.Label>Phone</Form.Label>
+                            <Form.Control placeholder="" ref={this.phone} />
                             </Form.Group>
                         </Form.Row>
 
-                        <Form.Group controlId="formPhone">
-                            <Form.Label>Phone</Form.Label>
-                            <Form.Control placeholder="" ref={this.phone} />
-                        </Form.Group>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridPassword1">
+                            <Form.Label>Password</Form.Label>
+                            <Form.Control type="password" placeholder="Password" ref={this.password1} />
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridPassword2">
+                            <Form.Label>Confirm Password</Form.Label>
+                            <Form.Control type="password" placeholder="Confirm Password" ref={this.password2} />
+                            </Form.Group>
+                        </Form.Row>
+
+                        
                         
                         <Form.Group controlId="formGridAddress1">
                             <Form.Label>Address</Form.Label>
@@ -139,6 +191,8 @@ class SignUp extends Component{
                                 
                             </Form.Group>
                         </Form.Row>
+
+                        {this.formCheckbox()}
 
                         <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {this.handleSubmit}>
                             Submit
