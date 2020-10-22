@@ -19,15 +19,23 @@ class App extends Component{
     super(props);
 
     this.state ={
-      searchResults : []
+      searchResults : [],
+      searchParams: null
     }
 
     this.retrieveSearchResults = this.retrieveSearchResults.bind(this);
+    this.retrieveSearchParams = this.retrieveSearchParams.bind(this);
   }
 
   retrieveSearchResults = (results) => {
     this.setState({
       searchResults : results
+    });
+  }
+
+  retrieveSearchParams = (params) => {
+    this.setState({
+      searchParams : params
     });
   }
 
@@ -37,12 +45,12 @@ class App extends Component{
         <div className="App-background">
           <NavigationBar cookies = {this.props.cookies}/>
           <Switch>
-            <Route exact path ="/"><Home cookies= {this.props.cookies} dataCallback={this.retrieveSearchResults.bind(this)} /></Route>
+            <Route exact path ="/"><Home cookies= {this.props.cookies} dataCallback={this.retrieveSearchResults.bind(this)} paramsCallback={this.retrieveSearchParams.bind(this)} /></Route>
             <Route exact path ="/login" ><Login cookies= {this.props.cookies} /></Route>
             <Route exact path ="/logout" ><LogOut cookies= {this.props.cookies} /></Route>
             <Route exact path="/signup"><SignUp  cookies = {this.props.cookies}/></Route>
             <Route exact path="/account"><Account cookies = {this.props.cookies}/></Route>
-            <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults}/></Route>
+            <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams}/></Route>
           </Switch>
       </div>
       </Router>

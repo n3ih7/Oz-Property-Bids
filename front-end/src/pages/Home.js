@@ -12,7 +12,8 @@ class Home extends Component{
     super(props);
 
     this.state = {
-      date :  new Date(),
+      date1 :  new Date(),
+      date2: (new Date()).setTime((new Date()).getTime() + 7 * 86400000),
       results : false,
       autofillResults : null,
     }
@@ -70,7 +71,7 @@ class Home extends Component{
           
         if (response.status === 200){
           this.setState({
-            autofillResults : response.data.slice(0,6)
+            autofillResults : response.data.slice(0,3)
           });
         }
       }).catch((error) =>{
@@ -131,15 +132,16 @@ class Home extends Component{
               <Col md="auto">
                   <Form.Control as="select" placeholder="Beds" size ="sm" ref ={this.numberBeds}>
                     <option value="null">Beds</option>
+                    <option value="Any">Any</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3+">3+</option>
-                    <option value="3+">Any</option>
                   </Form.Control>
               </Col>
               <Col md="auto">
                   <Form.Control as="select" placeholder="Bathrooms" size ="sm" ref ={this.numberBaths}>
                     <option value="null">Bathrooms</option>
+                    <option value="Any">Any</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3+">3+</option>
@@ -148,13 +150,23 @@ class Home extends Component{
               <Col md="auto">
                   <Form.Control as="select" placeholder="Garage" size ="sm" ref ={this.numberCarSpots}>
                     <option value="null">Car Spots</option>
+                    <option value="Any">Any</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3+">3+</option>
                   </Form.Control>
               </Col>
               <Col md="auto">
-                <DatePicker className = "calendar" selected = {this.state.date} onChange={date => this.setState({date : date})}/>
+                <Row>
+                <h6 className="auction-label-one">Auction Date Range:</h6>
+                <DatePicker className = "calendar" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
+                </Row>
+              </Col>
+              <Col md="auto">
+                <Row>
+                <h6 className="auction-label-two">-</h6>
+                <DatePicker className = "calendar" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
+                </Row>
               </Col>
             </Row>
           </Container>
@@ -176,10 +188,17 @@ class Home extends Component{
       
     }})
     .then((response) => {
-        // console.log(response);
-        
         if (response.status === 200){
+
           this.props.dataCallback(response.data);
+          this.props.paramsCallback({
+            initialLocation: this.location.current.value,
+            initialBeds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
+            initialBaths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
+            initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
+            initialAuctionStart: this.state.date1,
+            initialAuctionEnd: this.state.date2
+          });
           this.setState({results: true});
         }
     }).catch((error) =>{

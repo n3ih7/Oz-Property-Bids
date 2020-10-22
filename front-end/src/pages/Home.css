@@ -39,3 +39,14 @@
     background-clip: padding-box;
     border: 1px solid #ced4da;
 }
+
+.auction-label-one{
+    padding-right: 5px;
+    padding-top: 5px;
+}
+
+.auction-label-two{
+    padding-right: 5px;
+    padding-left: 5px;
+    padding-top: 5px;
+}

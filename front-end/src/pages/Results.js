@@ -1,30 +1,197 @@
 import React, {Component} from 'react';
-import {Container, Row} from 'react-bootstrap';
+import {Container, Row, Col, Form, Button} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
+import AutoResults from '../components/AutoResults';
+import DatePicker from "react-datepicker";
+const axios = require('axios');
 
 class Results extends Component{
     constructor(props){
         super(props);
 
-        this.state = {results : false}
+        this.state = {
+            results : false,
+            autofillResults : null,
+            date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
+            date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :(new Date()).setTime((new Date()).getTime() + 7 * 86400000),
+            searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null
+        }
+
+        console.log(this.props);
+
+        this.cookies = this.props.cookies;
+        this.numberBeds = React.createRef();
+        this.numberBaths = React.createRef();
+        this.numberCarSpots = React.createRef();
+        this.location = React.createRef();
 
         this.pageContent = this.pageContent.bind(this);
-        console.log(this.props.results.result);
+        this.searchBar = this.searchBar.bind(this);
+        this.autoFill = this.autoFill.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     searchBar(){
-        
+        return(
+            <Container fluid style={{marginTop: "1%"}}>
+                <Row>
+                <Col>
+                    <Form.Group>
+                    <Form.Row>
+                        <Col>
+                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.autoFill} onKeyDown = {this.handleKeyPress} />
+                        </Col>
+                        <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", border: "#05445E"}} onClick = {this.handleSubmit}>
+                        Search
+                        </Button>
+                    </Form.Row>
+                    </Form.Group>
+                    <AutoResults suggestions = {this.state.autofillResults} selectCallback ={this.getAutoSelect.bind(this)}/>
+                </Col>
+                </Row>
+
+                <Row className="">
+                <Col md="auto">
+                    <Form.Control as="select" placeholder="Beds" size ="sm" ref ={this.numberBeds}>
+                        <option value="null">Beds</option>
+                        <option value="Any">Any</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3+">3+</option>
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                    <Form.Control as="select" placeholder="Bathrooms" size ="sm" ref ={this.numberBaths}>
+                        <option value="null">Bathrooms</option>
+                        <option value="Any">Any</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3+">3+</option>
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                    <Form.Control as="select" placeholder="Garage" size ="sm" ref ={this.numberCarSpots}>
+                        <option value="null">Car Spots</option>
+                        <option value="Any">Any</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3+">3+</option>
+                    </Form.Control>
+                </Col>
+                <Col md="auto">
+                    <Row>
+                    <h6 className="auction-label-one" style={{color:"white"}}>Auction Date Range:</h6>
+                    <DatePicker className = "calendar" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
+                    </Row>
+                </Col>
+                <Col md="auto">
+                    <Row>
+                    <h6 className="auction-label-two" style={{color:"white"}}>-</h6>
+                    <DatePicker className = "calendar" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
+                    </Row>
+                </Col>
+                </Row>
+            </Container>
+        )
     }
 
+    handleSubmit(){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+    
+        axios.get('/buy', {params:{
+          keyword: this.location.current.value.slice(this.location.current.value.length - 4),
+          // beds : this.numberBeds.current.value,
+          // bathss : this.numberBaths.current.value,
+          // carSpots:
+          // auction-start: yyyy-mm-dd,
+          // auction-end: yyyy-mm-dd
+          
+        }})
+        .then((response) => {
+            if (response.status === 200){
+              this.setState({
+                  results : true,
+                  properties : response.data.result
+              })
+            }
+        }).catch((error) =>{
+            console.log(error);
+        });
+      }
+
+    handleKeyPress(event){
+        let key = event.keyCode || event.charCode;
+     
+         if (key === 13){
+           this.handleSubmit();
+         }
+         else if(key === 46 || key === 8){
+           this.setState({searchValue: null});
+         }
+       }
+       
+       getAutoSelect = (result) => {
+         if(result != null){
+           this.setState({
+             searchValue: result,
+             autofillResults: null
+           })
+         }
+       }
+       
+       autoFill(){
+         let userInput = this.location.current.value;
+         axios.defaults.baseURL = 'http://api.jsacreative.com.au/';
+     
+         if(userInput.length === 0){
+           this.setState({
+             autofillResults: null
+           });
+           return;
+         }
+     
+         if (isNaN(userInput)){
+     
+           axios.get('v1/suburbs', {params:{
+             q: userInput,
+           }})
+           .then((response) => {               
+             if (response.status === 200){
+               this.setState({
+                 autofillResults : response.data.slice(0,3)
+               });
+             }
+           }).catch((error) =>{
+               console.log(error);
+           });
+         }
+     
+         else {
+           axios.get('v1/suburbs', {params:{
+             postcode: userInput,
+           }})
+           .then((response) => {
+               
+             if (response.status === 200){
+               this.setState({
+                 autofillResults : response.data.slice(0,6)
+               });
+             }
+           }).catch((error) =>{
+               console.log(error);
+           });
+         }
+       }
 
     pageContent(){
         if(this.state.results){
             return(
                 this.state.properties.map(property =>(
-                    <>
-                    <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image ? property.image.substring(2,property.image.length-1) : ' '}/>
-                    <br/>
-                    </>
+                    <Row>
+                        <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image ? property.image.substring(2,property.image.length-1) : ' '}/>
+                        <br/>
+                    </Row>
                 ))
             );
         }
@@ -41,11 +208,14 @@ class Results extends Component{
 
     render(){
         return(
-            <Container style={{marginTop: "5%"}}>
-                <Row><h1 style={{color:"white"}}>Results</h1></Row>
-                <br/>
-                {this.pageContent()}
-            </Container>
+            <>
+                {this.searchBar()}
+                <Container fluid style={{marginTop: "1%"}}>
+                    <Col>
+                    {this.pageContent()}
+                    </Col>
+                </Container>
+            </>
         );
     }
 }
