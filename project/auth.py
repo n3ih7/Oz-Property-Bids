@@ -264,7 +264,7 @@ def property_search():
 
         # search_filter
 
-        req_filter = request.get_json()
+        # req_filter = request.get_json()
 
         # print(type(req_filter))
         # print("initial_filter:", req_filter)
@@ -272,9 +272,9 @@ def property_search():
         #
         # Processing conditions to query readable format
         req_filter_dict = {
-            "beds": str(req_filter.get('beds')),
-            "baths": str(req_filter.get('baths')),
-            "parkingSpace": str(req_filter.get('carspots')),
+            "beds": str(request.args.get('beds')),
+            "baths": str(request.args.get('baths')),
+            "parkingSpace": str(request.args.get('carspots')),
             # "auction_start": req_filter.get['auction_start'],
             # "compare_addr": req_filter.get['address'],
             # "propertyType": req_filter.get('propertyType')
@@ -308,8 +308,8 @@ def property_search():
         # else:
         #     compare_addr = '%'
 
-        auction_start = req_filter.get('auction_start')
-        auction_end = req_filter.get('auction_end')
+        auction_start = request.args.get('auction_start')
+        auction_end = request.args.get('auction_end')
         # print("auction start:", auction_start)
         # auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
         # print(auction_start)
