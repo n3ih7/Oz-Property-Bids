@@ -27,6 +27,8 @@ def login_post():
         password = req['password']
 
         user = USER_INFO.query.filter_by(email=email).first()
+        # aaa = USER_INFO.query.filter_by(properyid=1).first()
+        # email = aaa.user_email
 
         if not user or not check_password_hash(user.password, password):
             return jsonify(
@@ -79,6 +81,7 @@ def profile_update_post():
         if req['bidderTag'] == 1:
             try:
                 active_user = USER_INFO_EXTENDED.query.get(current_user.email)
+                # active_user = USER_INFO_EXTENDED.query.filter_by(current_user.email)
                 active_user.bsb = int(req['bsb'])
                 active_user.accNumber = int(req['accNumber'])
                 active_user.initialBid = int(req['initialBid'])
@@ -113,119 +116,119 @@ def logout():
     return jsonify(message="You are successfully logged out", status="successful"), 200
 
 
-@app.route('/search_test', methods=['GET', 'POST'])
-def search():
-    req_filter = request.get_json()
+# @app.route('/search_test', methods=['GET', 'POST'])
+# def search():
+#     req_filter = request.get_json()
+#
+#     print(type(req_filter))
+#     print("initial_filter:", req_filter)
+#     print()
+#     #
+#     # Processing conditions to query readable format
+#     req_filter_dict = {
+#         "beds": str(req_filter.get('beds')),
+#         "baths": str(req_filter.get('baths')),
+#         "parkingSpace": str(req_filter.get('carspots')),
+#         # "auction_start": req_filter.get['auction_start'],
+#         # "compare_addr": req_filter.get['address'],
+#         # "propertyType": req_filter.get('propertyType')
+#     }
+#
+#     for i in list(req_filter_dict):
+#         if req_filter_dict[i] == 'Any':
+#             del req_filter_dict[i]
+#
+#     # if 'propertyType' in req_filter_dict.keys():
+#     #     propertytype_recorder = req_filter_dict.pop('propertyType')
+#     # else:
+#     #     propertytype_recorder = 0
+#
+#     more_than_three = []
+#
+#     for i in list(req_filter_dict):
+#         if len(req_filter_dict[i]) > 1:
+#             more_than_three.append(i)
+#             del req_filter_dict[i]
+#
+#     # if propertytype_recorder:
+#     #     req_filter_dict['propertyType'] = propertytype_recorder
+#
+#     print("more than three features:", more_than_three)
+#     print("filtered dict:", req_filter_dict)
+#     print()
+#
+#     # if req_filter.get('compare_addr'):
+#     #     compare_addr = '%' + req_filter.get('compare_addr') + '%'
+#     # else:
+#     #     compare_addr = '%'
+#
+#     auction_start = req_filter.get('auction_start')
+#     auction_end = req_filter.get('auction_end')
+#     print("auction start:", auction_start)
+#     # auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
+#     # print(auction_start)
+#     print(type(auction_start))
+#     # print('compare_addr:', compare_addr)
+#     print()
+#
+#     # Query with the filters
+#     query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
+#         .filter(PROPERTY_INFO.auction_start >= auction_start) \
+#         .filter(PROPERTY_INFO.auction_end <= auction_end)
+#     # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
+#
+#     if 'beds' in more_than_three:
+#         query_res = query_res.filter(PROPERTY_INFO.beds > 3)
+#     if 'baths' in more_than_three:
+#         query_res = query_res.filter(PROPERTY_INFO.baths > 3)
+#     if 'parkingSpace' in more_than_three:
+#         query_res = query_res.filter(PROPERTY_INFO.parkingSpace > 3)
+#
+#     # Return result to front-end
+#     result_list = []
+#     if query_res:
+#         for i in query_res:
+#             # encoded = base64.b64encode(i.image)
+#             # image_converted = encoded.decode('utf-8')
+#             result_dict = {
+#                 "id": i.propertyId,
+#                 "propertyType": i.propertyType,
+#                 "unitNumber": i.unitNumber,
+#                 "streetAddress": i.streetAddress,
+#                 "suburb": i.suburb,
+#                 "state": i.state,
+#                 "postcode": i.postcode,
+#                 "beds": i.beds,
+#                 "baths": i.baths,
+#                 "parkingSpace": i.parkingSpace,
+#                 "landSize": i.landSize,
+#                 "sellerEmail": i.sellerEmail,
+#                 "introTitle": i.introTitle,
+#                 "introDetails": i.introDetails,
+#                 "startPrice": i.startPrice,
+#                 "image": i.image,
+#                 # "image": image_converted,
+#
+#                 "auction_start": i.auction_start,
+#                 "auction_end": i.auction_end,
+#                 "compare_addr": i.compare_addr
+#
+#             }
+#             result_list.append(result_dict)
+#             print("result_dict:", result_dict)
+#         print("result:", len(result_list))
+#         print()
+#
+#         if not result_list:
+#             return jsonify(message="nothing found", status="failed"), 404
+#
+#         resp = make_response(jsonify(result_list), 200)
+#         return resp
+#     else:
+#         return jsonify(message="nothing found", status="failed"), 404
 
-    print(type(req_filter))
-    print("initial_filter:", req_filter)
-    print()
-    #
-    # Processing conditions to query readable format
-    req_filter_dict = {
-        "beds": str(req_filter.get('beds')),
-        "baths": str(req_filter.get('baths')),
-        "parkingSpace": str(req_filter.get('carspots')),
-        # "auction_start": req_filter.get['auction_start'],
-        # "compare_addr": req_filter.get['address'],
-        # "propertyType": req_filter.get('propertyType')
-    }
 
-    for i in list(req_filter_dict):
-        if req_filter_dict[i] == 'Any':
-            del req_filter_dict[i]
-
-    # if 'propertyType' in req_filter_dict.keys():
-    #     propertytype_recorder = req_filter_dict.pop('propertyType')
-    # else:
-    #     propertytype_recorder = 0
-
-    more_than_three = []
-
-    for i in list(req_filter_dict):
-        if len(req_filter_dict[i]) > 1:
-            more_than_three.append(i)
-            del req_filter_dict[i]
-
-    # if propertytype_recorder:
-    #     req_filter_dict['propertyType'] = propertytype_recorder
-
-    print("more than three features:", more_than_three)
-    print("filtered dict:", req_filter_dict)
-    print()
-
-    # if req_filter.get('compare_addr'):
-    #     compare_addr = '%' + req_filter.get('compare_addr') + '%'
-    # else:
-    #     compare_addr = '%'
-
-    auction_start = req_filter.get('auction_start')
-    auction_end = req_filter.get('auction_end')
-    print("auction start:", auction_start)
-    # auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
-    # print(auction_start)
-    print(type(auction_start))
-    # print('compare_addr:', compare_addr)
-    print()
-
-    # Query with the filters
-    query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
-        .filter(PROPERTY_INFO.auction_start >= auction_start) \
-        .filter(PROPERTY_INFO.auction_end <= auction_end)
-    # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
-
-    if 'beds' in more_than_three:
-        query_res = query_res.filter(PROPERTY_INFO.beds > 3)
-    if 'baths' in more_than_three:
-        query_res = query_res.filter(PROPERTY_INFO.baths > 3)
-    if 'parkingSpace' in more_than_three:
-        query_res = query_res.filter(PROPERTY_INFO.parkingSpace > 3)
-
-    # Return result to front-end
-    result_list = []
-    if query_res:
-        for i in query_res:
-            # encoded = base64.b64encode(i.image)
-            # image_converted = encoded.decode('utf-8')
-            result_dict = {
-                "id": i.propertyId,
-                "propertyType": i.propertyType,
-                "unitNumber": i.unitNumber,
-                "streetAddress": i.streetAddress,
-                "suburb": i.suburb,
-                "state": i.state,
-                "postcode": i.postcode,
-                "beds": i.beds,
-                "baths": i.baths,
-                "parkingSpace": i.parkingSpace,
-                "landSize": i.landSize,
-                "sellerEmail": i.sellerEmail,
-                "introTitle": i.introTitle,
-                "introDetails": i.introDetails,
-                "startPrice": i.startPrice,
-                "image": i.image,
-                # "image": image_converted,
-
-                "auction_start": i.auction_start,
-                "auction_end": i.auction_end,
-                "compare_addr": i.compare_addr
-
-            }
-            result_list.append(result_dict)
-            print("result_dict:", result_dict)
-        print("result:", len(result_list))
-        print()
-
-        if not result_list:
-            return jsonify(message="nothing found", status="failed"), 404
-
-        resp = make_response(jsonify(result_list), 200)
-        return resp
-    else:
-        return jsonify(message="nothing found", status="failed"), 404
-
-
-@app.route('/buy', methods=['GET', 'POST'])
+@app.route('/buy', methods=['GET'])
 def property_search():
     if 'keyword' not in request.args:
         return jsonify(message="expected conditions not received", status="search failed"), 400
@@ -263,9 +266,9 @@ def property_search():
 
         req_filter = request.get_json()
 
-        print(type(req_filter))
-        print("initial_filter:", req_filter)
-        print()
+        # print(type(req_filter))
+        # print("initial_filter:", req_filter)
+        # print()
         #
         # Processing conditions to query readable format
         req_filter_dict = {
@@ -296,9 +299,9 @@ def property_search():
         # if propertytype_recorder:
         #     req_filter_dict['propertyType'] = propertytype_recorder
 
-        print("more than three features:", more_than_three)
-        print("filtered dict:", req_filter_dict)
-        print()
+        # print("more than three features:", more_than_three)
+        # print("filtered dict:", req_filter_dict)
+        # print()
 
         # if req_filter.get('compare_addr'):
         #     compare_addr = '%' + req_filter.get('compare_addr') + '%'
@@ -307,12 +310,12 @@ def property_search():
 
         auction_start = req_filter.get('auction_start')
         auction_end = req_filter.get('auction_end')
-        print("auction start:", auction_start)
+        # print("auction start:", auction_start)
         # auction_start = datetime.datetime.strptime(auction_start, "%Y-%m-%d")
         # print(auction_start)
-        print(type(auction_start))
+        # print(type(auction_start))
         # print('compare_addr:', compare_addr)
-        print()
+        # print()
 
         # Query with the filters
         query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
@@ -359,9 +362,9 @@ def property_search():
 
                 }
                 result_list.append(result_dict)
-                print("result_dict:", result_dict)
-            print("result:", len(result_list))
-            print()
+            #     print("result_dict:", result_dict)
+            # print("result:", len(result_list))
+            # print()
 
             if not result_list:
                 return jsonify(message="nothing found", status="failed"), 404
@@ -412,3 +415,9 @@ def property_post():
 
     except KeyError:
         return jsonify(message="expected attributes not received", status="post failed"), 400
+
+
+#
+# @app.route('/bids', methods=['GET'])
+# def bids_history():
+#
