@@ -113,13 +113,8 @@ def logout():
     return jsonify(message="You are successfully logged out", status="successful"), 200
 
 
-
-
-
-@app.route('/search_test', methods=['GET','POST'])
+@app.route('/search_test', methods=['GET', 'POST'])
 def search():
-
-
     req_filter = request.get_json()
 
     print(type(req_filter))
@@ -128,15 +123,13 @@ def search():
     #
     # Processing conditions to query readable format
     req_filter_dict = {
-                    "beds": str(req_filter.get('beds')),
-                    "baths": str(req_filter.get('baths')),
-                    "parkingSpace": str(req_filter.get('carspots')),
-                    # "auction_start": req_filter.get['auction_start'],
-                    # "compare_addr": req_filter.get['address'],
-                    # "propertyType": req_filter.get('propertyType')
-                    }
-
-
+        "beds": str(req_filter.get('beds')),
+        "baths": str(req_filter.get('baths')),
+        "parkingSpace": str(req_filter.get('carspots')),
+        # "auction_start": req_filter.get['auction_start'],
+        # "compare_addr": req_filter.get['address'],
+        # "propertyType": req_filter.get('propertyType')
+    }
 
     for i in list(req_filter_dict):
         if req_filter_dict[i] == 'Any':
@@ -175,14 +168,11 @@ def search():
     # print('compare_addr:', compare_addr)
     print()
 
-
-
-    #Query with the filters
+    # Query with the filters
     query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
-            .filter(PROPERTY_INFO.auction_start >= auction_start) \
-            .filter(PROPERTY_INFO.auction_end <= auction_end)
-            # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
-
+        .filter(PROPERTY_INFO.auction_start >= auction_start) \
+        .filter(PROPERTY_INFO.auction_end <= auction_end)
+    # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
 
     if 'beds' in more_than_three:
         query_res = query_res.filter(PROPERTY_INFO.beds > 3)
@@ -191,14 +181,14 @@ def search():
     if 'parkingSpace' in more_than_three:
         query_res = query_res.filter(PROPERTY_INFO.parkingSpace > 3)
 
-    #Return result to front-end
+    # Return result to front-end
     result_list = []
     if query_res:
         for i in query_res:
             # encoded = base64.b64encode(i.image)
             # image_converted = encoded.decode('utf-8')
             result_dict = {
-                "id" : i.propertyId,
+                "id": i.propertyId,
                 "propertyType": i.propertyType,
                 "unitNumber": i.unitNumber,
                 "streetAddress": i.streetAddress,
@@ -223,7 +213,7 @@ def search():
             }
             result_list.append(result_dict)
             print("result_dict:", result_dict)
-        print("result:",len(result_list))
+        print("result:", len(result_list))
         print()
 
         if not result_list:
@@ -235,16 +225,7 @@ def search():
         return jsonify(message="nothing found", status="failed"), 404
 
 
-
-
-
-
-
-
-
-
-
-@app.route('/buy', methods=['GET','POST'])
+@app.route('/buy', methods=['GET', 'POST'])
 def property_search():
     if 'keyword' not in request.args:
         return jsonify(message="expected conditions not received", status="search failed"), 400
@@ -278,12 +259,7 @@ def property_search():
 
         searchKeyword = request.args.get('keyword')
 
-
-
-
-
-
-        #search_filter
+        # search_filter
 
         req_filter = request.get_json()
 
@@ -341,7 +317,7 @@ def property_search():
         # Query with the filters
         query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
             .filter(PROPERTY_INFO.auction_start >= auction_start) \
-            .filter(PROPERTY_INFO.auction_end <= auction_end)\
+            .filter(PROPERTY_INFO.auction_end <= auction_end) \
             .filter_by(postcode=int(searchKeyword))
         # .filter(PROPERTY_INFO.compare_addr.like(compare_addr))
 
@@ -396,7 +372,6 @@ def property_search():
             return jsonify(message="nothing found", status="failed"), 404
 
 
-
 @app.route('/sell', methods=['POST'])
 # @login_required
 def property_post():
@@ -437,4 +412,3 @@ def property_post():
 
     except KeyError:
         return jsonify(message="expected attributes not received", status="post failed"), 400
-

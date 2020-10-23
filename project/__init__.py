@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app, supports_credentials=True, resources={r"/*": {"origins": "*"}})
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbBinary.sqlite'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
     app.config['REMEMBER_COOKIE_DURATION'] = datetime.timedelta(days=14)
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.urandom(24)
