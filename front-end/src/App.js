@@ -9,6 +9,7 @@ import SignUp from './pages/SignUp';
 import Account from './pages/Account';
 import Results from './pages/Results';
 import SellerHome from './pages/SellHome';
+import Upload from './pages/Upload';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -52,6 +53,7 @@ class App extends Component{
             <Route exact path="/signup"><SignUp  cookies = {this.props.cookies}/></Route>
             <Route exact path="/account"><Account cookies = {this.props.cookies}/></Route>
             <Route exact path="/sell"><SellerHome cookies = {this.props.cookies}/></Route>
+            <Route exact path="/upload"><Upload cookies = {this.props.cookies}/></Route>
             <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams}/></Route>
           </Switch>
       </div>
