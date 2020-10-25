@@ -14,7 +14,8 @@ class Results extends Component{
         this.state = {
             // results : false,
             results : true,
-            properties: [{streetAddress : "123 Apple Street", postcode : "2012", image : house1, introTitle:"A wonderful home in the town of Watonnga"}, {streetAddress : "44 Era Street", postcode : "2209", image : house2}],
+            // Delete properties when in prod
+            properties: [{streetAddress : "123 Apple Street", postcode : "2012", image : house1, introTitle:"A wonderful home in the town of Watonnga, this house is home to Mike and Linda who have lived here for 900 years. Now they wish to sell their home as they are migrating to Europe."}, {streetAddress : "44 Era Street", postcode : "2209",introTitle:"A wonderful home in the town of Watonnga, this house is home to Mike and Linda who have lived here for 900 years. Now they wish to sell their home as they are migrating to Europe." ,image : house2}],
             autofillResults : null,
             date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
             date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :(new Date()).setTime((new Date()).getTime() + 7 * 86400000),

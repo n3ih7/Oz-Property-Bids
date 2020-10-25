@@ -182,7 +182,7 @@ class Home extends Component{
       keyword: this.location.current.value.slice(this.location.current.value.length - 4),
       // beds : this.numberBeds.current.value,
       // baths : this.numberBaths.current.value,
-      // carSpots:
+      // carspots:
       // auction-start: yyyy-mm-dd,
       // auction-end: yyyy-mm-dd
       

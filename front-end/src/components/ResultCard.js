@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Card, Container, Col, Row} from 'react-bootstrap';
 import emptyStar from "../assets/empty_star.png";
 import halfStar from "../assets/hover_star.png";
+import fullStar from "../assets/full_star.png";
 import './ResultCard.css';
 
 class ResultCard extends Component{
@@ -9,15 +10,39 @@ class ResultCard extends Component{
     constructor(props){
         super(props);
         this.state = {
-            starImage : emptyStar
+            starImage : emptyStar,
+            addedToFav: false
         }
 
-        this.addToFavorites = this.addToFavorites.bind(this);
+        this.toggleFavorites = this.toggleFavorites.bind(this);
+        this.hoverFavorites = this.hoverFavorites.bind(this);
     }
 
-    addToFavorites(){
-        //perform api call to add to favs
-        //set
+    redirectToHouse(){
+        
+    }
+    
+    toggleFavorites(){
+        if(this.state.addedToFav === false){
+            //perform api call to add to favs
+            this.setState({
+                starImage: fullStar,
+                addedToFav: true
+            });
+        }
+        else{
+            //perform api call to remove from favs
+            this.setState({
+                starImage: emptyStar,
+                addedToFav: false
+            });
+        }
+    }
+
+    hoverFavorites(){
+        if(this.state.addedToFav === false){
+            this.setState({starImage:emptyStar});
+        }
     }
 
     render(){
@@ -41,7 +66,7 @@ class ResultCard extends Component{
                         </Col>
                         <Col md="auto">
                             <Container>
-                            <img className ="favorites" src={this.state.starImage} onMouseOver ={() =>{this.setState({starImage:halfStar})}} onMouseLeave={() =>{this.setState({starImage:emptyStar})} } />
+                                <img className ="favorites" alt="Add to Fav" src={this.state.starImage} onClick ={() => {this.toggleFavorites()}} onMouseOver ={() =>{this.setState({starImage:halfStar})}} onMouseLeave={() =>{this.hoverFavorites()} } />
                             </Container>
                         </Col>
                     </Row>
