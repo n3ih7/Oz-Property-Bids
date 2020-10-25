@@ -85,13 +85,13 @@ class Results extends Component{
                 <Col md="auto">
                     <Row>
                     <h6 className="auction-label-one" style={{color:"white"}}>Auction Date Range:</h6>
-                    <DatePicker className = "calendar" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
+                    <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
                     </Row>
                 </Col>
                 <Col md="auto">
                     <Row>
                     <h6 className="auction-label-two" style={{color:"white"}}>-</h6>
-                    <DatePicker className = "calendar" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
+                    <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
                     </Row>
                 </Col>
                 </Row>

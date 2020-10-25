@@ -3,6 +3,7 @@ import {Container, Card, Form, Col, Row, Button, Spinner} from 'react-bootstrap'
 import DatePicker from "react-datepicker";
 import {Redirect} from 'react-router-dom';
 import ImageUploading from "react-images-uploading";
+import './Upload.css';
 const axios = require('axios');
 
 class Upload extends Component{
@@ -13,8 +14,19 @@ class Upload extends Component{
             redirect : false,
             images : [],
             maxImageNumber : 15,
-            loading : false
+            loading : false,
+            date_time_start : new Date(),
+            date_time_end: new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
         }
+
+        this.beds = React.createRef();
+        this.baths = React.createRef();
+        this.carSpots = React.createRef();
+        this.address1 = React.createRef();
+        this.address2 = React.createRef();
+        this.territory = React.createRef();
+        this.postCode = React.createRef();
+        this.reserve = React.createRef();
     
         this.cookies = this.props.cookies;
         this.pageContent = this.pageContent.bind(this);
@@ -23,8 +35,7 @@ class Upload extends Component{
     }
 
     onImageChange(imageList, addUpdateIndex){
-         // data for submit
-         console.log(imageList, addUpdateIndex);
+        //  console.log(imageList, addUpdateIndex);
          this.setState({images: imageList});
     }
 
@@ -52,7 +63,7 @@ class Upload extends Component{
                     </Card.Title>
                 <Card.Body>
                     <Form>
-                        
+                        <h4>Location</h4>
                         <Form.Group controlId="formGridAddress1">
                             <Form.Label>Address</Form.Label>
                             <Form.Control placeholder="1234 Main St" ref={this.address1} />
@@ -92,7 +103,7 @@ class Upload extends Component{
                         <br/>
                         <h4>Property Details</h4>
                         <Form.Row>
-                            <Form.Group as={Col} controlId="formGridBeds">
+                            <Form.Group as={Col} controlId="formGridDescription">
                                 <Form.Label>Description</Form.Label>
                                 <Form.Control placeholder="Lovely 5 year old house close by the beach..." ref={this.description} />
                             </Form.Group>
@@ -108,7 +119,7 @@ class Upload extends Component{
                                 <Form.Control type="" placeholder="" />
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridBaths" ref={this.baths}>
+                            <Form.Group as={Col} controlId="formGridBaths" ref={this.carSpots}>
                                 <Form.Label>Number of Car Spots</Form.Label>
                                 <Form.Control type="" placeholder="" />
                             </Form.Group>
@@ -132,7 +143,6 @@ class Upload extends Component{
                                 isDragging,
                                 dragProps
                                 }) => (
-                                // write your building UI
                                 <div className="upload__image-wrapper">
                                     <Button 
                                     style={isDragging ? { background : "#05445E" ,color: "yellow" } : {background : "#05445E", border: "#05445E"}}
@@ -159,6 +169,26 @@ class Upload extends Component{
                             </ImageUploading>
                         </Row>
                         <br/>
+                        <h4>Auction Details</h4>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridReservePrice">
+                                <Form.Label>Reserve Price</Form.Label>
+                                <Form.Control placeholder="Minimum $ bid that must be made to sell" ref={this.reserve} />
+                                <Form.Text>This information will not be shared with anyone</Form.Text>
+                            </Form.Group>
+                        </Form.Row>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridAuctionStart">
+                                <Form.Label>Auction Start Time</Form.Label>
+                                <br/>
+                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.date_time_start} onChange={() =>{this.setState({date_time_start : this.state.date_time_start})}}/>
+                            </Form.Group>
+                            <Form.Group as={Col} controlId="formGridAuctionEnd">
+                                <Form.Label>Auction End Time</Form.Label>
+                                <br/>
+                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.date_time_end} onChange={() =>{this.setState({date_time_end : this.state.date_time_end})}}/>
+                            </Form.Group>
+                        </Form.Row>
                         <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handleSubmit()}}>
                             Submit
                         </Button>
