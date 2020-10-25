@@ -18,7 +18,7 @@ class Results extends Component{
             properties: [{streetAddress : "123 Apple Street", postcode : "2012", image : house1, introTitle:"A wonderful home in the town of Watonnga, this house is home to Mike and Linda who have lived here for 900 years. Now they wish to sell their home as they are migrating to Europe."}, {streetAddress : "44 Era Street", postcode : "2209",introTitle:"A wonderful home in the town of Watonnga, this house is home to Mike and Linda who have lived here for 900 years. Now they wish to sell their home as they are migrating to Europe." ,image : house2}],
             autofillResults : null,
             date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
-            date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :(new Date()).setTime((new Date()).getTime() + 7 * 86400000),
+            date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
             searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null
         }
 
@@ -104,12 +104,11 @@ class Results extends Component{
     
         axios.get('/buy', {params:{
           keyword: this.location.current.value.slice(this.location.current.value.length - 4),
-          // beds : this.numberBeds.current.value,
-          // bathss : this.numberBaths.current.value,
-          // carSpots:
-          // auction-start: yyyy-mm-dd,
-          // auction-end: yyyy-mm-dd
-          
+          beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
+          baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
+          carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
+          "auction-start": `${this.state.date1.getFullYear()}-${('0'+(this.state.date1.getMonth()+1)).slice(-2)}-${this.state.date1.getDate()}`,
+          "auction-end": `${this.state.date2.getFullYear()}-${('0'+(this.state.date2.getMonth()+1)).slice(-2)}-${this.state.date2.getDate()}`
         }})
         .then((response) => {
             if (response.status === 200){

@@ -13,7 +13,7 @@ class Home extends Component{
 
     this.state = {
       date1 :  new Date(),
-      date2: (new Date()).setTime((new Date()).getTime() + 7 * 86400000),
+      date2: new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
       results : false,
       autofillResults : null,
     }
@@ -87,7 +87,7 @@ class Home extends Component{
           
         if (response.status === 200){
           this.setState({
-            autofillResults : response.data.slice(0,6)
+            autofillResults : response.data.slice(0,3)
           });
         }
       }).catch((error) =>{
@@ -180,11 +180,11 @@ class Home extends Component{
 
     axios.get('/buy', {params:{
       keyword: this.location.current.value.slice(this.location.current.value.length - 4),
-      // beds : this.numberBeds.current.value,
-      // baths : this.numberBaths.current.value,
-      // carspots:
-      // auction-start: yyyy-mm-dd,
-      // auction-end: yyyy-mm-dd
+      beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
+      baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
+      carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
+      "auction-start": `${this.state.date1.getFullYear()}-${('0'+(this.state.date1.getMonth()+1)).slice(-2)}-${this.state.date1.getDate()}`,
+      "auction-end": `${this.state.date2.getFullYear()}-${('0'+(this.state.date2.getMonth()+1)).slice(-2)}-${this.state.date2.getDate()}`
       
     }})
     .then((response) => {
