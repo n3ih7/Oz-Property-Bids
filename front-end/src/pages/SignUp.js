@@ -11,9 +11,7 @@ class SignUp extends Component{
 
         this.state = {
             loading: false,
-            authenticated: null,
             redirect: false,
-            attemptSignUp : false,
             buyer : false,
             seller : false
         }
@@ -35,7 +33,6 @@ class SignUp extends Component{
 
         this.pageContent = this.pageContent.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.attemptSignUp = this.attemptSignUp.bind(this);
     }
 
     formCheckbox(){
@@ -194,7 +191,7 @@ class SignUp extends Component{
 
                         {this.formCheckbox()}
 
-                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {this.handleSubmit}>
+                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handleSubmit()}}>
                             Submit
                         </Button>
 
@@ -216,7 +213,8 @@ class SignUp extends Component{
             firstName: this.firstName.current.value,
             lastName : this.lastName.current.value,
             email : this.email.current.value,
-            password : this.password.current.value,
+            password1 : this.password1.current.value,
+            password2 : this.password1.current.value,
             address1 : this.address1.current.value,
             address2 : this.address2.current.value,
             city : this.city.current.value,
@@ -224,36 +222,29 @@ class SignUp extends Component{
             postCode : this.postCode .current.value,
             bsb : this.bsb.current.value,
             accountNumber : this.accountNumber.current.value,
-            attemptSignUp : true
         });
-    }
 
-    attemptSignUp(){
-        if(this.state.attemptSignUp === true){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
 
-            axios.defaults.baseURL = 'http://api.nono.fi:5000';
-
-            axios.post('/signup', {email : this.state.email, password: this.state.password})
-            .then((response) => {
-                console.log(response);
-                console.log(response.headers['Set-Cookie']);
-                console.log(response.headers['session']);
-                if (response.status === 200){
-                    this.cookies.set('authenticated',true,{path:'/'});
-                    this.cookies.set('user',this.state.email,{path:'/'});
-                    this.setState({redirect : true});
-                }
-            }).catch((error) => {
-                console.log(error);
-            });
-        }
+        axios.post('/signup', {email : this.email.current.value, password: this.password1.current.value})
+        .then((response) => {
+            console.log(response);
+            // console.log(response.headers['Set-Cookie']);
+            // console.log(response.headers['session']);
+            if (response.status === 200){
+                this.cookies.set('authenticated',true,{path:'/'});
+                // this.cookies.set('user',this.email.current.value,{path:'/'});
+                this.setState({redirect : true});
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     render(){
         return(
             <Container className = "pageContent">
                 {this.pageContent()}
-                {this.attemptSignUp()}
             </Container>
         );
     }
