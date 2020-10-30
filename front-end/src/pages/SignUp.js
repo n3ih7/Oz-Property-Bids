@@ -166,9 +166,9 @@ class SignUp extends Component{
                             </Form.Control>
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridZip" ref={this.postCode}>
+                            <Form.Group as={Col} controlId="formGridZip" >
                             <Form.Label>PostCode</Form.Label>
-                            <Form.Control />
+                            <Form.Control ref={this.postCode} />
                             </Form.Group>
                         </Form.Row>
 
@@ -181,10 +181,9 @@ class SignUp extends Component{
                             </Form.Text>
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridAcc" ref={this.accountNumber}>
+                            <Form.Group as={Col} controlId="formGridAcc" >
                             <Form.Label>Account Number</Form.Label>
-                            <Form.Control type="password" placeholder="" />
-                                
+                            <Form.Control type="password" placeholder="" ref={this.accountNumber} />
                             </Form.Group>
                         </Form.Row>
 
