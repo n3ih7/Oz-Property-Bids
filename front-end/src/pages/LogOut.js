@@ -12,7 +12,6 @@ class LogOut extends Component{
         }
 
         this.cookies = this.props.cookies;
-        this.cookies.set('authenticated',false);
 
         this.pageContent = this.pageContent.bind(this);
         this.logOutBuffer = this.logOutBuffer.bind(this);
@@ -36,12 +35,14 @@ class LogOut extends Component{
     logOutBuffer(){
 
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
 
-        axios.put('/logout', {cookie : this.state.email})
+        axios.get('/logout')
         .then((response) => {
             console.log(response);
             if (response.status === 200){
                 this.setState({loading : false });
+                this.cookies.set('authenticated',false);
                 window.location.reload(false);
             }
         }).catch((error) =>{

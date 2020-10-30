@@ -77,7 +77,7 @@ class SignUp extends Component{
     pageContent(){
         if (this.state.redirect === true){
             return(
-                <Redirect to="/"/>
+                <Redirect to="/login"/>
             )
         }
         else if (this.state.loading === true){
@@ -209,29 +209,34 @@ class SignUp extends Component{
 
         this.setState({
             loading : true,
-            firstName: this.firstName.current.value,
-            lastName : this.lastName.current.value,
-            email : this.email.current.value,
-            password1 : this.password1.current.value,
-            password2 : this.password1.current.value,
-            address1 : this.address1.current.value,
-            address2 : this.address2.current.value,
-            city : this.city.current.value,
-            territory : this.territory.current.value,
-            postCode : this.postCode .current.value,
-            bsb : this.bsb.current.value,
-            accountNumber : this.accountNumber.current.value,
         });
+
+        console.log(this.city.current.value);
 
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
 
-        axios.post('/signup', {email : this.email.current.value, password: this.password1.current.value})
+        axios.post('/signup', {
+            email : this.email.current.value,
+            phone: this.phone.current.value, 
+            password: this.password1.current.value,
+            firstname: this.firstName.current.value,
+            lastname : this.lastName.current.value,
+            address_line_1 : this.address1.current.value,
+            address_line_2 : this.address2.current.value,
+            city : this.city.current.value,
+            state : this.territory.current.value,
+            postcode : this.postCode.current.value,
+            bsb : this.bsb.current.value,
+            acc_number : this.accountNumber.current.value,
+            bidder_flag: (this.state.buyer ? 1 : 0),
+            seller_flag : (this.state.seller ? 1 : 0)
+        })
         .then((response) => {
             console.log(response);
             // console.log(response.headers['Set-Cookie']);
             // console.log(response.headers['session']);
             if (response.status === 200){
-                this.cookies.set('authenticated',true,{path:'/'});
+                // this.cookies.set('authenticated',true,{path:'/'});
                 // this.cookies.set('user',this.email.current.value,{path:'/'});
                 this.setState({redirect : true});
             }

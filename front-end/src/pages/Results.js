@@ -117,8 +117,8 @@ class Results extends Component{
           beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
           baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
           carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-          "auction-start": `${this.state.date1.getFullYear()}-${('0'+(this.state.date1.getMonth()+1)).slice(-2)}-${this.state.date1.getDate()}`,
-          "auction-end": `${this.state.date2.getFullYear()}-${('0'+(this.state.date2.getMonth()+1)).slice(-2)}-${this.state.date2.getDate()}`
+          auction_start: `${this.state.date1.getFullYear()}-${('0'+(this.state.date1.getMonth()+1)).slice(-2)}-${this.state.date1.getDate()}`,
+          auction_end: `${this.state.date2.getFullYear()}-${('0'+(this.state.date2.getMonth()+1)).slice(-2)}-${this.state.date2.getDate()}`
         }})
         .then((response) => {
             if (response.status === 200){
@@ -202,7 +202,7 @@ class Results extends Component{
                 this.state.properties.map(property =>(
                   <>
                     <Row>
-                        <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image /*? property.image.substring(2,property.image.length-1) : ' '*/}/>
+                        <ResultCard streetAddress={property.streetAddress} postcode={property.postcode} introTitle = {property.introTitle} image={property.image /*? property.image.substring(property.image.length) : ' '*/}/>
                     </Row>
                     <br/>
                     </>
