@@ -19,7 +19,8 @@ class Results extends Component{
             autofillResults : null,
             date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
             date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
-            searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null
+            searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
+            timer : null
         }
 
         this.cookies = this.props.cookies;
@@ -33,6 +34,15 @@ class Results extends Component{
         this.autoFill = this.autoFill.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+
+    }
+
+    handleChange(){
+      clearTimeout(this.state.timer);
+      this.state.timer = setTimeout(() => {
+        this.autoFill();
+      }, 1000);
     }
 
     searchBar(){
@@ -43,7 +53,7 @@ class Results extends Component{
                     <Form.Group>
                     <Form.Row>
                         <Col>
-                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.autoFill} onKeyDown = {this.handleKeyPress} />
+                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.handleChange} onKeyDown = {this.handleKeyPress} />
                         </Col>
                         <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", borderColor: "white"}} onClick = {this.handleSubmit}>
                         Search
