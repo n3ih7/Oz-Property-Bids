@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
-import './Login.css';
 const axios = require('axios');
 
 class Login extends Component{
@@ -96,8 +95,9 @@ class Login extends Component{
     setUserCookies(data){
         this.cookies.set('authenticated',true,{path:'/'});
         this.cookies.set('email',this.state.email,{path:'/'});
-        this.cookies.set('token',data.message,{path:'/'});
-        this.cookies.set('userType',"seller",{path:'/'});
+        this.cookies.set('token',data.token,{path:'/'});
+        this.cookies.set('userType',data.user_type,{path:'/'});
+        this.cookies.set('expireTime',data.expire_time,{path:'/'});
     }
 
     attemptLogin(setUserCookies){
@@ -106,9 +106,6 @@ class Login extends Component{
 
             axios.post('/login', {email : this.state.email, password: this.state.password})
             .then((response) => {
-                console.log(response);
-                console.log(response.headers['Set-Cookie']);
-                console.log(response.headers['session']);
                 if (response.status === 200){
                     setUserCookies(response.data)
                     this.setState({redirect : true});
@@ -122,7 +119,7 @@ class Login extends Component{
     render(){
         return(
             
-            <Container className ="card-style">
+            <Container style ={{marginTop: "2%"}}>
                 <Row className="justify-content-md-center">                    
                         {this.pageContent()}
                         {this.attemptLogin(this.setUserCookies)}

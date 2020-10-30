@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Card, Container, Col, Row, Form, Button, Spinner} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
-import './SignUp.css';
 const axios = require('axios');
 
 class SignUp extends Component{
@@ -243,7 +242,7 @@ class SignUp extends Component{
 
     render(){
         return(
-            <Container className = "pageContent">
+            <Container style={{marginTop:"2%"}}>
                 {this.pageContent()}
             </Container>
         );

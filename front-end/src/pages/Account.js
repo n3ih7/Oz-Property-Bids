@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
-// import './Account.css';
 
 class Account extends Component{
 
