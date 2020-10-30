@@ -298,6 +298,86 @@
 			"response": []
 		},
 		{
+			"name": "property post",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 902b3d33ea79171a37e13b50bf86d7a23513032c3dc96464bb6ba4708dc56240",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"propertyType\": \"Apartment\",\n    \"unitNumber\": \"615\",\n    \"streetAddress\": \"3 Gearin Alley\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"beds\": \"3\",\n    \"baths\": \"2\",\n    \"parkingSpace\": \"2\",\n    \"landSize\": \"170\",\n    \"startPrice\": \"1200000\",\n    \"auction_start\": \"1604057563000\",\n    \"intro_title\": \"title\",\n    \"intro_text\": \"text\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/property_post",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"property_post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "property post-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 902b3d33ea79171a37e13b50bf86d7a23513032c3dc96464bb6ba4708dc56240",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"propertyType\": \"Apartment\",\n    \"unitNumber\": \"615\",\n    \"streetAddress\": \"3 Gearin Alley\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"beds\": \"3\",\n    \"baths\": \"2\",\n    \"parkingSpace\": \"2\",\n    \"landSize\": \"170\",\n    \"startPrice\": \"1200000\",\n    \"auction_start\": \"1604057563000\",\n    \"intro_title\": \"title\",\n    \"intro_text\": \"text\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/property_post",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"property_post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "search property",
 			"request": {
 				"method": "GET",

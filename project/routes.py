@@ -1,29 +1,15 @@
-import base64
-import datetime
-import json
 import secrets
 import time
-import uuid
 from random import randint
-
-from flask import request, jsonify, make_response
+from flask import request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db, create_app
-from .models import USER_INFO, USER_INFO_EXTENDED, MOVEMENT_TRACKING, PROPERTY_INFO
+from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO
 
 app = create_app()
 SQLAlchemy(app)
-
-
-def get_new_id():
-    n = randint(10000, 99999)
-    check_temp_uid = USER_INFO.query.filter_by(uid=n).first()
-    if check_temp_uid:
-        get_new_id()
-    else:
-        return n
 
 
 @app.route('/login', methods=['POST'])
@@ -38,7 +24,7 @@ def login():
                 return jsonify(error='Please check your login details and try again, login failed'), 401
             user.login_status = '1'
             user.curr_token = str(secrets.token_hex(32))
-            user.expire_time = str(time.time() + 7 * 24 * 3600)
+            user.expire_time = str(int(time.time() + 7 * 24 * 3600)) + '000'
             db.session.merge(user)
             db.session.commit()
             user_ext = USER_INFO_EXTENDED.query.filter_by(uid=user.uid).first()
@@ -67,15 +53,23 @@ def logout():
             db.session.commit()
             return jsonify(msg="Logout successful"), 200
         else:
-            return jsonify(error="Token not valid, nothing to be changed"), 400
+            return jsonify(error="Token not valid, nothing changed"), 400
     except IndexError:
-        return jsonify(error="Token format not valid, nothing to be changed"), 400
+        return jsonify(error="Token format not valid, nothing changed"), 400
     except KeyError:
-        return jsonify(warning="Token not received, but you can continue"), 400
+        return jsonify(warning="Token not received, but you may continue"), 400
 
 
 @app.route('/signup', methods=['POST'])
 def signup():
+    def get_new_uid():
+        n = randint(10000, 99999)
+        check_temp_uid = USER_INFO.query.filter_by(uid=n).first()
+        if check_temp_uid:
+            get_new_uid()
+        else:
+            return n
+
     try:
         jsonContent = request.get_json()
         try:
@@ -84,9 +78,9 @@ def signup():
                 return jsonify(
                     error="Email address already exists, signup failed"), 409
             else:
-                uid = get_new_id()
+                uid = get_new_uid()
                 tk = str(secrets.token_hex(32))
-                et = str(time.time() + 7 * 24 * 3600)
+                et = str(int(time.time() + 7 * 24 * 3600)) + '000'
                 nu = USER_INFO(uid=uid,
                                email=jsonContent['email'],
                                password=generate_password_hash(jsonContent['password'], method='sha256'),
@@ -123,7 +117,7 @@ def profile_update():
         tk = str(request.headers['Authorization']).split(' ')[1]
         user = USER_INFO.query.filter_by(curr_token=tk).first()
 
-        if user and user.login_status == '1' and time.time() < float(user.expire_time):
+        if user and user.login_status == '1' and time.time() < float(user.expire_time[0:-3]):
             uid = user.uid
             try:
                 user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
@@ -178,7 +172,7 @@ def profile_update():
                         elif k == 'seller_flag':
                             user_ext.seller_flag = v
                         else:
-                            return jsonify(error="Unexpected attributes received, nothing to be changed"), 400
+                            return jsonify(error="Unexpected attributes received, nothing changed"), 400
 
                     if addr_change_flag == '1':
                         user_ext.address = str(addr_1) + str(addr_2)
@@ -190,15 +184,15 @@ def profile_update():
                     return jsonify(msg="Profile update successful"), 200
 
                 except KeyError:
-                    return jsonify(error="Expected attribute old_password not received, nothing to be changed"), 401
+                    return jsonify(error="Expected attribute old_password not received, nothing changed"), 401
             except ValueError:
-                return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+                return jsonify(error="No JSON object could be decoded, nothing changed"), 400
         else:
             return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
     except IndexError:
-        return jsonify(error="Token format not valid, nothing to be changed"), 401
+        return jsonify(error="Token format not valid, nothing changed"), 401
     except KeyError:
-        return jsonify(error="Token not received, nothing to be changed"), 401
+        return jsonify(error="Token not received, nothing changed"), 401
 
 
 @app.route('/search', methods=['GET'])
@@ -271,14 +265,14 @@ def property_search():
         query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
             .filter(PROPERTY_INFO.auction_start >= auction_start) \
             .filter(PROPERTY_INFO.auction_end <= auction_end) \
-            .filter_by(postcode=int(searchKeyword))
+            .filter_by(postcode=str(searchKeyword))
 
-        if 'beds' in more_than_three:
-            query_res = query_res.filter(PROPERTY_INFO.beds > 3)
-        if 'baths' in more_than_three:
-            query_res = query_res.filter(PROPERTY_INFO.baths > 3)
-        if 'parkingSpace' in more_than_three:
-            query_res = query_res.filter(PROPERTY_INFO.parkingSpace > 3)
+        # if 'beds' in more_than_three:
+        #     query_res = query_res.filter(int(PROPERTY_INFO.beds) > 3)
+        # if 'baths' in more_than_three:
+        #     query_res = query_res.filter(int(PROPERTY_INFO.baths) > 3)
+        # if 'parkingSpace' in more_than_three:
+        #     query_res = query_res.filter(int(PROPERTY_INFO.parkingSpace) > 3)
 
         # Return result to front-end
         result_list = []
@@ -313,36 +307,116 @@ def property_search():
                 return jsonify(resp=result_list), 200
         else:
             return jsonify(message="nothing found", status="failed"), 404
-#
-#
-# @app.route('/sell', methods=['POST'])
-# def property_post():
-#     req = request.get_json()
-#     req_json_check = json.loads(str(req).replace("\'", "\""))
-#     new_pp = PROPERTY_INFO(propertyId=randint(100000000, 999999999))
-#     new_pp.sellerEmail = current_user.email
-#
-#     if "unitNumber" in req_json_check:
-#         new_pp.unitNumber = req['unitNumber']
+
+
+@app.route('/property_post', methods=['POST'])
+def property_post():
+    def get_new_property_id():
+        n = randint(10000, 99999)
+        check_temp_id = PROPERTY_INFO.query.filter_by(propertyId=n).first()
+        if check_temp_id:
+            get_new_property_id()
+        else:
+            return n
+
+    try:
+        tk = str(request.headers['Authorization']).split(' ')[1]
+        user = USER_INFO.query.filter_by(curr_token=tk).first()
+
+        if user and user.login_status == '1' and time.time() < float(user.expire_time[0:-3]):
+            try:
+                jsonContent = request.get_json()
+                try:
+                    np = PROPERTY_INFO(propertyId=get_new_property_id(),
+                                       sellerId=user.uid,
+                                       propertyPostDate=str(int(time.time())) + '000'
+                                       )
+                    for k, v in jsonContent.items():
+                        if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
+                                or k == 'compare_addr' or k == 'auction_end':
+                            continue
+                        if k == 'propertyType':
+                            np.propertyType = str(v)
+                        elif k == 'unitNumber':
+                            np.unitNumber = str(v)
+                        elif k == 'streetAddress':
+                            np.streetAddress = str(v)
+                        elif k == 'city':
+                            np.suburb = str(v)
+                        elif k == 'state':
+                            np.state = str(v)
+                        elif k == 'postcode':
+                            np.postcode = str(v)
+                        elif k == 'beds':
+                            np.beds = str(v)
+                        elif k == 'baths':
+                            np.baths = str(v)
+                        elif k == 'parkingSpace':
+                            np.parkingSpace = str(v)
+                        elif k == 'landSize':
+                            np.landSize = str(v)
+                        elif k == 'startPrice':
+                            np.startPrice = str(v)
+                        elif k == 'auction_start':
+                            np.auction_start = str(int(v)) + '000'
+                            np.auction_end = str(int(v) + 30 * 60) + '000'
+                        elif k == 'intro_title':
+                            np.intro_title = str(v)
+                        elif k == 'intro_text':
+                            np.intro_text = str(v)
+                        else:
+                            return jsonify(error="Unexpected attributes received, nothing changed"), 400
+
+                    np.compare_addr = np.suburb + ' ' + np.state + ' '+ np.postcode
+
+                    db.session.merge(np)
+                    db.session.commit()
+
+                    return jsonify(msg="Property post successful", propertyId=str(np.propertyId)), 200
+
+                except ValueError:
+                    return jsonify(error="auction_start format not valid"), 400
+                except KeyError:
+                    return jsonify(error="Expected attributes not received, post failed"), 400
+            except ValueError:
+                return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+        else:
+            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+    except IndexError:
+        return jsonify(error="Token format not valid, nothing to be changed"), 401
+    except KeyError:
+        return jsonify(error="Token not received, nothing to be changed"), 401
+
+
+# @app.route('/example', methods=['POST'])
+# def example():
+#     def get_new_example_id():
+#         n = randint(10000, 99999)
+#         check_temp_id = PROPERTY_INFO.query.filter_by(propertyId=n).first()
+#         if check_temp_id:
+#             get_new_example_id()
+#         else:
+#             return n
 #
 #     try:
-#         new_pp.propertyType = req['propertyType']
-#         new_pp.streetAddress = req['streetAddress']
-#         new_pp.suburb = req['suburb']
-#         new_pp.state = req['state']
-#         new_pp.postcode = int(req['postcode'])
-#         new_pp.beds = int(req['beds'])
-#         new_pp.baths = int(req['baths'])
-#         new_pp.parkingSpace = int(req['parkingSpace'])
-#         new_pp.landSize = int(req['landSize'])
-#         new_pp.introTitle = req['introTitle']
-#         new_pp.introDetails = req['introDetails']
-#         new_pp.startPrice = int(req['startprice'])
-#         new_pp.accessDate = time.strftime("%H:%M:%S %d-%b-%Y", time.localtime())
+#         tk = str(request.headers['Authorization']).split(' ')[1]
+#         user = USER_INFO.query.filter_by(curr_token=tk).first()
 #
-#         db.session.add(new_pp)
-#         db.session.commit()
-#         return jsonify(message="Your property has been posted", status="post successful"), 200
+#         if user and user.login_status == '1' and time.time() < float(user.expire_time[0:-3]):
+#             uid = user.uid
+#             try:
+#                 jsonContent = request.get_json()
+#                 try:
+#                     # code goes here
 #
+#                     return jsonify(msg="post successful"), 200
+#                 except KeyError:
+#                     return jsonify(error="Expected attributes not received, post failed"), 400
+#             except ValueError:
+#                 return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+#         else:
+#             return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+#     except IndexError:
+#         return jsonify(error="Token format not valid, nothing to be changed"), 401
 #     except KeyError:
-#         return jsonify(message="expected attributes not received", status="post failed"), 400
+#         return jsonify(error="Token not received, nothing to be changed"), 401
