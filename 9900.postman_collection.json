@@ -6,24 +6,18 @@
 	},
 	"item": [
 		{
-			"name": "sign up",
+			"name": "register",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "email",
-							"value": "1111",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "11111",
-							"type": "text"
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"zack@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"password\": \"zzz\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"bsb\": \"\",\n    \"acc_number\": \"\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
 				"url": {
 					"raw": "http://127.0.0.1:5000/signup",
@@ -43,13 +37,46 @@
 			"response": []
 		},
 		{
-			"name": "login",
+			"name": "register-remote",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"zakc@nono.fi\",\n    \"password\": \"dasdawda\"\n}",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"zack@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"password\": \"zzz\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"bsb\": \"\",\n    \"acc_number\": \"\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/signup",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"zzz\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -86,105 +113,16 @@
 			"response": []
 		},
 		{
-			"name": "profile",
+			"name": "login-remote",
 			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\":\"zack@nono.fi\",\n    \"password\": \"dasdawda\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+				"auth": {
+					"type": "noauth"
 				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/profile",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"profile"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "logout",
-			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\":\"zack@nono.fi\",\n    \"password\": \"dasdawda\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://127.0.0.1:5000/profile",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "5000",
-					"path": [
-						"profile"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "remote-signup",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"123\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "http://api.nono.fi:5000/signup",
-					"protocol": "http",
-					"host": [
-						"api",
-						"nono",
-						"fi"
-					],
-					"port": "5000",
-					"path": [
-						"signup"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "remote-login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"123\"\n}",
+					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"zzz\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -202,27 +140,70 @@
 					"port": "5000",
 					"path": [
 						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "123",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"disabled": true
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "remote-profile",
+			"name": "logout",
 			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"firstname\": \"www\",\n    \"lastname\": \"111\",\n    \"birthYear\": 1144444411,\n    \"gender\": 1,\n    \"phone\": \"wwwwwwwwww\",\n    \"bidderTag\" : 0\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
+				"auth": {
+					"type": "noauth"
 				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 8f37cb79c07a6dcf907699169f108636810d586326d158c8f7e1b7140815a350",
+						"type": "text"
+					}
+				],
 				"url": {
-					"raw": "http://api.nono.fi:5000/profile",
+					"raw": "http://127.0.0.1:5000/logout",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 8f37cb79c07a6dcf907699169f108636810d586326d158c8f7e1b7140815a350",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/logout",
 					"protocol": "http",
 					"host": [
 						"api",
@@ -231,7 +212,181 @@
 					],
 					"port": "5000",
 					"path": [
-						"profile"
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "profile update",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 5097cb6ec88cc8c3da4ceb1768175b282f29fe106da80d35892517b1047bb098",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"zack@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"old_password\": \"zzz\",\n    \"new_password\": \"zzz\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"new_bsb\": \"\",\n    \"new_acc_number\": \"\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/profile_update",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"profile_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "profile update-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 5097cb6ec88cc8c3da4ceb1768175b282f29fe106da80d35892517b1047bb098",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"zack@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"old_password\": \"zzz\",\n    \"new_password\": \"zzz\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"new_bsb\": \"\",\n    \"new_acc_number\": \"\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/profile_update",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"profile_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search property",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/search?keyword=2032&beds=Any&baths=Any&carspots=Any&auction_start=2020-01-10&auction_end=2021-01-10",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "2032"
+						},
+						{
+							"key": "beds",
+							"value": "Any"
+						},
+						{
+							"key": "baths",
+							"value": "Any"
+						},
+						{
+							"key": "carspots",
+							"value": "Any"
+						},
+						{
+							"key": "auction_start",
+							"value": "2020-01-10"
+						},
+						{
+							"key": "auction_end",
+							"value": "2021-01-10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search property-remote",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api.nono.fi:5000/search?keyword=2032&beds=Any&baths=Any&carspots=Any&auction_start=2020-01-10&auction_end=2021-01-10",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "2032"
+						},
+						{
+							"key": "beds",
+							"value": "Any"
+						},
+						{
+							"key": "baths",
+							"value": "Any"
+						},
+						{
+							"key": "carspots",
+							"value": "Any"
+						},
+						{
+							"key": "auction_start",
+							"value": "2020-01-10"
+						},
+						{
+							"key": "auction_end",
+							"value": "2021-01-10"
+						}
 					]
 				}
 			},
