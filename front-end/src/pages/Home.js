@@ -192,8 +192,8 @@ class Home extends Component{
       beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
       baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
       carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-      auction_start: `${this.state.date1.getFullYear()}-${('0'+(this.state.date1.getMonth()+1)).slice(-2)}-${this.state.date1.getDate()}`,
-      auction_end: `${this.state.date2.getFullYear()}-${('0'+(this.state.date2.getMonth()+1)).slice(-2)}-${this.state.date2.getDate()}`
+      auction_start: `${(this.state.date1.getTime())}`,
+      auction_end: `${(this.state.date2.getTime())}`
       
     }})
     .then((response) => {

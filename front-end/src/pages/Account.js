@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
+const axios = require('axios');
 
 class Account extends Component{
 
@@ -11,9 +12,54 @@ class Account extends Component{
             loading : true
         }
 
+        this.oldPassword = React.createRef();
+        this.newPassword = React.createRef();
+        this.verifyPassword = React.createRef();
+        this.passwordBSB = React.createRef();
+        this.newBSB = React.createRef();
+        this.newAccountNumber = React.createRef();
+
         this.cookies = this.props.cookies;
         this.pageContent = this.pageContent.bind(this);
         this.loadAccount = this.loadAccount.bind(this);
+        
+    }
+
+    handlePasswordChange(){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+
+        axios.put('/profile_update', {
+            old_password: this.oldPassword.current.value,
+            new_password: this.newPassword.current.value,
+        })
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200){
+                // Show notification that this worked
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
+    handlePaymentChange(){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+
+        axios.put('/profile_update', {
+            old_password: this.passwordBSB.current.value,
+            new_bsb: this.newBSB.current.value,
+            new_acc_number: this.newAccountNumber.current.value
+        })
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200){
+                // Show notification that this worked
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     pageContent(){
@@ -111,6 +157,9 @@ class Account extends Component{
                             <Form.Control type="password" placeholder="" ref={this.verifyPassword} />
                             </Form.Group>
                         </Form.Row>
+                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handlePasswordChange()}}>
+                            Submit
+                        </Button>
                     </Card.Body>
                 </Card>
                 <br/>
@@ -118,7 +167,8 @@ class Account extends Component{
                     <Card.Title>
                         Change Payment Details
                     </Card.Title>
-                    <Form.Row>
+                    <Card.Body>
+                        <Form.Row>
                             <Form.Group as={Col} controlId="formGridCurrentPasswordBSB">
                             <Form.Label>Current Password</Form.Label>
                             <Form.Control type="password" placeholder="" ref={this.passwordBSB} />
@@ -134,6 +184,10 @@ class Account extends Component{
                             <Form.Control type="password" placeholder="" ref={this.newAccountNumber} />
                             </Form.Group>
                         </Form.Row>
+                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handlePaymentChange()}}>
+                            Submit
+                        </Button>
+                    </Card.Body>
                 </Card>
                 </>
             );
