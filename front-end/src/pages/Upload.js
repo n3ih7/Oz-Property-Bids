@@ -13,10 +13,12 @@ class Upload extends Component{
         this.state = {
             redirect : false,
             images : [],
+            mappedImages : [],
             maxImageNumber : 15,
             loading : false,
-            date_time_start : new Date(),
-            date_time_end: new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
+            date1 :  new Date(),
+            auctionDuration : 0,
+            dateTimeEnd: null
         }
 
         this.beds = React.createRef();
@@ -27,6 +29,11 @@ class Upload extends Component{
         this.territory = React.createRef();
         this.postCode = React.createRef();
         this.reserve = React.createRef();
+        this.city = React.createRef();
+        this.description = React.createRef();
+        this.title = React.createRef();
+        this.propertyType = React.createRef();
+        this.area = React.createRef();
     
         this.cookies = this.props.cookies;
         this.pageContent = this.pageContent.bind(this);
@@ -37,6 +44,7 @@ class Upload extends Component{
     onImageChange(imageList, addUpdateIndex){
         //  console.log(imageList, addUpdateIndex);
          this.setState({images: imageList});
+         this.setState({mappedImages : this.state.images.map((image) =>{return image.data_url})});
     }
 
     
@@ -104,10 +112,18 @@ class Upload extends Component{
                         <h4>Property Details</h4>
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridDescription">
-                                <Form.Label>Description</Form.Label>
-                                <Form.Control placeholder="Lovely 5 year old house close by the beach..." ref={this.description} />
+                                <Form.Label>Property Title</Form.Label>
+                                <Form.Control placeholder="A quick snappy title (5-10 words)" ref={this.title} />
                             </Form.Group>
                         </Form.Row>
+
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridDescription">
+                                <Form.Label>Description</Form.Label>
+                                <Form.Control placeholder="Describe your property in detail..." ref={this.description} />
+                            </Form.Group>
+                        </Form.Row>
+
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridBeds">
                                 <Form.Label>Number of Bedrooms</Form.Label>
@@ -122,6 +138,23 @@ class Upload extends Component{
                             <Form.Group as={Col} controlId="formGridBaths" ref={this.carSpots}>
                                 <Form.Label>Number of Car Spots</Form.Label>
                                 <Form.Control type="" placeholder="" />
+                            </Form.Group>
+                        </Form.Row>
+
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridLandsize">
+                                <Form.Label>Property Size (Square Meters)</Form.Label>
+                                <Form.Control placeholder="" ref={this.area} />
+                            </Form.Group>
+
+                            <Form.Group as={Col} controlId="formGridPropertyType">
+                            <Form.Label>Please choose what best describes your property</Form.Label>
+                            <Form.Control as="select" defaultValue="Choose..." ref={this.propertyType}>
+                                <option>Choose...</option>
+                                <option>Apartment</option>
+                                <option>Unit</option>
+                                <option>House</option>
+                            </Form.Control>
                             </Form.Group>
                         </Form.Row>
 
@@ -173,23 +206,34 @@ class Upload extends Component{
                         <Form.Row>
                             <Form.Group as={Col} controlId="formGridReservePrice">
                                 <Form.Label>Reserve Price</Form.Label>
-                                <Form.Control placeholder="Minimum $ bid that must be made to sell" ref={this.reserve} />
+                                <Form.Control placeholder="Minimum $ bid you are willing to accept" ref={this.reserve} />
                                 <Form.Text>This information will not be shared with anyone</Form.Text>
                             </Form.Group>
                         </Form.Row>
                         <Form.Row>
-                            <Form.Group as={Col} controlId="formGridAuctionStart">
+                            <Col controlId="formGridAuctionStartSeller">
                                 <Form.Label>Auction Start Time</Form.Label>
                                 <br/>
-                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.date_time_start} onChange={() =>{this.setState({date_time_start : this.state.date_time_start})}}/>
-                            </Form.Group>
-                            <Form.Group as={Col} controlId="formGridAuctionEnd">
-                                <Form.Label>Auction End Time</Form.Label>
+                                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => {this.setState({date1 : date}); console.log(this.state.date1);}}/>
+                            </Col>
+                            <Form.Group as={Col} controlId="formGridDuration">
+                                <Form.Label>Desired Auction Duration (days)</Form.Label>
+                                <input className="calendar" value={this.state.auctionDuration} onChange={(e) =>{
+                                    if(e.target.value){
+                                    this.setState({auctionDuration: e.target.value, dateTimeEnd: new Date((new Date()).setTime((new Date()).getTime() + parseInt(e.target.value) * 86400000))});
+                                    }
+                                    else {
+                                        this.setState({auctionDuration: e.target.value});
+                                    }}}></input>
                                 <br/>
-                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.date_time_end} onChange={() =>{this.setState({date_time_end : this.state.date_time_end})}}/>
+                            </Form.Group>
+                            <Form.Group as={Col} controlId="formGridAuctionEndSeller">
+                                <Form.Label>Estimated Auction End Time</Form.Label>
+                                <br/>
+                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.dateTimeEnd}/>
                             </Form.Group>
                         </Form.Row>
-                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handleSubmit()}}>
+                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {(e) => {this.handleSubmit(e)}}>
                             Submit
                         </Button>
                     </Form>
@@ -197,37 +241,45 @@ class Upload extends Component{
                 </Card>
                 </>
             );
-        }
+        } 
     }
     
-    handleSubmit(){
-
-        this.setState({
-            
+    handleSubmit(e){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+  
+        axios.post('/property_post', {
+            propertyType: this.propertyType.current.value,
+            unitNumber: this.address2.current.value,
+            streetAddress: this.address1.current.value,
+            city: this.city.current.value,
+            state: this.territory.current.value,
+            postcode: this.postCode.current.value,
+            beds: this.beds.current.value,
+            baths: this.baths.current.value,
+            parkingSpace: this.carSpots.current.value,
+            landSize: this.area.current.value,
+            reservePrice: this.reserve.current.value,
+            auction_start: `${(this.state.date1.getTime())}`,
+            auction_duration : `${(86400 * this.state.auctionDuration)}`,
+            intro_title: this.title.current.value,
+            intro_text: this.description.current.value,
+            images : this.state.mappedImages
+        })
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200){
+                // Show notification that this worked
+            }
+        }).catch((error) => {
+            console.log(error);
         });
-
-        // axios.defaults.baseURL = 'http://api.nono.fi:5000';
-
-        // axios.post('/signup', {email : this.email.current.value, password: this.password1.current.value})
-        // .then((response) => {
-        //     console.log(response);
-        //     // console.log(response.headers['Set-Cookie']);
-        //     // console.log(response.headers['session']);
-        //     if (response.status === 200){
-        //         this.cookies.set('authenticated',true,{path:'/'});
-        //         // this.cookies.set('user',this.email.current.value,{path:'/'});
-        //         this.setState({redirect : true});
-        //     }
-        // }).catch((error) => {
-        //     console.log(error);
-        // });
     }
 
     render(){
         return(
             <Container style= {{marginTop:"2%"}}>
                 {this.pageContent()}
-                
             </Container>
         );
     }

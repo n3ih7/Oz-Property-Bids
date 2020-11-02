@@ -95,7 +95,7 @@ class Results extends Component{
                 <Col md="auto">
                     <Row>
                     <h6 className="auction-label-one" style={{color:"white"}}>Auction Date Range:</h6>
-                    <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
+                    <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => {this.setState({date1 : date}); console.log(this.state.date1);}}/>
                     </Row>
                 </Col>
                 <Col md="auto">

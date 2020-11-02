@@ -12,7 +12,7 @@ class NavigationBar extends Component{
   }
   
   userOnlyOptions(){
-    if((this.cookies.get("authenticated") === "true") && (this.cookies.get("userType") === "buyer")){
+    if((this.cookies.get("authenticated") === "true") && (this.cookies.get("userType") === "bidder")){
       return(
         <>
             <Nav.Link href="/saved">Saved Houses</Nav.Link>

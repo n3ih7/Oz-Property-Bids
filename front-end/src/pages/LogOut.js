@@ -39,12 +39,12 @@ class LogOut extends Component{
 
         axios.get('/logout')
         .then((response) => {
-            console.log(response);
-            if (response.status === 200){
-                this.setState({loading : false });
-                this.cookies.set('authenticated',false);
-                window.location.reload(false);
-            }
+            this.setState({loading : false });
+            this.cookies.set('authenticated',false);
+            this.cookies.remove('userType');
+            this.cookies.remove('token');
+            this.cookies.remove('expireTime');
+            window.location.reload(false);
         }).catch((error) =>{
             console.log(error);
             this.setState({loading : false });

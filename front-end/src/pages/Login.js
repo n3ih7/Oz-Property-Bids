@@ -94,7 +94,6 @@ class Login extends Component{
 
     setUserCookies(data){
         this.cookies.set('authenticated',true,{path:'/'});
-        this.cookies.set('email',this.state.email,{path:'/'});
         this.cookies.set('token',data.token,{path:'/'});
         this.cookies.set('userType',data.user_type,{path:'/'});
         this.cookies.set('expireTime',data.expire_time,{path:'/'});
