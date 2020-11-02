@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db, create_app
 from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO
+from .blob import *
 
 app = create_app()
 SQLAlchemy(app)
@@ -240,69 +241,109 @@ def property_search():
         # db.session.commit()
 
         searchKeyword = request.args.get('keyword')
+        bedroom_req = ''
+        bathroom_req = ''
+        carSpots_req = ''
+        start_timeStamp = ''
+        end_timeStamp = ''
 
-        req_filter_dict = {
-            "beds": str(request.args.get('beds')),
-            "baths": str(request.args.get('baths')),
-            "parkingSpace": str(request.args.get('carspots')),
-        }
+        if 'beds' in request.args and request.args.get('beds') != "" and \
+                request.args.get('beds') != "null" and request.args.get('beds') != "Any":
+            bedroom_req = request.args.get('beds')
+            if bedroom_req[0] == '3':
+                bedroom_req = '3'
+        if 'baths' in request.args and request.args.get('baths') != "" and \
+                request.args.get('baths') != "null" and request.args.get('baths') != "Any":
+            bathroom_req = request.args.get('baths')
+            if bathroom_req[0] == '3':
+                bathroom_req = '3'
+        if 'carspots' in request.args and request.args.get('carspots') != "" and \
+                request.args.get('carspots') != "null" and request.args.get('carspots') != "Any":
+            carSpots_req = request.args.get('carspots')
+            if carSpots_req[0] == '3':
+                carSpots_req = '3'
+        if 'auction_start' in request.args:
+            if request.args.get('auction_start'):
+                try:
+                    date_list = str(request.args.get('auction_start')).split('-')
+                    yr = date_list[0]
+                    month = date_list[1]
+                    day = date_list[2]
+                    timeArray = time.strptime(yr + ' ' + month + ' ' + day + ' 00:00:01',
+                                              "%Y %m %d %H:%M:%S")
+                    start_timeStamp = str(str(int(time.mktime(timeArray))) + '000')
+                    # print("start", str(request.args.get('auction_start')), start_timeStamp)
+                except IndexError:
+                    return jsonify(error="Date range format not looks quite right"), 400
+        if 'auction_end' in request.args:
+            if request.args.get('auction_end'):
+                try:
+                    date_list = str(request.args.get('auction_end')).split('-')
+                    yr = date_list[0]
+                    month = date_list[1]
+                    day = date_list[2]
+                    timeArray = time.strptime(yr + ' ' + month + ' ' + day + ' 23:59:59',
+                                              "%Y %m %d %H:%M:%S")
+                    end_timeStamp = str(str(int(time.mktime(timeArray))) + '000')
+                    # print("end", str(request.args.get('auction_end')), end_timeStamp)
+                except IndexError:
+                    return jsonify(error="Date range format not looks quite right"), 400
 
-        for i in list(req_filter_dict):
-            if req_filter_dict[i] == 'Any':
-                del req_filter_dict[i]
+        if searchKeyword == '':
+            query_res = db.session.query(PROPERTY_INFO)
+        else:
+            query_res = db.session.query(PROPERTY_INFO).filter_by(postcode=searchKeyword)
+        if bedroom_req != '':
+            if bedroom_req != '3':
+                query_res = query_res.filter_by(beds=bedroom_req)
+            else:
+                query_res = query_res.filter(PROPERTY_INFO.beds >= 3)
+        if bathroom_req != '':
+            if bathroom_req != '3':
+                query_res = query_res.filter_by(baths=bathroom_req)
+            else:
+                query_res = query_res.filter(PROPERTY_INFO.baths >= 3)
+        if carSpots_req != '':
+            if carSpots_req != '3':
+                query_res = query_res.filter_by(parkingSpace=carSpots_req)
+            else:
+                query_res = query_res.filter(PROPERTY_INFO.parkingSpace >= 3)
+        if start_timeStamp != '':
+            print(start_timeStamp)
+            query_res = query_res.filter(start_timeStamp <= PROPERTY_INFO.auction_start)
+        if end_timeStamp != '':
+            print(end_timeStamp)
+            query_res = query_res.filter(PROPERTY_INFO.auction_end <= end_timeStamp)
 
-        more_than_three = []
+        # upload_blob('1', '3')
+        print(str(query_res.all()))
 
-        for i in list(req_filter_dict):
-            if len(req_filter_dict[i]) > 1:
-                more_than_three.append(i)
-                del req_filter_dict[i]
-
-        auction_start = request.args.get('auction_start')
-        auction_end = request.args.get('auction_end')
-
-        # Query with the filters
-        query_res = db.session.query(PROPERTY_INFO).filter_by(**req_filter_dict) \
-            .filter(PROPERTY_INFO.auction_start >= auction_start) \
-            .filter(PROPERTY_INFO.auction_end <= auction_end) \
-            .filter_by(postcode=str(searchKeyword))
-
-        # if 'beds' in more_than_three:
-        #     query_res = query_res.filter(int(PROPERTY_INFO.beds) > 3)
-        # if 'baths' in more_than_three:
-        #     query_res = query_res.filter(int(PROPERTY_INFO.baths) > 3)
-        # if 'parkingSpace' in more_than_three:
-        #     query_res = query_res.filter(int(PROPERTY_INFO.parkingSpace) > 3)
-
-        # Return result to front-end
         result_list = []
         if query_res:
             for i in query_res:
+                if i.unitNumber:
+                    address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ', ' + i.state + ' ' + i.postcode
+                else:
+                    address = i.streetAddress + ', ' + i.suburb + ', ' + i.state + ' ' + i.postcode
+
                 result_dict = {
                     "propertyId": i.propertyId,
                     "propertyType": i.propertyType,
-                    "unitNumber": i.unitNumber,
-                    "streetAddress": i.streetAddress,
+                    "address": address,
                     "city": i.suburb,
-                    "state": i.state,
-                    "postcode": i.postcode,
-                    "beds": i.beds,
                     "baths": i.baths,
                     "parkingSpace": i.parkingSpace,
                     "landSize": i.landSize,
-                    # "sellerEmail": i.sellerEmail,
-                    # "introTitle": i.introTitle,
-                    # "introDetails": i.introDetails,
                     "startPrice": i.startPrice,
                     "front_image": i.front_image,
-                    "auction_start": i.auction_start
-                    # "auction_end": i.auction_end,
-                    # "compare_addr": i.compare_addr
+                    "auction_start": i.auction_start,
+                    "beds": i.beds
                 }
+
                 result_list.append(result_dict)
 
             if not result_list:
-                return jsonify(message="nothing found", status="failed"), 404
+                return jsonify(error="nothing found, search failed"), 404
             else:
                 return jsonify(resp=result_list), 200
         else:
@@ -357,9 +398,11 @@ def property_post():
                             np.landSize = str(v)
                         elif k == 'startPrice':
                             np.startPrice = str(v)
+                        elif k == 'reservePrice':
+                            np.reservePrice = str(v)
                         elif k == 'auction_start':
                             np.auction_start = str(int(v)) + '000'
-                            np.auction_end = str(int(v) + 30 * 60) + '000'
+                            np.auction_end = str(int(v) + 48 * 60 * 60) + '000'
                         elif k == 'intro_title':
                             np.intro_title = str(v)
                         elif k == 'intro_text':
@@ -367,7 +410,7 @@ def property_post():
                         else:
                             return jsonify(error="Unexpected attributes received, nothing changed"), 400
 
-                    np.compare_addr = np.suburb + ' ' + np.state + ' '+ np.postcode
+                    np.compare_addr = np.suburb + ' ' + np.state + ' ' + np.postcode
 
                     db.session.merge(np)
                     db.session.commit()
@@ -386,7 +429,6 @@ def property_post():
         return jsonify(error="Token format not valid, nothing to be changed"), 401
     except KeyError:
         return jsonify(error="Token not received, nothing to be changed"), 401
-
 
 # @app.route('/example', methods=['POST'])
 # def example():

@@ -42,12 +42,12 @@ class PROPERTY_INFO(db.Model):
     parkingSpace = db.Column('carspots', db.Text)
     landSize = db.Column('landsize', db.Text)
     startPrice = db.Column('startprice', db.Text)
+    reservePrice = db.Column('reserveprice', db.Text)
     front_image = db.Column('image', db.Text)
     other_image = db.Column('images', db.Text)
     propertyPostDate = db.Column('accessdate', db.Text)
     auction_start = db.Column('auction_start', db.Text)
     auction_end = db.Column('auction_end', db.Text)
-    compare_addr = db.Column('compare_addr', db.Text)
     intro_title = db.Column('intro_title', db.Text)
     intro_text = db.Column('intro_text', db.Text)
 
