@@ -25,7 +25,7 @@ def login():
                 return jsonify(error='Please check your login details and try again, login failed'), 401
             user.login_status = '1'
             user.curr_token = str(secrets.token_hex(32))
-            user.expire_time = str(int(time.time() + 7 * 24 * 3600)) + '000'
+            user.expire_time = str(int(time.time() + 7 * 24 * 3600))
             db.session.merge(user)
             db.session.commit()
             user_ext = USER_INFO_EXTENDED.query.filter_by(uid=user.uid).first()
@@ -34,7 +34,7 @@ def login():
                 user_type = 'seller'
             if user_ext.bidder_flag == "1" and user_ext.seller_flag == "0":
                 user_type = 'bidder'
-            return jsonify(token=user.curr_token, expire_time=user.expire_time, user_type=user_type), 200
+            return jsonify(token=user.curr_token, expire_time=str(user.expire_time + '000'), user_type=user_type), 200
         except KeyError:
             return jsonify(error="Expected attributes not received, login failed"), 400
     except ValueError:
@@ -49,7 +49,7 @@ def logout():
         if user:
             user.login_status = '0'
             user.curr_token = ''
-            user.expire_time = str(time.time())
+            user.expire_time = str(int(time.time()))
             db.session.merge(user)
             db.session.commit()
             return jsonify(msg="Logout successful"), 200
@@ -81,7 +81,7 @@ def signup():
             else:
                 uid = get_new_uid()
                 tk = str(secrets.token_hex(32))
-                et = str(int(time.time() + 7 * 24 * 3600)) + '000'
+                et = str(int(time.time() + 7 * 24 * 3600))
                 nu = USER_INFO(uid=uid,
                                email=jsonContent['email'],
                                password=generate_password_hash(jsonContent['password'], method='sha256'),
@@ -105,7 +105,7 @@ def signup():
                 db.session.add(nu)
                 db.session.add(nu_ext)
                 db.session.commit()
-                return jsonify(token=tk, expire_time=et), 200
+                return jsonify(token=tk, expire_time=str(et + '000')), 200
         except KeyError:
             return jsonify(error="Expected attributes not received, signup failed"), 400
     except ValueError:
@@ -118,7 +118,7 @@ def profile_update():
         tk = str(request.headers['Authorization']).split(' ')[1]
         user = USER_INFO.query.filter_by(curr_token=tk).first()
 
-        if user and user.login_status == '1' and time.time() < float(user.expire_time[0:-3]):
+        if user and user.login_status == '1' and time.time() < float(user.expire_time):
             uid = user.uid
             try:
                 user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
@@ -265,27 +265,19 @@ def property_search():
         if 'auction_start' in request.args:
             if request.args.get('auction_start'):
                 try:
-                    date_list = str(request.args.get('auction_start')).split('-')
-                    yr = date_list[0]
-                    month = date_list[1]
-                    day = date_list[2]
-                    timeArray = time.strptime(yr + ' ' + month + ' ' + day + ' 00:00:01',
-                                              "%Y %m %d %H:%M:%S")
-                    start_timeStamp = str(str(int(time.mktime(timeArray))) + '000')
-                    # print("start", str(request.args.get('auction_start')), start_timeStamp)
+                    if len(request.args.get('auction_start')) == 13:
+                        start_timeStamp = request.args.get('auction_start')[0:-3]
+                    else:
+                        return jsonify(error="Date range length not looks quite right"), 400
                 except IndexError:
                     return jsonify(error="Date range format not looks quite right"), 400
         if 'auction_end' in request.args:
             if request.args.get('auction_end'):
                 try:
-                    date_list = str(request.args.get('auction_end')).split('-')
-                    yr = date_list[0]
-                    month = date_list[1]
-                    day = date_list[2]
-                    timeArray = time.strptime(yr + ' ' + month + ' ' + day + ' 23:59:59',
-                                              "%Y %m %d %H:%M:%S")
-                    end_timeStamp = str(str(int(time.mktime(timeArray))) + '000')
-                    # print("end", str(request.args.get('auction_end')), end_timeStamp)
+                    if len(request.args.get('auction_end')) == 13:
+                        end_timeStamp = request.args.get('auction_end')[0:-3]
+                    else:
+                        return jsonify(error="Date range length not looks quite right"), 400
                 except IndexError:
                     return jsonify(error="Date range format not looks quite right"), 400
 
@@ -309,22 +301,22 @@ def property_search():
             else:
                 query_res = query_res.filter(PROPERTY_INFO.parkingSpace >= 3)
         if start_timeStamp != '':
-            print(start_timeStamp)
+            # print(start_timeStamp)
             query_res = query_res.filter(start_timeStamp <= PROPERTY_INFO.auction_start)
         if end_timeStamp != '':
-            print(end_timeStamp)
+            # print(end_timeStamp)
             query_res = query_res.filter(PROPERTY_INFO.auction_end <= end_timeStamp)
 
         # upload_blob('1', '3')
-        print(str(query_res.all()))
+        # print(str(query_res.all()))
 
         result_list = []
         if query_res:
             for i in query_res:
                 if i.unitNumber:
-                    address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ', ' + i.state + ' ' + i.postcode
+                    address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
                 else:
-                    address = i.streetAddress + ', ' + i.suburb + ', ' + i.state + ' ' + i.postcode
+                    address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
 
                 result_dict = {
                     "propertyId": i.propertyId,
@@ -334,8 +326,7 @@ def property_search():
                     "baths": i.baths,
                     "parkingSpace": i.parkingSpace,
                     "landSize": i.landSize,
-                    "startPrice": i.startPrice,
-                    "front_image": i.front_image,
+                    "images": i.images,
                     "auction_start": i.auction_start,
                     "beds": i.beds
                 }
@@ -364,13 +355,13 @@ def property_post():
         tk = str(request.headers['Authorization']).split(' ')[1]
         user = USER_INFO.query.filter_by(curr_token=tk).first()
 
-        if user and user.login_status == '1' and time.time() < float(user.expire_time[0:-3]):
+        if user and user.login_status == '1' and time.time() < float(user.expire_time):
             try:
                 jsonContent = request.get_json()
                 try:
                     np = PROPERTY_INFO(propertyId=get_new_property_id(),
                                        sellerId=user.uid,
-                                       propertyPostDate=str(int(time.time())) + '000'
+                                       propertyPostDate=str(int(time.time()))
                                        )
                     for k, v in jsonContent.items():
                         if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
@@ -396,21 +387,24 @@ def property_post():
                             np.parkingSpace = str(v)
                         elif k == 'landSize':
                             np.landSize = str(v)
-                        elif k == 'startPrice':
-                            np.startPrice = str(v)
                         elif k == 'reservePrice':
                             np.reservePrice = str(v)
                         elif k == 'auction_start':
-                            np.auction_start = str(int(v)) + '000'
-                            np.auction_end = str(int(v) + 48 * 60 * 60) + '000'
+                            if len(v) == 13:
+                                np.auction_start = str(int(v[0:-3]))
+                            else:
+                                return jsonify(error="Date range length not looks quite right"), 400
+                        elif k == 'auction_duration':
+                            np.auction_end = str(int(np.auction_start) + int(v[0:-3]))
                         elif k == 'intro_title':
                             np.intro_title = str(v)
                         elif k == 'intro_text':
                             np.intro_text = str(v)
+                        elif k == 'images':
+                            # np.images = str(v)
+                            print(np.propertyId, v[0])
                         else:
                             return jsonify(error="Unexpected attributes received, nothing changed"), 400
-
-                    np.compare_addr = np.suburb + ' ' + np.state + ' ' + np.postcode
 
                     db.session.merge(np)
                     db.session.commit()

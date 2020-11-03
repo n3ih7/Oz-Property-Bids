@@ -30,7 +30,7 @@ class USER_INFO_EXTENDED(db.Model):
 class PROPERTY_INFO(db.Model):
     __tablename__ = 'PROPERTY_INFO'
     propertyId = db.Column('propertyid', db.INTEGER, primary_key=True)
-    sellerId = db.Column('sellerid', db.Text)
+    sellerId = db.Column('sellerid', db.INTEGER)
     propertyType = db.Column('propertytype', db.Text)
     unitNumber = db.Column('unitnumber', db.Text)
     streetAddress = db.Column('streetaddress', db.Text)
@@ -41,22 +41,13 @@ class PROPERTY_INFO(db.Model):
     baths = db.Column('baths', db.Text)
     parkingSpace = db.Column('carspots', db.Text)
     landSize = db.Column('landsize', db.Text)
-    startPrice = db.Column('startprice', db.Text)
     reservePrice = db.Column('reserveprice', db.Text)
-    front_image = db.Column('image', db.Text)
-    other_image = db.Column('images', db.Text)
+    images = db.Column('images', db.Text)
     propertyPostDate = db.Column('accessdate', db.Text)
     auction_start = db.Column('auction_start', db.Text)
     auction_end = db.Column('auction_end', db.Text)
     intro_title = db.Column('intro_title', db.Text)
     intro_text = db.Column('intro_text', db.Text)
-
-
-class PROPERTY_BID_EXTENDED(db.Model):
-    __tablename__ = 'PROPERTY_BID_EXTENDED'
-    propertyId = db.Column('propertyid', db.INTEGER, primary_key=True)
-    introTitle = db.Column('introtitle', db.Text)
-    introDetails = db.Column('introdetails', db.Text)
 
 
 class MOVEMENT_TRACKING(db.Model):

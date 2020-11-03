@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "304fb128-1a2a-4d92-8aed-c375c3b72f9f",
+		"name": "9900 remote",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register-remote",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"zack1@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"password\": \"111\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"bsb\": \"\",\n    \"acc_number\": \"\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/signup",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"zack@nono.fi\",\n    \"password\": \"zzz\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/login",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "123",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token d514926dcc2d64484ac59ce5b5c704fdddd40085cbbbb86333deec1f92901529",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/logout",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "profile update-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 902b3d33ea79171a37e13b50bf86d7a23513032c3dc96464bb6ba4708dc56240",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"zack@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"old_password\": \"zzz\",\n    \"new_password\": \"zzz\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"new_bsb\": \"\",\n    \"new_acc_number\": \"\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/profile_update",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"profile_update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "property post-remote",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 90b936c428e55bcbddecbe131c98f401afd9b3d2fe04b2b1a190fedfcb582835"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"propertyType\": \"Apartment\",\n    \"unitNumber\": \"615\",\n    \"streetAddress\": \"3 Gearin Alley\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"beds\": \"3\",\n    \"baths\": \"2\",\n    \"parkingSpace\": \"2\",\n    \"landSize\": \"170\",\n    \"reservePrice\": \"1400000\",\n    \"auction_start\": \"1604312790373\",\n    \"auction_duration\": \"3600\",\n    \"intro_title\": \"title\",\n    \"intro_text\": \"This generously proportionerains.\",\n    \"images\": [\"data:image/png;base64, iVBORw0KG\", \"data:image/png;base64, iVBORw0KG\", \"data:image/png;base64, iVBORw0KG\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/property_post",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"property_post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search property-remote",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api.nono.fi:5000/search?keyword=&beds=&baths=Any&carspots=Any&auction_start=1604312391000&auction_end=",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": ""
+						},
+						{
+							"key": "beds",
+							"value": ""
+						},
+						{
+							"key": "baths",
+							"value": "Any"
+						},
+						{
+							"key": "carspots",
+							"value": "Any"
+						},
+						{
+							"key": "auction_start",
+							"value": "1604312391000"
+						},
+						{
+							"key": "auction_end",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
