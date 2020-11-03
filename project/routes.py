@@ -1,3 +1,4 @@
+import os
 import secrets
 import time
 from random import randint
@@ -301,13 +302,12 @@ def property_search():
             else:
                 query_res = query_res.filter(PROPERTY_INFO.parkingSpace >= 3)
         if start_timeStamp != '':
-            # print(start_timeStamp)
+            print(start_timeStamp)
             query_res = query_res.filter(start_timeStamp <= PROPERTY_INFO.auction_start)
         if end_timeStamp != '':
-            # print(end_timeStamp)
+            print(end_timeStamp)
             query_res = query_res.filter(PROPERTY_INFO.auction_end <= end_timeStamp)
 
-        # upload_blob('1', '3')
         # print(str(query_res.all()))
 
         result_list = []
@@ -318,6 +318,14 @@ def property_search():
                 else:
                     address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
 
+                images_list = []
+                if i.images and i.images != '0':
+                    file_name = str(i.propertyId) + '-0'
+                    download_blob(file_name)
+                    image_str = open(file_name, 'r').read()
+                    images_list.append(str(image_str))
+                    os.remove(file_name)
+
                 result_dict = {
                     "propertyId": i.propertyId,
                     "propertyType": i.propertyType,
@@ -326,9 +334,9 @@ def property_search():
                     "baths": i.baths,
                     "parkingSpace": i.parkingSpace,
                     "landSize": i.landSize,
-                    "images": i.images,
                     "auction_start": i.auction_start,
-                    "beds": i.beds
+                    "beds": i.beds,
+                    "images": images_list
                 }
 
                 result_list.append(result_dict)
@@ -356,67 +364,82 @@ def property_post():
         user = USER_INFO.query.filter_by(curr_token=tk).first()
 
         if user and user.login_status == '1' and time.time() < float(user.expire_time):
-            try:
-                jsonContent = request.get_json()
+            uid = user.uid
+            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+            if user_ext.bidder_flag == '0' and user_ext.seller_flag == '1':
                 try:
-                    np = PROPERTY_INFO(propertyId=get_new_property_id(),
-                                       sellerId=user.uid,
-                                       propertyPostDate=str(int(time.time()))
-                                       )
-                    for k, v in jsonContent.items():
-                        if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
-                                or k == 'compare_addr' or k == 'auction_end':
-                            continue
-                        if k == 'propertyType':
-                            np.propertyType = str(v)
-                        elif k == 'unitNumber':
-                            np.unitNumber = str(v)
-                        elif k == 'streetAddress':
-                            np.streetAddress = str(v)
-                        elif k == 'city':
-                            np.suburb = str(v)
-                        elif k == 'state':
-                            np.state = str(v)
-                        elif k == 'postcode':
-                            np.postcode = str(v)
-                        elif k == 'beds':
-                            np.beds = str(v)
-                        elif k == 'baths':
-                            np.baths = str(v)
-                        elif k == 'parkingSpace':
-                            np.parkingSpace = str(v)
-                        elif k == 'landSize':
-                            np.landSize = str(v)
-                        elif k == 'reservePrice':
-                            np.reservePrice = str(v)
-                        elif k == 'auction_start':
-                            if len(v) == 13:
-                                np.auction_start = str(int(v[0:-3]))
+                    jsonContent = request.get_json()
+                    try:
+                        np = PROPERTY_INFO(propertyId=get_new_property_id(),
+                                           sellerId=user.uid,
+                                           propertyPostDate=str(int(time.time()))
+                                           )
+                        for k, v in jsonContent.items():
+                            if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
+                                    or k == 'compare_addr' or k == 'auction_end':
+                                continue
+                            if k == 'propertyType':
+                                np.propertyType = str(v)
+                            elif k == 'unitNumber':
+                                np.unitNumber = str(v)
+                            elif k == 'streetAddress':
+                                np.streetAddress = str(v)
+                            elif k == 'city':
+                                np.suburb = str(v)
+                            elif k == 'state':
+                                np.state = str(v)
+                            elif k == 'postcode':
+                                np.postcode = str(v)
+                            elif k == 'beds':
+                                np.beds = str(v)
+                            elif k == 'baths':
+                                np.baths = str(v)
+                            elif k == 'parkingSpace':
+                                np.parkingSpace = str(v)
+                            elif k == 'landSize':
+                                np.landSize = str(v)
+                            elif k == 'reservePrice':
+                                np.reservePrice = str(v)
+                            elif k == 'auction_start':
+                                if len(v) == 13:
+                                    np.auction_start = str(int(v[0:-3]))
+                                else:
+                                    return jsonify(error="Date range length not looks quite right"), 400
+                            elif k == 'auction_duration':
+                                np.auction_end = str(int(np.auction_start) + int(v[0:-3]))
+                            elif k == 'intro_title':
+                                np.intro_title = str(v)
+                            elif k == 'intro_text':
+                                np.intro_text = str(v)
+                            elif k == 'images':
+                                if v:
+                                    seq = 0
+                                    for i in v:
+                                        file_name = str(np.propertyId) + '-' + str(seq)
+                                        with open(file_name, "w") as f:
+                                            f.write(i)
+                                            seq += 1
+                                        upload_blob(file_name)
+                                        os.remove(file_name)
+                                    np.images = str(seq)
+                                else:
+                                    np.images = '0'
                             else:
-                                return jsonify(error="Date range length not looks quite right"), 400
-                        elif k == 'auction_duration':
-                            np.auction_end = str(int(np.auction_start) + int(v[0:-3]))
-                        elif k == 'intro_title':
-                            np.intro_title = str(v)
-                        elif k == 'intro_text':
-                            np.intro_text = str(v)
-                        elif k == 'images':
-                            # np.images = str(v)
-                            print(np.propertyId, v[0])
-                        else:
-                            return jsonify(error="Unexpected attributes received, nothing changed"), 400
+                                return jsonify(error="Unexpected attributes received, nothing changed"), 400
 
-                    db.session.merge(np)
-                    db.session.commit()
+                        db.session.merge(np)
+                        db.session.commit()
 
-                    return jsonify(msg="Property post successful", propertyId=str(np.propertyId)), 200
+                        return jsonify(msg="Property post successful", propertyId=str(np.propertyId)), 200
 
+                    except ValueError:
+                        return jsonify(error="auction_start format not valid"), 400
+                    except KeyError:
+                        return jsonify(error="Expected attributes not received, post failed"), 400
                 except ValueError:
-                    return jsonify(error="auction_start format not valid"), 400
-                except KeyError:
-                    return jsonify(error="Expected attributes not received, post failed"), 400
-            except ValueError:
-                return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+                    return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+            else:
+                return jsonify(error="User type not correct, nothing to be changed"), 401
         else:
             return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
     except IndexError:
