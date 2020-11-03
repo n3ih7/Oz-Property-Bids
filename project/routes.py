@@ -106,95 +106,140 @@ def signup():
                 db.session.add(nu)
                 db.session.add(nu_ext)
                 db.session.commit()
-                return jsonify(token=tk, expire_time=str(et + '000')), 200
+
+                user_type = ''
+                if jsonContent['bidder_flag'] == "0" and jsonContent['seller_flag'] == "1":
+                    user_type = 'seller'
+                if jsonContent['bidder_flag'] == "1" and jsonContent['seller_flag'] == "0":
+                    user_type = 'bidder'
+
+                return jsonify(token=tk, expire_time=str(et + '000'), user_type=user_type), 200
         except KeyError:
             return jsonify(error="Expected attributes not received, signup failed"), 400
     except ValueError:
         return jsonify(error="No JSON object could be decoded, signup failed"), 400
 
 
-@app.route('/profile_update', methods=['PUT'])
+@app.route('/profile', methods=['GET', 'PUT'])
 def profile_update():
-    try:
-        tk = str(request.headers['Authorization']).split(' ')[1]
-        user = USER_INFO.query.filter_by(curr_token=tk).first()
+    if request.method == 'GET':
+        try:
+            tk = str(request.headers['Authorization']).split(' ')[1]
+            user = USER_INFO.query.filter_by(curr_token=tk).first()
 
-        if user and user.login_status == '1' and time.time() < float(user.expire_time):
-            uid = user.uid
-            try:
+            if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                uid = user.uid
                 user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
-                jsonContent = request.get_json()
-                addr_1 = ''
-                addr_2 = ''
-                addr_change_flag = '0'
+                result_dict = {
+                    "firstname": user_ext.firstname,
+                    "lastname": user_ext.lastname,
+                    "email": user.email,
+                    "phone": user_ext.phone,
+                    "address": user_ext.address,
+                    "city": user_ext.suburb,
+                    "state": user_ext.state,
+                    "postcode": user_ext.postcode,
+                    "bidder_flag": user_ext.bidder_flag,
+                    "bsb": user_ext.bsb,
+                    "acc_number": user_ext.acc_number,
+                    "seller_flag": user_ext.seller_flag
+                }
+                return jsonify(result_dict), 200
+            else:
+                return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+        except IndexError:
+            return jsonify(error="Token format not valid, nothing changed"), 401
+        except KeyError:
+            return jsonify(error="Token not received, nothing changed"), 401
+
+    if request.method == 'PUT':
+        try:
+            tk = str(request.headers['Authorization']).split(' ')[1]
+            user = USER_INFO.query.filter_by(curr_token=tk).first()
+
+            if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                uid = user.uid
                 try:
-                    for k, v in jsonContent.items():
-                        if k == 'old_password':
-                            continue
-                        elif k == 'email':
-                            user.email = v
-                        elif k == 'address_line_1':
-                            addr_1 = v
-                            addr_change_flag = '1'
-                        elif k == 'address_line_2':
-                            addr_2 = v
-                            addr_change_flag = '1'
-                        elif k == 'new_password':
-                            if not check_password_hash(user.password, jsonContent['old_password']):
-                                return jsonify(
-                                    error='Please check your old password old_password, profile update failed'), 401
+                    user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+                    jsonContent = request.get_json()
+                    addr_1 = ''
+                    addr_2 = ''
+                    addr_change_flag = '0'
+                    try:
+                        for k, v in jsonContent.items():
+                            if k == 'old_password':
+                                continue
+                            elif k == 'email':
+                                a = USER_INFO.query.filter_by(email=v).first()
+                                if not a:
+                                    user.email = v
+                                elif a.uid == uid:
+                                    user.email = v
+                                else:
+                                    return jsonify(
+                                        error="Email address already exists, nothing changed"), 409
+                            elif k == 'address_line_1':
+                                addr_1 = v
+                                addr_change_flag = '1'
+                            elif k == 'address_line_2':
+                                addr_2 = v
+                                addr_change_flag = '1'
+                            elif k == 'new_password':
+                                if not check_password_hash(user.password, jsonContent['old_password']):
+                                    return jsonify(
+                                        error='Please check your old password old_password, profile update failed'), 401
+                                else:
+                                    user.password = generate_password_hash(v, method='sha256')
+                            elif k == 'new_bsb':
+                                if not check_password_hash(user.password, jsonContent['old_password']):
+                                    return jsonify(
+                                        error='Please check your old password old_password, profile update failed'), 401
+                                else:
+                                    user_ext.bsb = v
+                            elif k == 'new_acc_number':
+                                if not check_password_hash(user.password, jsonContent['old_password']):
+                                    return jsonify(
+                                        error='Please check your old password old_password, profile update failed'), 401
+                                else:
+                                    user_ext.acc_number = v
+                            elif k == 'firstname':
+                                user_ext.firstname = v
+                            elif k == 'lastname':
+                                user_ext.lastname = v
+                            elif k == 'phone':
+                                user_ext.phone = v
+                            elif k == 'city':
+                                user_ext.suburb = v
+                            elif k == 'state':
+                                user_ext.state = v
+                            elif k == 'postcode':
+                                user_ext.postcode = v
+                            elif k == 'bidder_flag':
+                                user_ext.bidder_flag = v
+                            elif k == 'seller_flag':
+                                user_ext.seller_flag = v
                             else:
-                                user.password = generate_password_hash(v, method='sha256')
-                        elif k == 'new_bsb':
-                            if not check_password_hash(user.password, jsonContent['old_password']):
-                                return jsonify(
-                                    error='Please check your old password old_password, profile update failed'), 401
-                            else:
-                                user_ext.bsb = v
-                        elif k == 'new_acc_number':
-                            if not check_password_hash(user.password, jsonContent['old_password']):
-                                return jsonify(
-                                    error='Please check your old password old_password, profile update failed'), 401
-                            else:
-                                user_ext.acc_number = v
-                        elif k == 'firstname':
-                            user_ext.firstname = v
-                        elif k == 'lastname':
-                            user_ext.lastname = v
-                        elif k == 'phone':
-                            user_ext.phone = v
-                        elif k == 'city':
-                            user_ext.suburb = v
-                        elif k == 'state':
-                            user_ext.state = v
-                        elif k == 'postcode':
-                            user_ext.postcode = v
-                        elif k == 'bidder_flag':
-                            user_ext.bidder_flag = v
-                        elif k == 'seller_flag':
-                            user_ext.seller_flag = v
-                        else:
-                            return jsonify(error="Unexpected attributes received, nothing changed"), 400
+                                return jsonify(error="Unexpected attributes received, nothing changed"), 400
 
-                    if addr_change_flag == '1':
-                        user_ext.address = str(addr_1) + str(addr_2)
+                        if addr_change_flag == '1':
+                            user_ext.address = str(addr_1) + str(addr_2)
 
-                    db.session.merge(user)
-                    db.session.merge(user_ext)
-                    db.session.commit()
+                        db.session.merge(user)
+                        db.session.merge(user_ext)
+                        db.session.commit()
 
-                    return jsonify(msg="Profile update successful"), 200
+                        return jsonify(msg="Profile update successful"), 200
 
-                except KeyError:
-                    return jsonify(error="Expected attribute old_password not received, nothing changed"), 401
-            except ValueError:
-                return jsonify(error="No JSON object could be decoded, nothing changed"), 400
-        else:
-            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
-    except IndexError:
-        return jsonify(error="Token format not valid, nothing changed"), 401
-    except KeyError:
-        return jsonify(error="Token not received, nothing changed"), 401
+                    except KeyError:
+                        return jsonify(error="Expected attribute old_password not received, nothing changed"), 401
+                except ValueError:
+                    return jsonify(error="No JSON object could be decoded, nothing changed"), 400
+            else:
+                return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+        except IndexError:
+            return jsonify(error="Token format not valid, nothing changed"), 401
+        except KeyError:
+            return jsonify(error="Token not received, nothing changed"), 401
 
 
 @app.route('/search', methods=['GET'])
@@ -331,11 +376,11 @@ def property_search():
                     "propertyType": i.propertyType,
                     "address": address,
                     "city": i.suburb,
+                    "beds": i.beds,
                     "baths": i.baths,
                     "parkingSpace": i.parkingSpace,
                     "landSize": i.landSize,
                     "auction_start": i.auction_start,
-                    "beds": i.beds,
                     "images": images_list
                 }
 
@@ -349,16 +394,149 @@ def property_search():
             return jsonify(message="nothing found", status="failed"), 404
 
 
-@app.route('/property_post', methods=['POST'])
-def property_post():
-    def get_new_property_id():
-        n = randint(10000, 99999)
-        check_temp_id = PROPERTY_INFO.query.filter_by(propertyId=n).first()
-        if check_temp_id:
-            get_new_property_id()
-        else:
-            return n
+@app.route('/property', methods=['GET', 'POST'])
+def property_get_n_post():
+    if request.method == 'POST':
+        def get_new_property_id():
+            n = randint(10000, 99999)
+            check_temp_id = PROPERTY_INFO.query.filter_by(propertyId=n).first()
+            if check_temp_id:
+                get_new_property_id()
+            else:
+                return n
 
+        try:
+            tk = str(request.headers['Authorization']).split(' ')[1]
+            user = USER_INFO.query.filter_by(curr_token=tk).first()
+
+            if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                uid = user.uid
+                user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+                if user_ext.bidder_flag == '0' and user_ext.seller_flag == '1':
+                    try:
+                        jsonContent = request.get_json()
+                        try:
+                            np = PROPERTY_INFO(propertyId=get_new_property_id(),
+                                               sellerId=user.uid,
+                                               propertyPostDate=str(int(time.time()))
+                                               )
+                            for k, v in jsonContent.items():
+                                if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
+                                        or k == 'compare_addr' or k == 'auction_end':
+                                    continue
+                                if k == 'propertyType':
+                                    np.propertyType = str(v)
+                                elif k == 'unitNumber':
+                                    np.unitNumber = str(v)
+                                elif k == 'streetAddress':
+                                    np.streetAddress = str(v)
+                                elif k == 'city':
+                                    np.suburb = str(v)
+                                elif k == 'state':
+                                    np.state = str(v)
+                                elif k == 'postcode':
+                                    np.postcode = str(v)
+                                elif k == 'beds':
+                                    np.beds = str(v)
+                                elif k == 'baths':
+                                    np.baths = str(v)
+                                elif k == 'parkingSpace':
+                                    np.parkingSpace = str(v)
+                                elif k == 'landSize':
+                                    np.landSize = str(v)
+                                elif k == 'reservePrice':
+                                    np.reservePrice = str(v)
+                                elif k == 'auction_start':
+                                    if len(v) == 13:
+                                        np.auction_start = str(int(v[0:-3]))
+                                    else:
+                                        return jsonify(error="Date range length not looks quite right"), 400
+                                elif k == 'auction_duration':
+                                    np.auction_end = str(int(np.auction_start) + int(v[0:-3]))
+                                elif k == 'intro_title':
+                                    np.intro_title = str(v)
+                                elif k == 'intro_text':
+                                    np.intro_text = str(v)
+                                elif k == 'images':
+                                    if v:
+                                        seq = 0
+                                        for i in v:
+                                            file_name = str(np.propertyId) + '-' + str(seq)
+                                            with open(file_name, "w") as f:
+                                                f.write(i)
+                                                seq += 1
+                                            upload_blob(file_name)
+                                            os.remove(file_name)
+                                        np.images = str(seq)
+                                    else:
+                                        np.images = '0'
+                                else:
+                                    return jsonify(error="Unexpected attributes received, nothing changed"), 400
+
+                            db.session.merge(np)
+                            db.session.commit()
+
+                            return jsonify(msg="Property post successful", propertyId=str(np.propertyId)), 200
+
+                        except ValueError:
+                            return jsonify(error="auction_start format not valid"), 400
+                        except KeyError:
+                            return jsonify(error="Expected attributes not received, post failed"), 400
+                    except ValueError:
+                        return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+                else:
+                    return jsonify(error="User type not correct, nothing to be changed"), 401
+            else:
+                return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+        except IndexError:
+            return jsonify(error="Token format not valid, nothing to be changed"), 401
+        except KeyError:
+            return jsonify(error="Token not received, nothing to be changed"), 401
+
+    if request.method == 'GET':
+        if 'id' in request.args and request.args.get('id') != "":
+            propertyId = request.args.get('id')
+            i = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+            if i:
+                if i.unitNumber:
+                    address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                else:
+                    address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+
+                images_list = []
+                if i.images and i.images != '0':
+                    for j in range(0, int(i.images)):
+                        file_name = str(i.propertyId) + '-' + str(j)
+                        download_blob(file_name)
+                        image_str = open(file_name, 'r').read()
+                        images_list.append(str(image_str))
+                        os.remove(file_name)
+
+                seller = USER_INFO_EXTENDED.query.filter_by(uid=i.sellerId).first()
+
+                result_dict = {
+                    "propertyId": i.propertyId,
+                    "sellerName": seller.firstname + ' '+ seller.lastname,
+                    "sellerContactNumber": seller.phone,
+                    "propertyType": i.propertyType,
+                    "address": address,
+                    "beds": i.beds,
+                    "baths": i.baths,
+                    "parkingSpace": i.parkingSpace,
+                    "landSize": i.landSize,
+                    "images": images_list,
+                    "propertyPostDate": i.propertyPostDate,
+                    "auction_start": i.auction_start,
+                    "auction_end": i.auction_end,
+                    "intro_title": i.intro_title,
+                    "intro_text": i.intro_text
+                }
+
+                return jsonify(result_dict), 200
+
+
+@app.route('/bid_register', methods=['POST'])
+def property_post():
     try:
         tk = str(request.headers['Authorization']).split(' ')[1]
         user = USER_INFO.query.filter_by(curr_token=tk).first()
@@ -366,74 +544,11 @@ def property_post():
         if user and user.login_status == '1' and time.time() < float(user.expire_time):
             uid = user.uid
             user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
-            if user_ext.bidder_flag == '0' and user_ext.seller_flag == '1':
+            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
                 try:
                     jsonContent = request.get_json()
                     try:
-                        np = PROPERTY_INFO(propertyId=get_new_property_id(),
-                                           sellerId=user.uid,
-                                           propertyPostDate=str(int(time.time()))
-                                           )
-                        for k, v in jsonContent.items():
-                            if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
-                                    or k == 'compare_addr' or k == 'auction_end':
-                                continue
-                            if k == 'propertyType':
-                                np.propertyType = str(v)
-                            elif k == 'unitNumber':
-                                np.unitNumber = str(v)
-                            elif k == 'streetAddress':
-                                np.streetAddress = str(v)
-                            elif k == 'city':
-                                np.suburb = str(v)
-                            elif k == 'state':
-                                np.state = str(v)
-                            elif k == 'postcode':
-                                np.postcode = str(v)
-                            elif k == 'beds':
-                                np.beds = str(v)
-                            elif k == 'baths':
-                                np.baths = str(v)
-                            elif k == 'parkingSpace':
-                                np.parkingSpace = str(v)
-                            elif k == 'landSize':
-                                np.landSize = str(v)
-                            elif k == 'reservePrice':
-                                np.reservePrice = str(v)
-                            elif k == 'auction_start':
-                                if len(v) == 13:
-                                    np.auction_start = str(int(v[0:-3]))
-                                else:
-                                    return jsonify(error="Date range length not looks quite right"), 400
-                            elif k == 'auction_duration':
-                                np.auction_end = str(int(np.auction_start) + int(v[0:-3]))
-                            elif k == 'intro_title':
-                                np.intro_title = str(v)
-                            elif k == 'intro_text':
-                                np.intro_text = str(v)
-                            elif k == 'images':
-                                if v:
-                                    seq = 0
-                                    for i in v:
-                                        file_name = str(np.propertyId) + '-' + str(seq)
-                                        with open(file_name, "w") as f:
-                                            f.write(i)
-                                            seq += 1
-                                        upload_blob(file_name)
-                                        os.remove(file_name)
-                                    np.images = str(seq)
-                                else:
-                                    np.images = '0'
-                            else:
-                                return jsonify(error="Unexpected attributes received, nothing changed"), 400
-
-                        db.session.merge(np)
-                        db.session.commit()
-
-                        return jsonify(msg="Property post successful", propertyId=str(np.propertyId)), 200
-
-                    except ValueError:
-                        return jsonify(error="auction_start format not valid"), 400
+                        result = 0
                     except KeyError:
                         return jsonify(error="Expected attributes not received, post failed"), 400
                 except ValueError:

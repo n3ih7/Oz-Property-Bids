@@ -50,6 +50,17 @@ class PROPERTY_INFO(db.Model):
     intro_text = db.Column('intro_text', db.Text)
 
 
+class PROPERTY_BID_RELATION(db.Model):
+    __tablename__ = 'PROPERTY_BID_RELATION'
+    bidActivityId = db.Column('bid_activity_id', db.INTEGER, primary_key=True)
+    propertyId = db.Column('propertyid', db.INTEGER)
+    winnerId = db.Column('winnerid', db.INTEGER)
+    reserve_price = db.Column('reserve_price', db.Text)
+    final_price = db.Column('final_price', db.Text)
+    start_time = db.Column('start_time', db.Text)
+    expected_finish_time = db.Column('expected_finish_time', db.Text)
+
+
 class MOVEMENT_TRACKING(db.Model):
     __tablename__ = 'MOVEMENT_TRACKING'
     movementId = db.Column('moveid', db.INTEGER, primary_key=True)
