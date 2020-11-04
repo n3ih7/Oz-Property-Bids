@@ -4,6 +4,7 @@ import time
 from random import randint
 from flask import request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db, create_app
@@ -353,7 +354,7 @@ def property_search():
             print(end_timeStamp)
             query_res = query_res.filter(PROPERTY_INFO.auction_end <= end_timeStamp)
 
-        # print(str(query_res.all()))
+        print(len(query_res.all()))
 
         result_list = []
         if query_res:
@@ -560,6 +561,7 @@ def property_get_n_post():
                 result_dict = {
                     "propertyId": i.propertyId,
                     "sellerName": seller.firstname + ' ' + seller.lastname,
+                    "sellerId": seller.uid,
                     "sellerContactNumber": seller.phone,
                     "propertyType": i.propertyType,
                     "address": address,
@@ -603,8 +605,119 @@ def property_get_n_post():
                         nothing = True
 
                 return jsonify(result_dict), 200
+            else:
+                return jsonify(error="Not found"), 404
+        elif 'sellerid' in request.args and request.args.get('sellerid') != "":
+            sellerId = request.args.get('sellerid')
+            seller = USER_INFO_EXTENDED.query.filter_by(uid=sellerId).first()
+            if not seller:
+                return jsonify(error="User not found"), 404
+            query_res = PROPERTY_INFO.query.filter_by(sellerId=sellerId).all()
+            pp_list = []
+            if query_res:
+                for i in query_res:
+                    if i.unitNumber:
+                        address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                    else:
+                        address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+
+                    images_list = []
+                    if i.images and i.images != '0':
+                        file_name = str(i.propertyId) + '-0'
+                        download_blob(file_name)
+                        image_str = open(file_name, 'r').read()
+                        images_list.append(str(image_str))
+                        os.remove(file_name)
+
+                    r_property_dict = {
+                        "propertyId": i.propertyId,
+                        "propertyType": i.propertyType,
+                        "address": address,
+                        "city": i.suburb,
+                        "beds": i.beds,
+                        "baths": i.baths,
+                        "parkingSpace": i.parkingSpace,
+                        "landSize": i.landSize,
+                        "auction_start": str(i.auction_start) + '000',
+                        "images": images_list,
+                        "intro_title": i.intro_title
+                    }
+                    pp_list.append(r_property_dict)
+
+            return_dict = {
+                "sellerId": sellerId,
+                "name": seller.firstname + ' ' + seller.lastname,
+                "address": seller.address + ', ' + seller.suburb + ', ' + seller.state + ', ' + seller.postcode,
+                "phone": seller.phone,
+                "listing": pp_list
+            }
+
+            return jsonify(return_dict), 200
+
         else:
-            return jsonify(error="Expected attribute 'id' not received, GET property detail failed"), 400
+            return jsonify(error="Expected attribute 'id' or 'sellerid' not received, GET property detail failed"), 400
+
+
+@app.route('/mylisting', methods=['GET'])
+def see_my_listing():
+    try:
+        tk = str(request.headers['Authorization']).split(' ')[1]
+        user = USER_INFO.query.filter_by(curr_token=tk).first()
+
+        if user and user.login_status == '1' and time.time() < float(user.expire_time):
+            uid = user.uid
+            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+            if user_ext.bidder_flag == '0' and user_ext.seller_flag == '1':
+                query_res = PROPERTY_INFO.query.filter_by(sellerId=uid).all()
+                print(query_res)
+                pp_list = []
+                if query_res:
+                    for i in query_res:
+                        if i.unitNumber:
+                            address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                        else:
+                            address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+
+                        images_list = []
+                        if i.images and i.images != '0':
+                            file_name = str(i.propertyId) + '-0'
+                            download_blob(file_name)
+                            image_str = open(file_name, 'r').read()
+                            images_list.append(str(image_str))
+                            os.remove(file_name)
+
+                        r_property_dict = {
+                            "propertyId": i.propertyId,
+                            "propertyType": i.propertyType,
+                            "address": address,
+                            "city": i.suburb,
+                            "beds": i.beds,
+                            "baths": i.baths,
+                            "parkingSpace": i.parkingSpace,
+                            "landSize": i.landSize,
+                            "auction_start": str(i.auction_start) + '000',
+                            "images": images_list,
+                            "intro_title": i.intro_title
+                        }
+                        pp_list.append(r_property_dict)
+
+                return_dict = {
+                    "sellerId": uid,
+                    "name": user_ext.firstname + ' ' + user_ext.lastname,
+                    "address": user_ext.address + ', ' + user_ext.suburb + ', ' + user_ext.state + ', ' + user_ext.postcode,
+                    "phone": user_ext.phone,
+                    "listing": pp_list
+                }
+
+                return jsonify(return_dict), 200
+            else:
+                return jsonify(error="User type not correct, nothing to be changed"), 401
+        else:
+            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+    except IndexError:
+        return jsonify(error="Token format not valid, nothing to be changed"), 401
+    except KeyError:
+        return jsonify(error="Token not received, nothing to be changed"), 401
 
 
 @app.route('/payment_info_check', methods=['GET'])
@@ -632,47 +745,101 @@ def payment_info_check():
         return jsonify(error="Token not received, nothing to be changed"), 401
 
 
-@app.route('/bid', methods=['POST'])
-def property_post():
-    try:
-        tk = str(request.headers['Authorization']).split(' ')[1]
-        user = USER_INFO.query.filter_by(curr_token=tk).first()
+@app.route('/bid', methods=['GET', 'POST'])
+def bid():
+    if request.method == 'POST':
+        try:
+            tk = str(request.headers['Authorization']).split(' ')[1]
+            user = USER_INFO.query.filter_by(curr_token=tk).first()
 
-        if user and user.login_status == '1' and time.time() < float(user.expire_time):
-            uid = user.uid
-            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
-            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
-                try:
-                    jsonContent = request.get_json()
+            if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                uid = user.uid
+                user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+                if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
                     try:
-                        propertyId = jsonContent['id']
-                        a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
-                        if not a:
-                            return jsonify(error="Not such auction exists"), 400
-                        offerPrice = jsonContent['offerPrice']
+                        jsonContent = request.get_json()
+                        try:
+                            propertyId = jsonContent['id']
+                            a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
+                            if not a:
+                                return jsonify(error="Not such auction exists"), 400
 
-                        nb = BID_ACTIVITY(uid=uid,
-                                          bidActivityId=a.bidActivityId,
-                                          offerPrice=offerPrice,
-                                          bidPlaceTime=str(int(time.time()))
-                                          )
-                        db.session.add(nb)
-                        db.session.commit()
+                            cur_time = int(time.time())
+                            b = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId, uid=uid).first()
 
-                        return jsonify(msg="Place bid successful", ref=nb.lineId, bid_time=str(nb.bidPlaceTime) + '000'), 200
+                            if b and cur_time < float(a.start_time):
+                                return jsonify(
+                                    error="You cannot change initial bid and the auction has not started yet"), 409
 
-                    except KeyError:
-                        return jsonify(error="Expected attributes not received, post failed"), 400
-                except ValueError:
-                    return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+                            if cur_time > float(a.expected_finish_time):
+                                return jsonify(error="The auction has ended", end_time=a.expected_finish_time + '000',
+                                               cur_time=str(cur_time) + '000'), 409
+                            else:
+                                check = int(a.expected_finish_time) - int(cur_time)
+                                if check <= 5 * 60:
+                                    a.expected_finish_time = str(int(a.expected_finish_time) + 2 * 60)
+                                    db.session.merge(a)
+                                    c = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+                                    c.auction_end = a.expected_finish_time
+                                    db.session.merge(c)
+
+                                offerPrice = jsonContent['offerPrice']
+                                search_largest = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId).order_by(
+                                    desc(BID_ACTIVITY.offerPrice)).first()
+                                if search_largest:
+                                    if int(offerPrice) <= int(search_largest.offerPrice):
+                                        return jsonify(msg="We did not accept your offer",
+                                                       bid_time=str(cur_time) + '000',
+                                                       expected_finish_time=a.expected_finish_time + '000',
+                                                       yourPrice=offerPrice,
+                                                       curr_higest_price=str(search_largest.offerPrice)), 409
+
+                                nb = BID_ACTIVITY(uid=uid,
+                                                  bidActivityId=a.bidActivityId,
+                                                  offerPrice=offerPrice,
+                                                  bidPlaceTime=str(cur_time)
+                                                  )
+                                db.session.add(nb)
+                                db.session.commit()
+
+                                return jsonify(msg="Your price has been accepted", ref=nb.lineId,
+                                               bid_time=str(nb.bidPlaceTime) + '000',
+                                               expected_finish_time=a.expected_finish_time + '000',
+                                               yourPrice=offerPrice), 200
+
+                        except KeyError:
+                            return jsonify(error="Expected attributes not received, post failed"), 400
+                    except ValueError:
+                        return jsonify(error="No JSON object could be decoded, nothing to be changed"), 400
+                else:
+                    return jsonify(error="User type not correct, nothing to be changed"), 401
             else:
-                return jsonify(error="User type not correct, nothing to be changed"), 401
-        else:
-            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
-    except IndexError:
-        return jsonify(error="Token format not valid, nothing to be changed"), 401
-    except KeyError:
-        return jsonify(error="Token not received, nothing to be changed"), 401
+                return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+        except IndexError:
+            return jsonify(error="Token format not valid, nothing to be changed"), 401
+        except KeyError:
+            return jsonify(error="Token not received, nothing to be changed"), 401
+
+    if request.method == 'GET':
+        if 'id' not in request.args:
+            return jsonify(message="expected condition 'id' not received"), 400
+
+        propertyId = request.args['id']
+        a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
+        if not a:
+            return jsonify(error="No such auction exists"), 400
+        b = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId)
+        result_list = []
+        for k in b:
+            bidder = USER_INFO_EXTENDED.query.filter_by(uid=k.uid).first()
+            bidder_name = bidder.firstname + ' ' + bidder.lastname
+            r_dict = {'bidder_name': bidder_name,
+                      'offerPrice': k.offerPrice,
+                      'bidPlaceTime': k.bidPlaceTime
+                      }
+            result_list.append(r_dict)
+
+        return jsonify(history=result_list, length=str(len(result_list)), propertyId=propertyId), 200
 
 # @app.route('/example', methods=['POST'])
 # def example():

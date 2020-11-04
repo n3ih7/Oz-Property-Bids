@@ -81,6 +81,6 @@ class BID_ACTIVITY(db.Model):
     lineId = db.Column('lineid', db.INTEGER, primary_key=True)
     uid = db.Column('uid', db.INTEGER)
     bidActivityId = db.Column('bid_activity_id', db.INTEGER)
-    offerPrice = db.Column('offer_price', db.Text)
+    offerPrice = db.Column('offer_price', db.INTEGER)
     bidPlaceTime = db.Column('bid_place_time', db.Text)
 

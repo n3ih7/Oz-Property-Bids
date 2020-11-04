@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "38e53e4c-7727-4665-b82f-8b69859b41cf",
-		"name": "9900 04Nov",
+		"_postman_id": "9cc8e482-1595-4fd9-a50f-a282f9e73f35",
+		"name": "9900 04 Nov evening 9 PM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -189,13 +189,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 21a0cb16593959781fd4ec58c3c616e633d337ccb7f8dcb51c7017a8b62c1105",
+						"value": "Token d7512270a96475d4dc67043f33f10520aab9153398efa53fcdfa364deefa27e0",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"propertyType\": \"Unit\",\n    \"unitNumber\": \"101\",\n    \"streetAddress\": \"581-587 Gardeners Road\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"beds\": \"3\",\n    \"baths\": \"2\",\n    \"parkingSpace\": \"2\",\n    \"landSize\": \"158\",\n    \"reservePrice\": \"1100000\",\n    \"auction_start\": \"1605340800000\",\n    \"auction_duration\": \"172800\",\n    \"intro_title\": \"Large-sized courtyard apartment with designer style\",\n    \"intro_text\": \"It's rare to find an urban residence that offers such a unique sense of space, privacy and quality. Flowing over a single light filled level, this spacious home has been architecturally to provide a peaceful sanctuary. The property is fresh, bright and full of style and quietly set in the contemporary development on the doorstep of Mascot's attractions with trains, shops, cafes and dining options all just a short stroll away.\",\n    \"images\": [\"data:image/png;base64, 111\", \"data:image/png;base64, 222\", \"data:image/png;base64, 333\"]\n}",
+					"raw": "{\n    \"propertyType\": \"Unit\",\n    \"unitNumber\": \"101\",\n    \"streetAddress\": \"auction due in 3 days\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"beds\": \"3\",\n    \"baths\": \"2\",\n    \"parkingSpace\": \"2\",\n    \"landSize\": \"158\",\n    \"reservePrice\": \"1100000\",\n    \"auction_start\": \"1604470906000\",\n    \"auction_duration\": \"259200\",\n    \"intro_title\": \"Large-sized courtyard apartment with designer style\",\n    \"intro_text\": \"It's rare to find an urban residence that offers such a unique sense of space, privacy and quality. Flowing over a single light filled level, this spacious home has been architecturally to provide a peaceful sanctuary. The property is fresh, bright and full of style and quietly set in the contemporary development on the doorstep of Mascot's attractions with trains, shops, cafes and dining options all just a short stroll away.\",\n    \"images\": [\"data:image/png;base64, 111\"]\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -219,18 +219,18 @@
 			"response": []
 		},
 		{
-			"name": "search property",
+			"name": "property search bar",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token c78e44557f460c7f3fd14d69f74fd1ed20f34f338136a44c0cb51c07334b1d61",
+						"value": "Token a702a97467ac8eed53dd7062549b84e92538e3ae6eadb7105fbd2f5497bd1d63",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://api.nono.fi:5000/search?keyword=&beds=3&baths=2&carspots=2&auction_start=1577836800000",
+					"raw": "http://api.nono.fi:5000/search?keyword=&beds=3&baths=2&carspots=2",
 					"protocol": "http",
 					"host": [
 						"api",
@@ -260,7 +260,8 @@
 						},
 						{
 							"key": "auction_start",
-							"value": "1577836800000"
+							"value": "1577836800000",
+							"disabled": true
 						},
 						{
 							"key": "auction_end",
@@ -273,7 +274,7 @@
 			"response": []
 		},
 		{
-			"name": "propertyInfo by id",
+			"name": "propertyInfo by propertyId",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -282,12 +283,12 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token 21a0cb16593959781fd4ec58c3c616e633d337ccb7f8dcb51c7017a8b62c1105",
+						"value": "Token a702a97467ac8eed53dd7062549b84e92538e3ae6eadb7105fbd2f5497bd1d63",
 						"type": "text"
 					}
 				],
 				"url": {
-					"raw": "http://api.nono.fi:5000/property?id=79358",
+					"raw": "http://api.nono.fi:5000/property?id=10000",
 					"protocol": "http",
 					"host": [
 						"api",
@@ -301,8 +302,68 @@
 					"query": [
 						{
 							"key": "id",
-							"value": "79358"
+							"value": "10000"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "propertyInfo by sellerId",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://api.nono.fi:5000/property?sellerid=51942",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"property"
+					],
+					"query": [
+						{
+							"key": "sellerid",
+							"value": "51942"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "seller see own listing",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 792eefe4896d5e0b5d938139eef7ecb57946e8469f18ae290d9bbc99c1464b32"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/mylisting",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"mylisting"
 					]
 				}
 			},
@@ -319,7 +380,7 @@
 					{
 						"key": "Authorization",
 						"type": "text",
-						"value": "Token c78e44557f460c7f3fd14d69f74fd1ed20f34f338136a44c0cb51c07334b1d61"
+						"value": "Token a702a97467ac8eed53dd7062549b84e92538e3ae6eadb7105fbd2f5497bd1d63"
 					}
 				],
 				"url": {
@@ -355,13 +416,13 @@
 				"header": [
 					{
 						"key": "Authorization",
-						"value": "Token c78e44557f460c7f3fd14d69f74fd1ed20f34f338136a44c0cb51c07334b1d61",
+						"value": "Token a702a97467ac8eed53dd7062549b84e92538e3ae6eadb7105fbd2f5497bd1d63",
 						"type": "text"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"id\": \"10091\",\n    \"offerPrice\": \"12000\"\n}",
+					"raw": "{\n    \"id\": \"84260\",\n    \"offerPrice\": \"14000\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -382,14 +443,50 @@
 					],
 					"query": [
 						{
-							"key": "email",
-							"value": "123",
+							"key": "id",
+							"value": "1000",
 							"disabled": true
 						},
 						{
 							"key": "password",
 							"value": "123",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bid history",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token a702a97467ac8eed53dd7062549b84e92538e3ae6eadb7105fbd2f5497bd1d63"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/bid?id=84260",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"bid"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "84260"
 						}
 					]
 				}
