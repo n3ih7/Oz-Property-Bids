@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
-import {Redirect} from 'react-router-dom';
 const axios = require('axios');
 
 class Account extends Component{
@@ -9,7 +8,17 @@ class Account extends Component{
         super(props);
 
         this.state = {
-            loading : true
+            loading : true,
+            firstName : "",
+            lastName : "",
+            address : "",
+            city : "",
+            email :"",
+            postcode :"",
+            state :"",
+            bsb :"",
+            acc_number :""
+
         }
 
         this.oldPassword = React.createRef();
@@ -21,8 +30,34 @@ class Account extends Component{
 
         this.cookies = this.props.cookies;
         this.pageContent = this.pageContent.bind(this);
-        this.loadAccount = this.loadAccount.bind(this);
+        this.getAccountDetails = this.getAccountDetails.bind(this);
         
+    }
+
+    getAccountDetails(){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+
+        axios.get('/profile')
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200){
+                this.setState({
+                    firstName : response.data.firstname,
+                    lastName : response.data.lastname,
+                    address : response.data.address,
+                    city : response.data.city,
+                    email : response.data.email,
+                    postcode : response.data.postcode,
+                    state : response.data.state,
+                    bsb : response.data.bsb,
+                    acc_number : response.data.acc_number,
+                    loading: false
+                });
+            }
+        }).catch((error) =>{
+            console.log(error);
+        });
     }
 
     handlePasswordChange(){
@@ -67,69 +102,65 @@ class Account extends Component{
             return(
                 <Row className="justify-content-md-center">
                 <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
+                {this.getAccountDetails()}
                 </Row>
             );
         }
         else{
             return(
                 <>
-                <Card style={{padding:'10px'}}>
+                <Card style={{padding:'10px', marginTop: "2%"}}>
                     <Card.Title>
-                        User Name Here
+                        Hello, {this.state.firstName}
                     </Card.Title>
                     <Card.Body>
                         <Form>
-                        <Form.Row>
+                            <Form.Row>
                                 <Form.Group as={Col} controlId="formGridName">
                                 <Form.Label>Name</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.firstName+" "+this.state.lastName} />
                                 </Form.Group>
-                            </Form.Row>
-
-                            <Form.Row>
+        
                                 <Form.Group as={Col} controlId="formGridEmail">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.email} />
                                 </Form.Group>
                             </Form.Row>
-
+                            
+                            <Form.Row>
                             <Form.Group controlId="formGridAddress1">
                                 <Form.Label>Address</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.address} />
                             </Form.Group>
-
-                            <Form.Group controlId="formGridAddress2">
-                                <Form.Label>Address 2</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
-                            </Form.Group>
+                            </Form.Row>
 
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridCity">
                                 <Form.Label>City</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.city} />
                                 </Form.Group>
 
                                 <Form.Group as={Col} controlId="formGridState">
                                 <Form.Label>State/Territory</Form.Label>
                                 <Form.Label>City</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.state} />
                                 </Form.Group>
 
                                 <Form.Group as={Col} controlId="formGridZip">
                                 <Form.Label>PostCode</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.postcode} />
                                 </Form.Group>
                             </Form.Row>
 
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridBSB">
                                 <Form.Label>BSB</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com"  />
+                                <Form.Control plaintext readOnly value={this.state.bsb}  />
                                 </Form.Group>
 
                                 <Form.Group as={Col} controlId="formGridAccountNumber">
                                 <Form.Label>Account Number</Form.Label>
-                                <Form.Control plaintext readOnly defaultValue="email@example.com" />
+                                <Form.Control plaintext readOnly value={this.state.acc_number} />
                                 </Form.Group>
                             </Form.Row>
                             </Form>
@@ -194,19 +225,11 @@ class Account extends Component{
         }
     }
 
-    loadAccount(){
-        if (this.state.loading === true){
-            // Replace with API Call later
-            setTimeout(()=>
-            {this.setState({loading : false });}, 50);
-        }
-    }
 
     render(){
         return(
             <Container className = "pageContent">
                 {this.pageContent()}
-                {this.loadAccount()}
             </Container>
         );
     }
