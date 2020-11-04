@@ -1,66 +1,62 @@
-## This is the extension part of the back-end
+## COMP9900-H16A-last_bus
 
-Can test for conditional search under certain filters from the front-end
+
+
+## How to run the back-end code
+
+`git clone git@github.com:unsw-cse-capstone-project/capstone-project-comp9900-h16a-last_bus.git`
+
+`cd capstone-project-comp9900-h16a-last_bus`
+
+**Note: Make sure you always on the correct branch**
+
+`git checkout back-end`
+
+**Note: On daily basis, before you make some change on code, please run the next command first**
+
+`git pull`
+
+**Note: The next command only needs to run for the very first time**
+
+`python3 -m venv venv`
+
+**Note: The next command needs to run every time before you work on this project**
+
+`source venv/bin/activate`
+
+`pip install -r requirements.txt`
+
+`python app.py`
+
 
 ## How to test
 
-1. Download postman 
+**Note: this is a temporary method for now**
 
-2. Run code `app.py`
+[Download Postman](https://www.postman.com/downloads/) 
 
-3. Open postman, use the link given by app.py : http://127.0.0.1:5000/buy?keyword=???? the ???? needed to be replaced by postcode, such as 2032.
+Once you successfully install Postman, login with your own account then import the file named
 
-Then post the json below, notice the values can be changed.
+**9900.postman_*_collection.json**
 
-{  
-            "beds": "Any",  
-            "baths": "Any",  
-            "carspots": "Any",  
-            "auction_start": "2020-01-10",  
-            "auction_end": "2021-1-10"  
-  
-}  
+You'll see the sample requests under 9900 collections, try yourself to test if your service works.
 
-the result should be like:
+## How to run the front-end code
+Make sure you have Node.js installed on your machine/
+https://nodejs.org/en/download/
 
-[  
-    {  
-             "auction_end": "2020-12-10",  
-             "auction_start": "2020-07-10",  
-             "baths": 3,  
-             "beds": 3,  
-             "compare_addr": "Kingsford New South Wales 2032",  
-             "id": 1,  
-             "image": "C:\\Users\\Administrator\\Desktop\\9900\\test_images\\images.jpg",  
-             "introDetails": null,  
-             "introTitle": null,  
-             "landSize": 260,  
-             "parkingSpace": 2,  
-             "postcode": 2032,  
-             "propertyType": "House",  
-             "sellerEmail": "12345@gmail.com",  
-             "startPrice": 500000,  
-             "state": "New South Wales",  
-             "streetAddress": null,  
-             "suburb": "Kingsford",  
-             "unitNumber": "21B"  
-    }  
+Afterwards...
 
+`git checkout front-end`
 
-  
-## Image with different storage methods
+`git pull`
 
-There are two database are used for test. db.sqlite stores the image information as their path, not the image itself.
+Make sure you are in the 'front-end' directory.
 
-dbBinary.sqlite stores the images itself for every record, in bytes format.
+`npm install`
 
-They will return different values for image only.
+Wait for all modules to install
 
-## Change to dbBinary.sqlite for test
-The default database is db.sqlite. If you want to change to dbBinary.sqlite, follow these steps:
+`npm start`
 
-1. Unpound the line 54 in `models.py`, and pound the line 48.
-
-2. unpound line 359, 360 and 378 in `auth.py`, and pound line 377.
-
-3. run the code
+Should start the program! Hosted on localhost:3000
