@@ -15,13 +15,30 @@ class ResultCard extends Component{
             addedToFav: false
         }
 
+
         this.toggleFavorites = this.toggleFavorites.bind(this);
         this.hoverFavorites = this.hoverFavorites.bind(this);
         this.redirectToProperty = this.redirectToProperty.bind(this);
+        this.registerForAuction = this.registerForAuction.bind(this);
+        this.sellerCardFeatures = this.sellerCardFeatures.bind(this);
     }
 
     registerForAuction(){
-        
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.props.token}`;
+
+        axios.post('/bid', {
+            id: this.props.propertyId,
+            offerPrice: "100",
+        })
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200){
+                // Show notification that this worked
+            }
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     redirectToProperty(){
@@ -67,6 +84,21 @@ class ResultCard extends Component{
         }
     }
 
+    sellerCardFeatures(){
+        if (!this.props.sellerCard){
+            return(
+            <Col>
+                <Row className="justify-content-md-center" style={{marginTop:"15%"}}>
+                    <img className ="favorites" alt="Add to Fav" src={this.state.starImage} onClick ={() => {this.toggleFavorites()}} onMouseOver ={() =>{this.setState({starImage:halfStar})}} onMouseLeave={() =>{this.hoverFavorites()} } />
+                </Row>
+                <Row className="justify-content-md-center" style={{marginTop:"5%"}}>
+                    <Button style={{background : "#05445E", borderColor: "#05445E"}} onClick={() => {this.registerForAuction()}}>Register!</Button>
+                </Row>
+            </Col>
+        )}
+
+    }
+
     render(){
         return(
             <Container>
@@ -98,14 +130,7 @@ class ResultCard extends Component{
                                 </h5>
                             </Card.Body>
                         </Col>
-                        <Col>
-                            <Row className="justify-content-md-center" style={{marginTop:"15%"}}>
-                                <img className ="favorites" alt="Add to Fav" src={this.state.starImage} onClick ={() => {this.toggleFavorites()}} onMouseOver ={() =>{this.setState({starImage:halfStar})}} onMouseLeave={() =>{this.hoverFavorites()} } />
-                            </Row>
-                            <Row className="justify-content-md-center" style={{marginTop:"5%"}}>
-                                <Button style={{background : "#05445E", borderColor: "#05445E"}}>Register!</Button>
-                            </Row>
-                        </Col>
+                        {this.sellerCardFeatures()}
                     </Row>
                 </Card>
             </Container>

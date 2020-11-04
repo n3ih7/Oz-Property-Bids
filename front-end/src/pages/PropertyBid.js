@@ -31,22 +31,9 @@ class PropertyBid extends Component{
             }
         }
 
-        let currentTime = new Date();
-        let givenStart = new Date(parseInt(testProperty.propertyDetails.auction_start));
-        let givenEnd =  new Date(parseInt(testProperty.propertyDetails.auction_end))
-        let currentAuction = false;
-        let afterAuction = false;
-
-        if ((currentTime >= givenStart) && (currentTime < givenEnd)){
-            currentAuction = true;
-        }
-        else if (currentTime >= givenEnd){
-            afterAuction = true;
-        }
-
         // let currentTime = new Date();
-        // let givenStart = new Date(parseInt(this.props.propertyDetails.auction_start));
-        // let givenEnd =  new Date(parseInt(this.props.propertyDetails.auction_end))
+        // let givenStart = new Date(parseInt(testProperty.propertyDetails.auction_start));
+        // let givenEnd =  new Date(parseInt(testProperty.propertyDetails.auction_end))
         // let currentAuction = false;
         // let afterAuction = false;
 
@@ -57,20 +44,34 @@ class PropertyBid extends Component{
         //     afterAuction = true;
         // }
 
+        let currentTime = new Date();
+        let givenStart = new Date(parseInt(this.props.propertyDetails.auction_start));
+        let givenEnd =  new Date(parseInt(this.props.propertyDetails.auction_end))
+        let currentAuction = false;
+        let afterAuction = false;
+
+        if ((currentTime >= givenStart) && (currentTime < givenEnd)){
+            currentAuction = true;
+        }
+        else if (currentTime >= givenEnd){
+            afterAuction = true;
+        }
+
             
         this.state = {
-            propertyDetails : (testProperty.propertyDetails != null) ? testProperty.propertyDetails : false,
-            pendingAuction: (currentAuction === afterAuction) ? true : false,
-            activeAuction: (currentAuction) ? true : false,
-            auctionComplete: (afterAuction) ? true : false,
-            timeTillStart : givenStart,
-            timeTillEnd : givenEnd,
-            // propertyDetails : (this.props.propertyDetails != null) ? this.props.propertyDetails : false,
+            // propertyDetails : (testProperty.propertyDetails != null) ? testProperty.propertyDetails : false,
             // pendingAuction: (currentAuction === afterAuction) ? true : false,
             // activeAuction: (currentAuction) ? true : false,
             // auctionComplete: (afterAuction) ? true : false,
             // timeTillStart : givenStart,
             // timeTillEnd : givenEnd,
+            propertyDetails : (this.props.propertyDetails != null) ? this.props.propertyDetails : false,
+            pendingAuction: (currentAuction === afterAuction) ? true : false,
+            activeAuction: (currentAuction) ? true : false,
+            auctionComplete: (afterAuction) ? true : false,
+            timeTillStart : givenStart,
+            timeTillEnd : givenEnd,
+            loading : true
         }
         console.log(givenStart);
     
@@ -121,6 +122,8 @@ class PropertyBid extends Component{
                                 auctionComplete={this.state.auctionComplete}
                                 timeStart = {this.state.timeTillStart}
                                 timeEnd = {this.state.timeTillEnd}
+                                propertyId = {this.props.propertyDetails.propertyId}
+                                token = {this.cookies.get('token')}
                             />
                         </Col>
                     </Row>

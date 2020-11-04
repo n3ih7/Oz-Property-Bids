@@ -51,7 +51,7 @@ class Upload extends Component{
     pageContent(){
         if (this.state.redirect === true){
             return(
-                <Redirect to="/"/>
+                <Redirect to="/sell"/>
             )
         }
         else if (this.state.loading === true){
@@ -103,9 +103,9 @@ class Upload extends Component{
                             </Form.Control>
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridZip" ref={this.postCode}>
+                            <Form.Group as={Col} controlId="formGridZip">
                             <Form.Label>PostCode</Form.Label>
-                            <Form.Control />
+                            <Form.Control ref={this.postCode} />
                             </Form.Group>
                         </Form.Row>
                         <br/>
@@ -130,14 +130,14 @@ class Upload extends Component{
                                 <Form.Control placeholder="" ref={this.beds} />
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridBaths" ref={this.baths}>
+                            <Form.Group as={Col} controlId="formGridBaths" >
                                 <Form.Label>Number of Bathrooms</Form.Label>
-                                <Form.Control type="" placeholder="" />
+                                <Form.Control type="" placeholder="" ref={this.baths}/>
                             </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridBaths" ref={this.carSpots}>
+                            <Form.Group as={Col} controlId="formGridBaths" >
                                 <Form.Label>Number of Car Spots</Form.Label>
-                                <Form.Control type="" placeholder="" />
+                                <Form.Control type="" placeholder="" ref={this.carSpots}/>
                             </Form.Group>
                         </Form.Row>
 
@@ -245,10 +245,11 @@ class Upload extends Component{
     }
     
     handleSubmit(e){
+        e.preventDefault();
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
         axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
   
-        axios.post('/property_post', {
+        axios.post('/property', {
             propertyType: this.propertyType.current.value,
             unitNumber: this.address2.current.value,
             streetAddress: this.address1.current.value,
@@ -269,7 +270,7 @@ class Upload extends Component{
         .then((response) => {
             console.log(response);
             if (response.status === 200){
-                // Show notification that this worked
+                this.setState({redirect :true});
             }
         }).catch((error) => {
             console.log(error);

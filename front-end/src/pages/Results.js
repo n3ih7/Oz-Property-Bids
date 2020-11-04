@@ -183,18 +183,18 @@ class Results extends Component{
                       <option value="3+">3+</option>
                   </Form.Control>
               </Col>
-              <Col md="auto">
-                  <Row>
-                  <h6 className="auction-label-one" style={{color:"white"}}>Auction Date Range:</h6>
-                  <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => {this.setState({date1 : date}); console.log(this.state.date1);}}/>
-                  </Row>
-              </Col>
-              <Col md="auto">
-                  <Row>
-                  <h6 className="auction-label-two" style={{color:"white"}}>-</h6>
-                  <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
-                  </Row>
-              </Col>
+              {/* <Col md="auto"> */}
+              <Row style={{paddingLeft:"5px"}}>
+                <h6 className="auction-label-one" style={{paddingLeft:"5px", color:"white"}}>Auction Date Range:</h6>
+                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
+                </Row>
+              {/* </Col> */}
+              {/* <Col md="auto"> */}
+                <Row style={{paddingLeft:"30px"}}>
+                <h6 className="auction-label-two" style={{paddingLeft:"5px", color:"white"}}>-</h6>
+                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
+                </Row>
+              {/* </Col> */}
               </Row>
           </Container>
       )
@@ -212,7 +212,7 @@ class Results extends Component{
               this.state.properties.map(property =>(
                 <>
                   <Row>
-                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect}/>
+                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect} token={this.cookies.get('token')} sellerCard={false}/>
                   </Row>
                   <br/>
                   </>

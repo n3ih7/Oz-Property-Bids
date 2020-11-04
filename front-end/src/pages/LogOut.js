@@ -46,8 +46,11 @@ class LogOut extends Component{
             this.cookies.remove('expireTime');
             window.location.reload(false);
         }).catch((error) =>{
-            console.log(error);
             this.setState({loading : false });
+            this.cookies.set('authenticated',false);
+            this.cookies.remove('userType');
+            this.cookies.remove('token');
+            this.cookies.remove('expireTime');
             window.location.reload(false);
         });
     }
