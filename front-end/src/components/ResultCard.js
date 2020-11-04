@@ -31,7 +31,9 @@ class ResultCard extends Component{
                 this.setState({
                     redirect : true,
                     propertyDetails : response.data
-                })
+                });
+                this.props.givePropertyDetails(this.state.propertyDetails);
+                this.props.checkRedirect(true);
               }
           }).catch((error) =>{
               console.log(error);
@@ -88,7 +90,7 @@ class ResultCard extends Component{
                                     Car Spots: {this.props.carSpots}
                                 </h5>
                                 <h5>
-                                    Auction Start: <h8>{(new Date(parseInt(this.props.auctionStart + '000')).toString()).slice(0,24)}</h8>
+                                    Auction Start: <h8>{(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}</h8>
                                 </h5>
                             </Card.Body>
                         </Col>

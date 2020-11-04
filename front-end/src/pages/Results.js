@@ -3,8 +3,7 @@ import {Container, Row, Col, Form, Button} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
 import AutoResults from '../components/AutoResults';
 import DatePicker from "react-datepicker";
-import house1 from "./test-data/house_1.jpg";
-import house2 from "./test-data/house_2.jpg";
+import {Redirect} from 'react-router-dom';
 const axios = require('axios');
 
 class Results extends Component{
@@ -18,7 +17,8 @@ class Results extends Component{
             date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
             searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
             timer : null,
-            redirect : false
+            redirect : false,
+            chosenProperty : null
         }
 
         this.cookies = this.props.cookies;
@@ -34,6 +34,11 @@ class Results extends Component{
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.checkRedirect = this.checkRedirect.bind(this);
+    }
+
+    checkRedirect(redirectNow){
+      this.setState({redirect: redirectNow});
     }
 
     handleChange(){
@@ -195,15 +200,19 @@ class Results extends Component{
       )
   }
 
-    
-
   pageContent(){
-      if(this.state.results){
+    if(this.state.redirect === true){
+      return(
+        <Redirect to="/house"/>
+      );
+    }
+
+    else if(this.state.results){
           return(
               this.state.properties.map(property =>(
                 <>
                   <Row>
-                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId}/>
+                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect}/>
                   </Row>
                   <br/>
                   </>
@@ -211,7 +220,7 @@ class Results extends Component{
           );
       }
 
-      if(this.props.results.resp){
+      else if(this.props.results.resp){
           if(this.props.results.resp.length > 0){
               this.setState({
                   properties: this.props.results.resp,

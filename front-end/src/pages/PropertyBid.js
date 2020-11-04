@@ -18,6 +18,7 @@ class PropertyBid extends Component{
     render(){
         return(
             <Container>
+                <div>{this.props.propertyDetails.propertyId}</div>
                 <AuctionManager/>
             </Container>
         );

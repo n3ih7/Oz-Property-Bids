@@ -45,6 +45,7 @@ class App extends Component{
   }
 
   retrieveHouseFromResults(propertyDetails){
+    console.log("we made it to the APP page");
     this.setState({
       property : propertyDetails
     });
@@ -63,8 +64,8 @@ class App extends Component{
             <Route exact path="/account"><Account cookies = {this.props.cookies}/></Route>
             <Route exact path="/sell"><SellerHome cookies = {this.props.cookies}/></Route>
             <Route exact path="/upload"><Upload cookies = {this.props.cookies}/></Route>
-            <Route exact path="/house"><PropertyBid cookies = {this.props.cookies}/></Route>
-            <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams} retrieveHouse ={this.retrieveHouseFromResults}/></Route>
+            <Route exact path="/house"><PropertyBid propertyDetails={this.state.property} cookies = {this.props.cookies}/></Route>
+            <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams} retrieveHouse ={this.retrieveHouseFromResults.bind(this)}/></Route>
           </Switch>
       </div>
       </Router>
