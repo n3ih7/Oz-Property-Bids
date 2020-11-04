@@ -1,0 +1,401 @@
+{
+	"info": {
+		"_postman_id": "38e53e4c-7727-4665-b82f-8b69859b41cf",
+		"name": "9900 04Nov",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"buyer\",\n    \"lastname\": \"Zou\",\n    \"email\": \"buyer\",\n    \"phone\": \"0439346081\",\n    \"password\": \"111\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"1\",\n    \"bsb\": \"062303\",\n    \"acc_number\": \"1234567\",\n    \"seller_flag\": \"0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/signup",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"seller\",\n    \"password\": \"111\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/login",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "123",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 250374cad7e95c6030abd0d2de796bd8c694981bd4e5d1a585864ddced4c6784",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/logout",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "profile",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 9d73ddbd1a168833c0bbcc42baceb44fa1fb7893ce857539abdffc2c928eb067",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/profile",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "profile update",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 406bdd57b72216cb858ac516b1772ed6c27f34497b10e78ccfb1bd9fd8b028d0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\": \"Weicheng\",\n    \"lastname\": \"Zou\",\n    \"email\": \"test@nono.fi\",\n    \"phone\": \"0439346081\",\n    \"old_password\": \"111\",\n    \"address_line_1\": \"3 Gearin Alley\",\n    \"address_line_2\": \"\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"bidder_flag\": \"0\",\n    \"new_bsb\": \"062303\",\n    \"new_acc_number\": \"12345678\",\n    \"seller_flag\": \"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/profile",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "property post",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 21a0cb16593959781fd4ec58c3c616e633d337ccb7f8dcb51c7017a8b62c1105",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"propertyType\": \"Unit\",\n    \"unitNumber\": \"101\",\n    \"streetAddress\": \"581-587 Gardeners Road\",\n    \"city\": \"Mascot\",\n    \"state\": \"NSW\",\n    \"postcode\": \"2020\",\n    \"beds\": \"3\",\n    \"baths\": \"2\",\n    \"parkingSpace\": \"2\",\n    \"landSize\": \"158\",\n    \"reservePrice\": \"1100000\",\n    \"auction_start\": \"1605340800000\",\n    \"auction_duration\": \"172800\",\n    \"intro_title\": \"Large-sized courtyard apartment with designer style\",\n    \"intro_text\": \"It's rare to find an urban residence that offers such a unique sense of space, privacy and quality. Flowing over a single light filled level, this spacious home has been architecturally to provide a peaceful sanctuary. The property is fresh, bright and full of style and quietly set in the contemporary development on the doorstep of Mascot's attractions with trains, shops, cafes and dining options all just a short stroll away.\",\n    \"images\": [\"data:image/png;base64, 111\", \"data:image/png;base64, 222\", \"data:image/png;base64, 333\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/property",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"property"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search property",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c78e44557f460c7f3fd14d69f74fd1ed20f34f338136a44c0cb51c07334b1d61",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/search?keyword=&beds=3&baths=2&carspots=2&auction_start=1577836800000",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": ""
+						},
+						{
+							"key": "beds",
+							"value": "3"
+						},
+						{
+							"key": "baths",
+							"value": "2"
+						},
+						{
+							"key": "carspots",
+							"value": "2"
+						},
+						{
+							"key": "auction_start",
+							"value": "1577836800000"
+						},
+						{
+							"key": "auction_end",
+							"value": "2021-01-10",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "propertyInfo by id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token 21a0cb16593959781fd4ec58c3c616e633d337ccb7f8dcb51c7017a8b62c1105",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/property?id=79358",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"property"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "79358"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "payment_info_check",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token c78e44557f460c7f3fd14d69f74fd1ed20f34f338136a44c0cb51c07334b1d61"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/payment_info_check",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"payment_info_check"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "10091",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "bid",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token c78e44557f460c7f3fd14d69f74fd1ed20f34f338136a44c0cb51c07334b1d61",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"10091\",\n    \"offerPrice\": \"12000\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://api.nono.fi:5000/bid",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"bid"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "123",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

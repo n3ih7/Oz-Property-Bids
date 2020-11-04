@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db, create_app
-from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO
+from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO, PROPERTY_BID_RELATION, BID_ACTIVITY
 from .blob import *
 
 app = create_app()
@@ -380,9 +380,36 @@ def property_search():
                     "baths": i.baths,
                     "parkingSpace": i.parkingSpace,
                     "landSize": i.landSize,
-                    "auction_start": i.auction_start,
-                    "images": images_list
+                    "auction_start": str(i.auction_start) + '000',
+                    "images": images_list,
+                    "intro_title": i.intro_title
                 }
+
+                if 'Authorization' in request.headers:
+                    try:
+                        tk = str(request.headers['Authorization']).split(' ')[1]
+                        user = USER_INFO.query.filter_by(curr_token=tk).first()
+                        if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                            uid = user.uid
+                            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+                            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
+                                a = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                                if a:
+                                    bidActivityId = a.bidActivityId
+                                else:
+                                    return jsonify(error="No such auction"), 400
+                                check = BID_ACTIVITY.query.filter_by(bidActivityId=bidActivityId, uid=uid).first()
+                                if check:
+                                    result_dict['bidderRegisterRequired'] = False
+                                else:
+                                    result_dict['bidderRegisterRequired'] = True
+                            #
+                            # else:
+                            #     return jsonify(error="User type not correct, nothing to be changed"), 401
+                        # else:
+                        #     return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+                    except IndexError:
+                        nothing = True
 
                 result_list.append(result_dict)
 
@@ -402,6 +429,14 @@ def property_get_n_post():
             check_temp_id = PROPERTY_INFO.query.filter_by(propertyId=n).first()
             if check_temp_id:
                 get_new_property_id()
+            else:
+                return n
+
+        def get_new_bid_activity_id():
+            n = randint(10000, 99999)
+            check_temp_id = PROPERTY_BID_RELATION.query.filter_by(bidActivityId=n).first()
+            if check_temp_id:
+                get_new_bid_activity_id()
             else:
                 return n
 
@@ -452,7 +487,7 @@ def property_get_n_post():
                                     else:
                                         return jsonify(error="Date range length not looks quite right"), 400
                                 elif k == 'auction_duration':
-                                    np.auction_end = str(int(np.auction_start) + int(v[0:-3]))
+                                    np.auction_end = str(int(np.auction_start) + int(v))
                                 elif k == 'intro_title':
                                     np.intro_title = str(v)
                                 elif k == 'intro_text':
@@ -472,8 +507,16 @@ def property_get_n_post():
                                         np.images = '0'
                                 else:
                                     return jsonify(error="Unexpected attributes received, nothing changed"), 400
-
                             db.session.merge(np)
+
+                            pbr = PROPERTY_BID_RELATION(bidActivityId=get_new_bid_activity_id(),
+                                                        propertyId=np.propertyId,
+                                                        reserve_price=np.reservePrice,
+                                                        start_time=np.auction_start,
+                                                        expected_finish_time=np.auction_end
+                                                        )
+                            db.session.merge(pbr)
+
                             db.session.commit()
 
                             return jsonify(msg="Property post successful", propertyId=str(np.propertyId)), 200
@@ -516,7 +559,7 @@ def property_get_n_post():
 
                 result_dict = {
                     "propertyId": i.propertyId,
-                    "sellerName": seller.firstname + ' '+ seller.lastname,
+                    "sellerName": seller.firstname + ' ' + seller.lastname,
                     "sellerContactNumber": seller.phone,
                     "propertyType": i.propertyType,
                     "address": address,
@@ -526,16 +569,70 @@ def property_get_n_post():
                     "landSize": i.landSize,
                     "images": images_list,
                     "propertyPostDate": i.propertyPostDate,
-                    "auction_start": i.auction_start,
-                    "auction_end": i.auction_end,
+                    "auction_start": i.auction_start + '000',
+                    "auction_end": i.auction_end + '000',
                     "intro_title": i.intro_title,
                     "intro_text": i.intro_text
                 }
 
+                if 'Authorization' in request.headers:
+                    try:
+                        tk = str(request.headers['Authorization']).split(' ')[1]
+                        user = USER_INFO.query.filter_by(curr_token=tk).first()
+                        if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                            uid = user.uid
+                            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+                            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
+                                a = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                                if a:
+                                    bidActivityId = a.bidActivityId
+                                else:
+                                    return jsonify(error="No such auction"), 400
+                                check = BID_ACTIVITY.query.filter_by(bidActivityId=bidActivityId, uid=uid).first()
+                                if check:
+                                    result_dict['bidderRegisterRequired'] = False
+                                else:
+                                    result_dict['bidderRegisterRequired'] = True
+                            #
+                            # else:
+                            #     return jsonify(error="User type not correct, nothing to be changed"), 401
+                        # else:
+                        #     return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+                    except IndexError:
+                        # return jsonify(error="Token format not valid, nothing to be changed"), 401
+                        nothing = True
+
                 return jsonify(result_dict), 200
+        else:
+            return jsonify(error="Expected attribute 'id' not received, GET property detail failed"), 400
 
 
-@app.route('/bid_register', methods=['POST'])
+@app.route('/payment_info_check', methods=['GET'])
+def payment_info_check():
+    try:
+        tk = str(request.headers['Authorization']).split(' ')[1]
+        user = USER_INFO.query.filter_by(curr_token=tk).first()
+
+        if user and user.login_status == '1' and time.time() < float(user.expire_time):
+            uid = user.uid
+            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
+                if user_ext.bsb != '' and len(user_ext.bsb) == 6 and user_ext.acc_number != '':
+                    return jsonify(bsb=user_ext.bsb, acc_number=user_ext.acc_number), 200
+                else:
+                    return jsonify(bsb=user_ext.bsb, acc_number=user_ext.acc_number, error='needs to update payment '
+                                                                                           'info'), 402
+            else:
+                return jsonify(error="User type not correct, nothing to be changed"), 401
+        else:
+            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+    except IndexError:
+        return jsonify(error="Token format not valid, nothing to be changed"), 401
+    except KeyError:
+        return jsonify(error="Token not received, nothing to be changed"), 401
+
+
+@app.route('/bid', methods=['POST'])
 def property_post():
     try:
         tk = str(request.headers['Authorization']).split(' ')[1]
@@ -548,7 +645,22 @@ def property_post():
                 try:
                     jsonContent = request.get_json()
                     try:
-                        result = 0
+                        propertyId = jsonContent['id']
+                        a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
+                        if not a:
+                            return jsonify(error="Not such auction exists"), 400
+                        offerPrice = jsonContent['offerPrice']
+
+                        nb = BID_ACTIVITY(uid=uid,
+                                          bidActivityId=a.bidActivityId,
+                                          offerPrice=offerPrice,
+                                          bidPlaceTime=str(int(time.time()))
+                                          )
+                        db.session.add(nb)
+                        db.session.commit()
+
+                        return jsonify(msg="Place bid successful", ref=nb.lineId, bid_time=str(nb.bidPlaceTime) + '000'), 200
+
                     except KeyError:
                         return jsonify(error="Expected attributes not received, post failed"), 400
                 except ValueError:

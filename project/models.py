@@ -74,3 +74,13 @@ class MOVEMENT_TRACKING(db.Model):
     minPrice = db.Column('minprice', db.INTEGER)
     maxPrice = db.Column('maxprice', db.INTEGER)
     minLandSize = db.Column('minlandsize', db.INTEGER)
+
+
+class BID_ACTIVITY(db.Model):
+    __tablename__ = 'BID_ACTIVITY'
+    lineId = db.Column('lineid', db.INTEGER, primary_key=True)
+    uid = db.Column('uid', db.INTEGER)
+    bidActivityId = db.Column('bid_activity_id', db.INTEGER)
+    offerPrice = db.Column('offer_price', db.Text)
+    bidPlaceTime = db.Column('bid_place_time', db.Text)
+
