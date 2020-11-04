@@ -45,7 +45,7 @@ class App extends Component{
   }
 
   retrieveHouseFromResults(propertyDetails){
-    console.log("we made it to the APP page");
+    console.log(propertyDetails);
     this.setState({
       property : propertyDetails
     });

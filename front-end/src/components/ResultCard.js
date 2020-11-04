@@ -20,6 +20,10 @@ class ResultCard extends Component{
         this.redirectToProperty = this.redirectToProperty.bind(this);
     }
 
+    registerForAuction(){
+        
+    }
+
     redirectToProperty(){
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
       
@@ -99,7 +103,7 @@ class ResultCard extends Component{
                                 <img className ="favorites" alt="Add to Fav" src={this.state.starImage} onClick ={() => {this.toggleFavorites()}} onMouseOver ={() =>{this.setState({starImage:halfStar})}} onMouseLeave={() =>{this.hoverFavorites()} } />
                             </Row>
                             <Row className="justify-content-md-center" style={{marginTop:"5%"}}>
-                                <Button style={{background : "#05445E", borderColor: "#05445E"}}>Register to Bid!</Button>
+                                <Button style={{background : "#05445E", borderColor: "#05445E"}}>Register!</Button>
                             </Row>
                         </Col>
                     </Row>
