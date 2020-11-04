@@ -105,6 +105,37 @@ class Home extends Component{
     }, 1000);
   }
 
+  handleSubmit(){
+    axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+    axios.get('/search', {params:{
+      keyword: this.location.current.value.slice(this.location.current.value.length - 4),
+      beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
+      baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
+      carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
+      auction_start: `${(this.state.date1.getTime())}`,
+      auction_end: `${(this.state.date2.getTime())}`
+      
+    }})
+    .then((response) => {
+        if (response.status === 200){
+
+          this.props.dataCallback(response.data);
+          this.props.paramsCallback({
+            initialLocation: this.location.current.value,
+            initialBeds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
+            initialBaths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
+            initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
+            initialAuctionStart: this.state.date1,
+            initialAuctionEnd: this.state.date2
+          });
+          this.setState({results: true});
+        }
+    }).catch((error) =>{
+        console.log(error);
+    });
+  }
+
   pageContent(){
     if(this.state.results){
       return(
@@ -165,18 +196,18 @@ class Home extends Component{
                     <option value="3+">3+</option>
                   </Form.Control>
               </Col>
-              <Col md="auto">
-                <Row>
-                <h6 className="auction-label-one">Auction Date Range:</h6>
+              {/* <Col md="auto"> */}
+                <Row style={{paddingLeft:"5px"}}>
+                <h6 className="auction-label-one" style={{paddingLeft:"5px"}}>Auction Date Range:</h6>
                 <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
                 </Row>
-              </Col>
-              <Col md="auto">
-                <Row>
-                <h6 className="auction-label-two">-</h6>
+              {/* </Col> */}
+              {/* <Col md="auto"> */}
+                <Row style={{paddingLeft:"30px"}}>
+                <h6 className="auction-label-two" style={{paddingLeft:"5px"}}>-</h6>
                 <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
                 </Row>
-              </Col>
+              {/* </Col> */}
             </Row>
           </Container>
         </Jumbotron>
@@ -184,36 +215,7 @@ class Home extends Component{
     }
   }
 
-  handleSubmit(){
-    axios.defaults.baseURL = 'http://api.nono.fi:5000';
-
-    axios.get('/buy', {params:{
-      keyword: this.location.current.value.slice(this.location.current.value.length - 4),
-      beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
-      baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
-      carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-      auction_start: `${(this.state.date1.getTime())}`,
-      auction_end: `${(this.state.date2.getTime())}`
-      
-    }})
-    .then((response) => {
-        if (response.status === 200){
-
-          this.props.dataCallback(response.data);
-          this.props.paramsCallback({
-            initialLocation: this.location.current.value,
-            initialBeds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
-            initialBaths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
-            initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-            initialAuctionStart: this.state.date1,
-            initialAuctionEnd: this.state.date2
-          });
-          this.setState({results: true});
-        }
-    }).catch((error) =>{
-        console.log(error);
-    });
-  }
+  
 
   render(){
     return(

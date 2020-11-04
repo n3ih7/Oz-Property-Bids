@@ -23,11 +23,13 @@ class App extends Component{
 
     this.state ={
       searchResults : [],
-      searchParams: null
+      searchParams: null,
+      property: null
     }
 
     this.retrieveSearchResults = this.retrieveSearchResults.bind(this);
     this.retrieveSearchParams = this.retrieveSearchParams.bind(this);
+    this.retrieveHouseFromResults = this.retrieveHouseFromResults.bind(this);
   }
 
   retrieveSearchResults = (results) => {
@@ -39,6 +41,12 @@ class App extends Component{
   retrieveSearchParams = (params) => {
     this.setState({
       searchParams : params
+    });
+  }
+
+  retrieveHouseFromResults(propertyDetails){
+    this.setState({
+      property : propertyDetails
     });
   }
 
@@ -56,7 +64,7 @@ class App extends Component{
             <Route exact path="/sell"><SellerHome cookies = {this.props.cookies}/></Route>
             <Route exact path="/upload"><Upload cookies = {this.props.cookies}/></Route>
             <Route exact path="/house"><PropertyBid cookies = {this.props.cookies}/></Route>
-            <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams}/></Route>
+            <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams} retrieveHouse ={this.retrieveHouseFromResults}/></Route>
           </Switch>
       </div>
       </Router>

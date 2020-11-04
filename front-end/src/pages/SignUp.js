@@ -208,10 +208,7 @@ class SignUp extends Component{
 
         this.setState({
             loading : true,
-        });
-
-        console.log(this.firstName.current.value);
-        
+        });        
 
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
 
@@ -232,12 +229,11 @@ class SignUp extends Component{
             seller_flag: (this.state.seller ? "1" : "0")
         })
         .then((response) => {
-            console.log(response);
-            console.log(axios);
-            // console.log(response.headers['session']);
             if (response.status === 200){
                 this.cookies.set('authenticated',true,{path:'/'});
                 this.cookies.set('token',response.data.token,{path:'/'});
+                this.cookies.set('userType',response.data.user_type,{path:'/'});
+                this.cookies.set('expireTime',response.data.expire_time,{path:'/'});
                 this.setState({redirect : true});
             }
         }).catch((error) => {
