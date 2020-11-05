@@ -767,14 +767,34 @@ def bid():
                             cur_time = int(time.time())
                             b = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId, uid=uid).first()
 
-                            if b and cur_time < float(a.start_time):
+                            if not b and cur_time < float(a.start_time):
+                                offerPrice = jsonContent['offerPrice']
+                                i_b = BID_ACTIVITY(uid=uid,
+                                                   bidActivityId=a.bidActivityId,
+                                                   offerPrice=offerPrice,
+                                                   bidPlaceTime=str(cur_time)
+                                                   )
+                                db.session.add(i_b)
+                                db.session.commit()
+                                return jsonify(msg="Your price has been accepted, this is your initial bid",
+                                               ref=i_b.lineId,
+                                               bid_time=str(i_b.bidPlaceTime) + '000',
+                                               expected_finish_time=a.expected_finish_time + '000',
+                                               yourPrice=offerPrice,
+                                               start_time=str(a.start_time)), 200
+
+                            elif b and cur_time < float(a.start_time):
                                 return jsonify(
                                     error="You cannot change initial bid and the auction has not started yet"), 409
 
-                            if cur_time > float(a.expected_finish_time):
-                                return jsonify(error="The auction has ended", end_time=a.expected_finish_time + '000',
-                                               cur_time=str(cur_time) + '000'), 409
-                            else:
+                            elif not b and float(a.start_time) <= cur_time <= float(
+                                    a.expected_finish_time):
+                                return jsonify(
+                                    error="You cannot participate this auction because you did not register as RAB "
+                                          "before auction starts"), 409
+
+                            elif b and float(a.start_time) <= cur_time <= float(
+                                    a.expected_finish_time):
                                 check = int(a.expected_finish_time) - int(cur_time)
                                 if check <= 5 * 60:
                                     a.expected_finish_time = str(int(a.expected_finish_time) + 2 * 60)
@@ -792,7 +812,8 @@ def bid():
                                                        bid_time=str(cur_time) + '000',
                                                        expected_finish_time=a.expected_finish_time + '000',
                                                        yourPrice=offerPrice,
-                                                       curr_higest_price=str(search_largest.offerPrice)), 409
+                                                       curr_higest_price=str(search_largest.offerPrice),
+                                                       start_time=str(a.start_time)), 409
 
                                 nb = BID_ACTIVITY(uid=uid,
                                                   bidActivityId=a.bidActivityId,
@@ -805,7 +826,16 @@ def bid():
                                 return jsonify(msg="Your price has been accepted", ref=nb.lineId,
                                                bid_time=str(nb.bidPlaceTime) + '000',
                                                expected_finish_time=a.expected_finish_time + '000',
-                                               yourPrice=offerPrice), 200
+                                               yourPrice=offerPrice,
+                                               start_time=str(a.start_time)), 200
+
+                            elif cur_time > float(a.expected_finish_time):
+                                return jsonify(error="The auction has ended",
+                                               end_time=a.expected_finish_time + '000',
+                                               cur_time=str(cur_time) + '000'), 409
+                            else:
+                                return jsonify(
+                                    error="WeYou bid request somehow did not accept by system"), 409
 
                         except KeyError:
                             return jsonify(error="Expected attributes not received, post failed"), 400
