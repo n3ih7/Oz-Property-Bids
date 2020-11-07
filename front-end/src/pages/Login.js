@@ -88,7 +88,7 @@ class Login extends Component{
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button variant="primary" onClick={()=>{this.setState({failLogin:false})}}>Close</Button>
+                        <Button variant="secondary" onClick={()=>{this.setState({failLogin:false})}}>Close</Button>
                     </Modal.Footer>
                 </Modal.Dialog>
             );

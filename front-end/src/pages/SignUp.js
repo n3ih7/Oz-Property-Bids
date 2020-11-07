@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Container, Col, Row, Form, Button, Spinner} from 'react-bootstrap';
+import {Card, Container, Col, Row, Form, Button, Spinner, Modal} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
 const axios = require('axios');
 
@@ -12,7 +12,13 @@ class SignUp extends Component{
             loading: false,
             redirect: false,
             buyer : false,
-            seller : false
+            seller : false,
+            formError: false,
+            passwordMatch : true,
+            userTypeError: false,
+            emailError : false,
+            emptyPassword: false,
+            emptyMandatoryField: false
         }
         this.firstName = React.createRef();
         this.lastName = React.createRef();
@@ -79,6 +85,45 @@ class SignUp extends Component{
             return(
                 <Redirect to="/"/>
             )
+        }
+        else if(this.state.formError){
+            let errorMessage= ""
+            
+            if(!this.state.passwordMatch){
+                errorMessage = "Your entered passwords do not match."
+            }
+            else if(this.state.emptyPassword){
+                errorMessage = "You cannot have an empty password"
+            }
+
+            else if(this.state.userTypeError){
+                errorMessage = "You must specify if you are buying or selling a house."
+            }
+
+            else if(this.state.emailError){
+                errorMessage = "Your email format is incorrect, please verify your email address"
+            }
+
+            else if(this.state.emptyMandatoryField){
+                errorMessage = "A mandatory field is empty, please check your form"
+            }
+
+
+            return(
+                <Modal.Dialog>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Sign Up Failed</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <p>{errorMessage}</p>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={()=>{this.setState({formError:false ,passwordMatch:true, userTypeError : false, emailError:false, emptyPassword:true})}}>Close</Button>
+                    </Modal.Footer>
+                </Modal.Dialog>
+            );
         }
         else if (this.state.loading === true){
             
@@ -205,6 +250,31 @@ class SignUp extends Component{
     }
 
     handleSubmit(){
+
+        if((this.password1.current.value) != (this.password2.current.value)){
+            this.setState({passwordMatch:false, formError: true});
+            return;
+        }
+
+        if((this.password1.current.value).length === 0){
+            this.setState({emptyPassword:true, formError: true});
+            return;
+        }
+
+        if((this.state.buyer) === (this.state.seller)){
+            this.setState({userTypeError:true, formError: true});
+            return;
+        }
+
+        if(!((this.email.current.value).includes('@') && (this.email.current.value).includes('.com'))){
+            this.setState({emailError:true, formError: true});
+            return;
+        }
+
+        if(((this.firstName.current.value).length === 0) || ((this.lastName.current.value).length === 0) || ((this.address1.current.value).length === 0) || ((this.city.current.value).length === 0) || ((this.postCode.current.value).length === 0) || ((this.phone.current.value).length === 0) || ((this.bsb.current.value).length === 0) ((this.accountNumber.current.value).length === 0)){
+            this.setState({emptyMandatoryField:true, formError: true});
+            return;
+        }
 
         this.setState({
             loading : true,
