@@ -20,7 +20,7 @@ class ResultCard extends Component{
         this.hoverFavorites = this.hoverFavorites.bind(this);
         this.redirectToProperty = this.redirectToProperty.bind(this);
         this.registerForAuction = this.registerForAuction.bind(this);
-        this.sellerCardFeatures = this.sellerCardFeatures.bind(this);
+        this.buyerCardFeatures = this.buyerCardFeatures.bind(this);
     }
 
     registerForAuction(){
@@ -84,8 +84,8 @@ class ResultCard extends Component{
         }
     }
 
-    sellerCardFeatures(){
-        if (!this.props.sellerCard){
+    buyerCardFeatures(){
+        if (this.props.userType === 'buyer'){
             return(
             <Col>
                 <Row className="justify-content-md-center" style={{marginTop:"15%"}}>
@@ -111,26 +111,18 @@ class ResultCard extends Component{
                             <Card.Title>
                                 {this.props.streetAddress}
                             </Card.Title>
-                            <Card.Subtitle className="mb-2 text-muted">{this.props.city}</Card.Subtitle>
+                            <Card.Subtitle className="mb-2 text-muted">{this.props.propertyType}</Card.Subtitle>
                             <Card.Body>
-                                <h5>
-                                    {this.props.propertyType}
-                                </h5>
-                                <h5>
                                     Beds: {this.props.beds}
-                                </h5>
-                                <h5>
+                                    <br/>
                                     Baths: {this.props.baths}
-                                </h5>
-                                <h5>
+                                    <br/>
                                     Car Spots: {this.props.carSpots}
-                                </h5>
-                                <h5>
-                                    Auction Start: <h8>{(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}</h8>
-                                </h5>
+                                    <br/>
+                                    Auction Start: {(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}
                             </Card.Body>
                         </Col>
-                        {this.sellerCardFeatures()}
+                        {this.buyerCardFeatures()}
                     </Row>
                 </Card>
             </Container>

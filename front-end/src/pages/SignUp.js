@@ -271,7 +271,7 @@ class SignUp extends Component{
             return;
         }
 
-        if(((this.firstName.current.value).length === 0) || ((this.lastName.current.value).length === 0) || ((this.address1.current.value).length === 0) || ((this.city.current.value).length === 0) || ((this.postCode.current.value).length === 0) || ((this.phone.current.value).length === 0) || ((this.bsb.current.value).length === 0) ((this.accountNumber.current.value).length === 0)){
+        if(((this.firstName.current.value).length === 0) || ((this.lastName.current.value).length === 0) || ((this.address1.current.value).length === 0) || ((this.city.current.value).length === 0) || ((this.postCode.current.value).length === 0) || ((this.phone.current.value).length === 0) || ((this.bsb.current.value).length === 0) || ((this.accountNumber.current.value).length === 0)){
             this.setState({emptyMandatoryField:true, formError: true});
             return;
         }

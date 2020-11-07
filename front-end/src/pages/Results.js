@@ -16,9 +16,9 @@ class Results extends Component{
             date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
             date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
             searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
-            timer : null,
             redirect : false,
-            chosenProperty : null
+            chosenProperty : null,
+            dateRange : true      
         }
 
         this.cookies = this.props.cookies;
@@ -35,6 +35,26 @@ class Results extends Component{
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.checkRedirect = this.checkRedirect.bind(this);
+        this.handleDateToggle = this.handleDateToggle.bind(this);
+
+    }
+
+    handleDateToggle(){
+      if(this.state.dateRange){
+        this.setState({
+          dateRange : false,
+          date1 : null,
+          date2 : null
+        });
+      }
+  
+      else if(!this.state.dateRange){
+        this.setState({
+          dateRange : true,
+          date1 : new Date(),
+          date2 :  new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
+        });
+      }
     }
 
     checkRedirect(redirectNow){
@@ -56,8 +76,8 @@ class Results extends Component{
         beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
         baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
         carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-        auction_start: `${(this.state.date1.getTime())}`,
-        auction_end: `${(this.state.date2.getTime())}`
+        auction_start: (this.state.dateRange === true) ? `${(this.state.date1.getTime())}` : "",
+        auction_end: (this.state.dateRange === true) ? `${(this.state.date2.getTime())}` : ""
       }})
       .then((response) => {
           if (response.status === 200){
@@ -183,18 +203,22 @@ class Results extends Component{
                       <option value="3+">3+</option>
                   </Form.Control>
               </Col>
-              {/* <Col md="auto"> */}
+
               <Row style={{paddingLeft:"5px"}}>
                 <h6 className="auction-label-one" style={{paddingLeft:"5px", color:"white"}}>Auction Date Range:</h6>
                 <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
                 </Row>
-              {/* </Col> */}
-              {/* <Col md="auto"> */}
+              
                 <Row style={{paddingLeft:"30px"}}>
-                <h6 className="auction-label-two" style={{paddingLeft:"5px", color:"white"}}>-</h6>
-                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
+                  <h6 className="auction-label-two" style={{paddingLeft:"5px", color:"white"}}>-</h6>
+                  <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
                 </Row>
-              {/* </Col> */}
+
+                <Col md="auto" style={{paddingTop:"9px"}}>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="Disable Date Range" onClick={() => {this.handleDateToggle()}}></Form.Check>
+                    </Form.Group>
+                </Col>
               </Row>
           </Container>
       )
@@ -212,7 +236,7 @@ class Results extends Component{
               this.state.properties.map(property =>(
                 <>
                   <Row>
-                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect} token={this.cookies.get('token')} sellerCard={false}/>
+                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect} token={this.cookies.get('token')} userType={this.cookies.get('userType')}/>
                   </Row>
                   <br/>
                   </>

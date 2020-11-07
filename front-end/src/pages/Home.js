@@ -16,7 +16,7 @@ class Home extends Component{
       date2: new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
       results : false,
       autofillResults : null,
-      timer : null
+      dateRange : true      
     }
 
     this.cookies = this.props.cookies;
@@ -30,6 +30,25 @@ class Home extends Component{
     this.autoFill = this.autoFill.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleDateToggle = this.handleDateToggle.bind(this);
+  }
+
+  handleDateToggle(){
+    if(this.state.dateRange){
+      this.setState({
+        dateRange : false,
+        date1 : null,
+        date2 : null
+      });
+    }
+
+    else if(!this.state.dateRange){
+      this.setState({
+        dateRange : true,
+        date1 : new Date(),
+        date2 :  new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
+      });
+    }
   }
 
   handleKeyPress(event){
@@ -113,8 +132,8 @@ class Home extends Component{
       beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
       baths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
       carspots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-      auction_start: `${(this.state.date1.getTime())}`,
-      auction_end: `${(this.state.date2.getTime())}`
+      auction_start: (this.state.dateRange === true) ? `${(this.state.date1.getTime())}` : "",
+      auction_end: (this.state.dateRange === true) ? `${(this.state.date2.getTime())}` : ""
       
     }})
     .then((response) => {
@@ -126,8 +145,8 @@ class Home extends Component{
             initialBeds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
             initialBaths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
             initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
-            initialAuctionStart: this.state.date1,
-            initialAuctionEnd: this.state.date2
+            initialAuctionStart:  (this.state.dateRange === true) ? this.state.date1 : null,
+            initialAuctionEnd: (this.state.dateRange === true) ? this.state.date2 : null,
           });
           this.setState({results: true});
         }
@@ -157,9 +176,9 @@ class Home extends Component{
                   <Form.Group>
                     <Form.Row>
                       <Col>
-                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.handleChange} onKeyDown = {this.handleKeyPress} />
+                        <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {() => {this.handleChange()}} onKeyDown = {this.handleKeyPress} />
                       </Col>
-                      <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", border: "#05445E"}} onClick = {this.handleSubmit}>
+                      <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", border: "#05445E"}} onClick = {() => {this.handleSubmit()}}>
                         Search
                       </Button>
                     </Form.Row>
@@ -196,18 +215,22 @@ class Home extends Component{
                     <option value="3+">3+</option>
                   </Form.Control>
               </Col>
-              {/* <Col md="auto"> */}
-                <Row style={{paddingLeft:"5px"}}>
+
+              <Row style={{paddingLeft:"5px"}}>
                 <h6 className="auction-label-one" style={{paddingLeft:"5px"}}>Auction Date Range:</h6>
                 <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
-                </Row>
-              {/* </Col> */}
-              {/* <Col md="auto"> */}
-                <Row style={{paddingLeft:"30px"}}>
+              </Row>
+            
+              <Row style={{paddingLeft:"30px"}}>
                 <h6 className="auction-label-two" style={{paddingLeft:"5px"}}>-</h6>
                 <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
-                </Row>
-              {/* </Col> */}
+              </Row>
+
+              <Col md="auto" style={{paddingTop:"9px"}}>
+                    <Form.Group as ={Col}>
+                    <Form.Check type="checkbox" id="default-radio" label="Disable Date Range" onClick={() => {this.handleDateToggle()}}></Form.Check>
+                    </Form.Group>
+              </Col>
             </Row>
           </Container>
         </Jumbotron>
