@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
+import {Card, Container, Row, Col, Form, Button, Spinner, Modal} from 'react-bootstrap';
 import {Redirect} from 'react-router-dom';
 const axios = require('axios');
 
@@ -13,7 +13,9 @@ class Login extends Component{
             loading: false,
             authenticated: null,
             redirect: false,
-            attemptLogin: false
+            attemptLogin: false,
+            failLogin : false
+
         }
 
         this.cookies = this.props.cookies;
@@ -27,11 +29,69 @@ class Login extends Component{
         this.setUserCookies = this.setUserCookies.bind(this);
     };
 
+    handleSubmit(){
+
+        this.setState({
+            loading : true,
+            email : this.email.current.value,
+            password : this.password.current.value,
+            attemptLogin: true,
+        });
+    };
+
+    setUserCookies(data){
+        this.cookies.set('authenticated',true,{path:'/'});
+        this.cookies.set('token',data.token,{path:'/'});
+        this.cookies.set('userType',data.user_type,{path:'/'});
+        this.cookies.set('expireTime',data.expire_time,{path:'/'});
+    }
+
+    attemptLogin(setUserCookies){
+        if (this.state.attemptLogin){
+            axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+            axios.post('/login', {email : this.state.email, password: this.state.password})
+            .then((response) => {
+                if (response.status === 200){
+                    setUserCookies(response.data)
+                    this.setState({redirect : true});
+                }
+                else{
+                    this.setState({failLogin:true, loading:false, attemptLogin:false});
+                }
+            }).catch((error) =>{
+                this.setState({failLogin:true, loading:false, attemptLogin:false});
+            });
+        }
+    }
+
     pageContent(){
         if(this.state.redirect === true){
             return(
                 <Redirect to="/"/>
-            )
+            );
+        }
+
+        else if(this.state.attemptLogin === true && this.state.loading == true){
+            this.attemptLogin(this.setUserCookies);
+        }
+
+        else if(this.state.failLogin ===true){
+            return(
+                <Modal.Dialog>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Login Failed</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <p>Please verify your credentials and try again.</p>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={()=>{this.setState({failLogin:false})}}>Close</Button>
+                    </Modal.Footer>
+                </Modal.Dialog>
+            );
         }
 
         else if (this.state.loading === true){
@@ -82,46 +142,12 @@ class Login extends Component{
         }
     };
     
-    handleSubmit(){
-
-        this.setState({
-            loading : true,
-            email : this.email.current.value,
-            password : this.password.current.value,
-            attemptLogin: true
-        });
-    };
-
-    setUserCookies(data){
-        this.cookies.set('authenticated',true,{path:'/'});
-        this.cookies.set('token',data.token,{path:'/'});
-        this.cookies.set('userType',data.user_type,{path:'/'});
-        this.cookies.set('expireTime',data.expire_time,{path:'/'});
-    }
-
-    attemptLogin(setUserCookies){
-        if (this.state.attemptLogin){
-            axios.defaults.baseURL = 'http://api.nono.fi:5000';
-
-            axios.post('/login', {email : this.state.email, password: this.state.password})
-            .then((response) => {
-                if (response.status === 200){
-                    setUserCookies(response.data)
-                    this.setState({redirect : true});
-                }
-            }).catch((error) =>{
-                console.log(error);
-            });
-        }
-    }
-    
     render(){
         return(
             
             <Container style ={{marginTop: "2%"}}>
                 <Row className="justify-content-md-center">                    
                         {this.pageContent()}
-                        {this.attemptLogin(this.setUserCookies)}
                 </Row>
             </Container>
         );
