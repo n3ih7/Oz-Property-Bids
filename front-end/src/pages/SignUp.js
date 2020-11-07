@@ -14,11 +14,7 @@ class SignUp extends Component{
             buyer : false,
             seller : false,
             formError: false,
-            passwordMatch : true,
-            userTypeError: false,
-            emailError : false,
-            emptyPassword: false,
-            emptyMandatoryField: false
+            errorMessage : ""
         }
         this.firstName = React.createRef();
         this.lastName = React.createRef();
@@ -86,45 +82,7 @@ class SignUp extends Component{
                 <Redirect to="/"/>
             )
         }
-        else if(this.state.formError){
-            let errorMessage= ""
-            
-            if(!this.state.passwordMatch){
-                errorMessage = "Your entered passwords do not match."
-            }
-            else if(this.state.emptyPassword){
-                errorMessage = "You cannot have an empty password"
-            }
-
-            else if(this.state.userTypeError){
-                errorMessage = "You must specify if you are buying or selling a house."
-            }
-
-            else if(this.state.emailError){
-                errorMessage = "Your email format is incorrect, please verify your email address"
-            }
-
-            else if(this.state.emptyMandatoryField){
-                errorMessage = "A mandatory field is empty, please check your form"
-            }
-
-
-            return(
-                <Modal.Dialog>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Sign Up Failed</Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body>
-                        <p>{errorMessage}</p>
-                    </Modal.Body>
-
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={()=>{this.setState({formError:false ,passwordMatch:true, userTypeError : false, emailError:false, emptyPassword:true})}}>Close</Button>
-                    </Modal.Footer>
-                </Modal.Dialog>
-            );
-        }
+        
         else if (this.state.loading === true){
             
             return(
@@ -136,114 +94,125 @@ class SignUp extends Component{
         else{
             return(
                 <>
-                <Card style={{padding:'10px'}}>
-                    <Card.Title style ={{marginLeft:"15px"}}>
-                        <h1>Sign Up</h1>
-                    </Card.Title>
-                <Card.Body>
-                    <Form>
-                    <Form.Row>
-                            <Form.Group as={Col} controlId="formGridFirstName">
-                            <Form.Label>First Name</Form.Label>
-                            <Form.Control type="" placeholder="" ref={this.firstName}/>
-                            </Form.Group>
+                    <Modal show={this.state.formError}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Sign Up Failed</Modal.Title>
+                        </Modal.Header>
 
-                            <Form.Group as={Col} controlId="formGridLastName">
-                            <Form.Label>Last Name</Form.Label>
-                            <Form.Control type="" placeholder="" ref={this.lastName} />
-                            </Form.Group>
-                        </Form.Row>
+                        <Modal.Body>
+                            <p>{this.state.errorMessage}</p>
+                        </Modal.Body>
 
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="formGridEmail">
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" ref={this.email}/>
-                            </Form.Group>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={()=>{this.setState({formError:false})}}>Close</Button>
+                        </Modal.Footer>
+                    </Modal>
 
-                            <Form.Group as={Col} controlId="formPhone">
-                            <Form.Label>Phone</Form.Label>
-                            <Form.Control placeholder="" ref={this.phone} />
-                            </Form.Group>
-                        </Form.Row>
+                    <Card style={{padding:'10px'}}>
+                        <Card.Title style ={{marginLeft:"15px"}}>
+                            <h1>Sign Up</h1>
+                        </Card.Title>
+                        <Card.Body>
+                            <Form>
+                            <Form.Row>
+                                    <Form.Group as={Col} controlId="formGridFirstName">
+                                    <Form.Label>First Name</Form.Label>
+                                    <Form.Control type="" placeholder="" ref={this.firstName}/>
+                                    </Form.Group>
 
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="formGridPassword1">
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" ref={this.password1} />
-                            </Form.Group>
+                                    <Form.Group as={Col} controlId="formGridLastName">
+                                    <Form.Label>Last Name</Form.Label>
+                                    <Form.Control type="" placeholder="" ref={this.lastName} />
+                                    </Form.Group>
+                                </Form.Row>
 
-                            <Form.Group as={Col} controlId="formGridPassword2">
-                            <Form.Label>Confirm Password</Form.Label>
-                            <Form.Control type="password" placeholder="Confirm Password" ref={this.password2} />
-                            </Form.Group>
-                        </Form.Row>
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="formGridEmail">
+                                    <Form.Label>Email</Form.Label>
+                                    <Form.Control type="email" placeholder="Enter email" ref={this.email}/>
+                                    </Form.Group>
 
-                        
-                        
-                        <Form.Group controlId="formGridAddress1">
-                            <Form.Label>Address</Form.Label>
-                            <Form.Control placeholder="1234 Main St" ref={this.address1} />
-                        </Form.Group>
+                                    <Form.Group as={Col} controlId="formPhone">
+                                    <Form.Label>Phone</Form.Label>
+                                    <Form.Control placeholder="" ref={this.phone} />
+                                    </Form.Group>
+                                </Form.Row>
 
-                        <Form.Group controlId="formGridAddress2">
-                            <Form.Label>Address 2</Form.Label>
-                            <Form.Control placeholder="Apartment, studio, or floor" ref={this.address2} />
-                        </Form.Group>
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="formGridPassword1">
+                                    <Form.Label>Password</Form.Label>
+                                    <Form.Control type="password" placeholder="Password" ref={this.password1} />
+                                    </Form.Group>
 
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="formGridCity">
-                            <Form.Label>City</Form.Label>
-                            <Form.Control ref={this.city} />
-                            </Form.Group>
+                                    <Form.Group as={Col} controlId="formGridPassword2">
+                                    <Form.Label>Confirm Password</Form.Label>
+                                    <Form.Control type="password" placeholder="Confirm Password" ref={this.password2} />
+                                    </Form.Group>
+                                </Form.Row>
 
-                            <Form.Group as={Col} controlId="formGridState">
-                            <Form.Label>State/Territory</Form.Label>
-                            <Form.Control as="select" defaultValue="Choose..." ref={this.territory}>
-                                <option>Choose...</option>
-                                <option>NSW</option>
-                                <option>VIC</option>
-                                <option>QLD</option>
-                                <option>ACT</option>
-                                <option>TAS</option>
-                                <option>SA</option>
-                                <option>WA</option>
-                                <option>NT</option>
-                            </Form.Control>
-                            </Form.Group>
+                                <Form.Group controlId="formGridAddress1">
+                                    <Form.Label>Address</Form.Label>
+                                    <Form.Control placeholder="1234 Main St" ref={this.address1} />
+                                </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridZip" >
-                            <Form.Label>PostCode</Form.Label>
-                            <Form.Control ref={this.postCode} />
-                            </Form.Group>
-                        </Form.Row>
+                                <Form.Group controlId="formGridAddress2">
+                                    <Form.Label>Address 2</Form.Label>
+                                    <Form.Control placeholder="Apartment, studio, or floor" ref={this.address2} />
+                                </Form.Group>
 
-                        <Form.Row>
-                            <Form.Group as={Col} controlId="formGridBSB">
-                            <Form.Label>BSB</Form.Label>
-                            <Form.Control placeholder="" ref={this.bsb} />
-                            <Form.Text className="text-muted">
-                                We will only share these details if you win at auction
-                            </Form.Text>
-                            </Form.Group>
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="formGridCity">
+                                    <Form.Label>City</Form.Label>
+                                    <Form.Control ref={this.city} />
+                                    </Form.Group>
 
-                            <Form.Group as={Col} controlId="formGridAcc" >
-                            <Form.Label>Account Number</Form.Label>
-                            <Form.Control type="password" placeholder="" ref={this.accountNumber} />
-                            </Form.Group>
-                        </Form.Row>
+                                    <Form.Group as={Col} controlId="formGridState">
+                                    <Form.Label>State/Territory</Form.Label>
+                                    <Form.Control as="select" defaultValue="Choose..." ref={this.territory}>
+                                        <option>Choose...</option>
+                                        <option>NSW</option>
+                                        <option>VIC</option>
+                                        <option>QLD</option>
+                                        <option>ACT</option>
+                                        <option>TAS</option>
+                                        <option>SA</option>
+                                        <option>WA</option>
+                                        <option>NT</option>
+                                    </Form.Control>
+                                    </Form.Group>
 
-                        {this.formCheckbox()}
+                                    <Form.Group as={Col} controlId="formGridZip" >
+                                    <Form.Label>PostCode</Form.Label>
+                                    <Form.Control ref={this.postCode} />
+                                    </Form.Group>
+                                </Form.Row>
 
-                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handleSubmit()}}>
-                            Submit
-                        </Button>
+                                <Form.Row>
+                                    <Form.Group as={Col} controlId="formGridBSB">
+                                    <Form.Label>BSB</Form.Label>
+                                    <Form.Control placeholder="" ref={this.bsb} />
+                                    <Form.Text className="text-muted">
+                                        We will only share these details if you win at auction
+                                    </Form.Text>
+                                    </Form.Group>
 
-                        <Form.Text className="text-muted" style={{textAlign:"right"}}>
-                                <a href="/login">Already have an account?</a>
-                        </Form.Text>
-                    </Form>
-                </Card.Body>
-                </Card>
+                                    <Form.Group as={Col} controlId="formGridAcc" >
+                                    <Form.Label>Account Number</Form.Label>
+                                    <Form.Control type="password" placeholder="" ref={this.accountNumber} />
+                                    </Form.Group>
+                                </Form.Row>
+
+                                {this.formCheckbox()}
+
+                                <Form.Text className="text-muted" style={{textAlign:"right"}}>
+                                        <a href="/login">Already have an account?</a>
+                                </Form.Text>
+                            </Form>
+                            <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {() => {this.handleSubmit()}}>
+                                Submit
+                            </Button>
+                        </Card.Body>
+                    </Card>
                 </>
             );
         }
@@ -252,27 +221,27 @@ class SignUp extends Component{
     handleSubmit(){
 
         if((this.password1.current.value) != (this.password2.current.value)){
-            this.setState({passwordMatch:false, formError: true});
+            this.setState({formError: true, errorMessage : "Your entered passwords do not match"});
             return;
         }
 
         if((this.password1.current.value).length === 0){
-            this.setState({emptyPassword:true, formError: true});
+            this.setState({formError: true, errorMessage : "You cannot have an empty password"});
             return;
         }
 
         if((this.state.buyer) === (this.state.seller)){
-            this.setState({userTypeError:true, formError: true});
+            this.setState({formError: true, errorMessage :"You must specify if you are buying or selling a house"});
             return;
         }
 
         if(!((this.email.current.value).includes('@') && (this.email.current.value).includes('.com'))){
-            this.setState({emailError:true, formError: true});
+            this.setState({formError: true, errorMessage : "Your email format is incorrect, please verify your email address"});
             return;
         }
 
         if(((this.firstName.current.value).length === 0) || ((this.lastName.current.value).length === 0) || ((this.address1.current.value).length === 0) || ((this.city.current.value).length === 0) || ((this.postCode.current.value).length === 0) || ((this.phone.current.value).length === 0) || ((this.bsb.current.value).length === 0) || ((this.accountNumber.current.value).length === 0)){
-            this.setState({emptyMandatoryField:true, formError: true});
+            this.setState({formError: true, errorMessage: "A mandatory field is empty, please check your form"});
             return;
         }
 

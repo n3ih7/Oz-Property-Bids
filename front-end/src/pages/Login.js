@@ -72,27 +72,11 @@ class Login extends Component{
             );
         }
 
-        else if(this.state.attemptLogin === true && this.state.loading == true){
+        else if(this.state.attemptLogin === true && this.state.loading === true){
             this.attemptLogin(this.setUserCookies);
         }
 
-        else if(this.state.failLogin ===true){
-            return(
-                <Modal.Dialog>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Login Failed</Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body>
-                        <p>Please verify your credentials and try again.</p>
-                    </Modal.Body>
-
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={()=>{this.setState({failLogin:false})}}>Close</Button>
-                    </Modal.Footer>
-                </Modal.Dialog>
-            );
-        }
+        
 
         else if (this.state.loading === true){
             return(
@@ -103,6 +87,20 @@ class Login extends Component{
         else if (this.state.authenticated === null && this.state.loading === false){
             return(
             <Col md="6">
+                
+                <Modal show={this.state.failLogin}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Login Failed</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Please verify your credentials and try again.</p>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={()=>{this.setState({failLogin:false})}}>Close</Button>
+                    </Modal.Footer>
+                </Modal>
+
                 <Card>
                     <Card.Body>
                         <Card.Title>Login</Card.Title>
