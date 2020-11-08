@@ -63,9 +63,11 @@ class Results extends Component{
 
     handleChange(){
       clearTimeout(this.state.timer);
-      this.state.timer = setTimeout(() => {
-        this.autoFill();
-      }, 500);
+      this.setState({
+        timer: setTimeout(() => {
+          this.autoFill();
+          }, 1000)
+        });
     }
 
     handleSubmit(){

@@ -220,7 +220,7 @@ class SignUp extends Component{
 
     handleSubmit(){
 
-        if((this.password1.current.value) != (this.password2.current.value)){
+        if((this.password1.current.value) !== (this.password2.current.value)){
             this.setState({formError: true, errorMessage : "Your entered passwords do not match"});
             return;
         }

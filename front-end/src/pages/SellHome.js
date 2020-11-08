@@ -46,7 +46,7 @@ class SellerHome extends Component{
     }
     
     pageContent(){
-        if ((this.state.listings != null) && (this.state.listings.length != 0)){
+        if ((this.state.listings !== null) && (this.state.listings.length !== 0)){
             return(
                 <Container style={{marginTop: "5%"}}>
                     <h1 style={{color:"white"}}>Current Listings</h1>

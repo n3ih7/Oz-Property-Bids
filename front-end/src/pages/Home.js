@@ -119,9 +119,11 @@ class Home extends Component{
 
   handleChange(){
     clearTimeout(this.state.timer);
-    this.state.timer = setTimeout(() => {
-      this.autoFill();
-    }, 1000);
+    this.setState({
+      timer: setTimeout(() => {
+        this.autoFill();
+        }, 1000)
+      });
   }
 
   handleSubmit(){
@@ -228,7 +230,7 @@ class Home extends Component{
 
               <Col md="auto" style={{paddingTop:"9px"}}>
                     <Form.Group as ={Col}>
-                    <Form.Check type="checkbox" id="default-radio" label="Disable Date Range" onClick={() => {this.handleDateToggle()}}></Form.Check>
+                      <Form.Check type="checkbox" id="default-radio" label="Disable Date Range" onClick={() => {this.handleDateToggle()}}></Form.Check>
                     </Form.Group>
               </Col>
             </Row>

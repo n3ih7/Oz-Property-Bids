@@ -18,7 +18,10 @@ class Upload extends Component{
             loading : false,
             date1 :  new Date(),
             auctionDuration : 0,
-            dateTimeEnd: null
+            dateTimeEnd: null,
+            acceptCard: false,
+            acceptBank: false,
+            acceptCheque: false
         }
 
         this.beds = React.createRef();
@@ -42,12 +45,10 @@ class Upload extends Component{
     }
 
     onImageChange(imageList, addUpdateIndex){
-        //  console.log(imageList, addUpdateIndex);
          this.setState({images: imageList});
          this.setState({mappedImages : this.state.images.map((image) =>{return image.data_url})});
     }
 
-    
     pageContent(){
         if (this.state.redirect === true){
             return(
@@ -214,7 +215,7 @@ class Upload extends Component{
                             <Col controlId="formGridAuctionStartSeller">
                                 <Form.Label>Auction Start Time</Form.Label>
                                 <br/>
-                                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => {this.setState({date1 : date}); console.log(this.state.date1);}}/>
+                                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => {this.setState({date1 : date})}}/>
                             </Col>
                             <Form.Group as={Col} controlId="formGridDuration">
                                 <Form.Label>Desired Auction Duration (days)</Form.Label>
@@ -228,15 +229,28 @@ class Upload extends Component{
                                 <br/>
                             </Form.Group>
                             <Form.Group as={Col} controlId="formGridAuctionEndSeller">
-                                <Form.Label>Estimated Auction End Time</Form.Label>
+                                <Form.Label>Auction End Time</Form.Label>
                                 <br/>
-                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.dateTimeEnd}/>
+                                <DatePicker className="calendar" showTimeSelect dateFormat="Pp" selected={this.state.dateTimeEnd} onChange={date => {this.setState({dateTimeEnd : date, auctionDuration:(Math.round((-1*this.state.date1.getTime() + date.getTime())/(1000*60*60*24)))})}}/>
                             </Form.Group>
                         </Form.Row>
-                        <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {(e) => {this.handleSubmit(e)}}>
-                            Submit
-                        </Button>
+                        <br/>
+                        <h4>Accepted Payment Methods</h4>
+                        <Form.Row>
+                            <Form.Group as={Col} controlId="formGridPaymentMethods">
+                                <Form.Row>
+                                    <Form.Check style={{marginRight:"15px", marginLeft:"5px"}} type="checkbox" id="default-radio1" label="Credit Card" onClick={() => {this.setState({acceptCard: !this.state.acceptCard})}}></Form.Check>
+                                    <Form.Check style={{marginRight:"15px"}} type="checkbox" id="default-radio2" label="Bank Transfer" onClick={() => {this.setState({acceptBank: !this.state.acceptBank})}}></Form.Check>
+                                    <Form.Check style={{marginRight:"5px"}} type="checkbox" id="default-radio3" label="Cheque" onClick={() => {this.setState({acceptCheque: !this.state.acceptCheque})}}></Form.Check>
+                                </Form.Row>
+                                <Form.Text>Payment methods you are willing to accept for your property</Form.Text>
+                            </Form.Group>
+                        </Form.Row>
                     </Form>
+                    <br/>
+                    <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {(e) => {this.handleSubmit(e)}}>
+                        Submit
+                    </Button>
                 </Card.Body>
                 </Card>
                 </>

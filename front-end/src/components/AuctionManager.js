@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Accordion, Card, Col, Row, Button, Spinner} from 'react-bootstrap';
+import { Accordion, Card, Col, Row, Button, Spinner} from 'react-bootstrap';
 import Countdown from 'react-countdown';
 import './AuctionManager.css';
 const axios = require('axios');
@@ -121,7 +121,7 @@ class AuctionManager extends Component{
         }
         
         else if(this.state.activeAuction === true){
-            if (this.state.loading == true){
+            if (this.state.loading === true){
                 return(
                     <Row className="justify-content-md-center">
                             <Spinner animation="border" role="status" variant="light"></Spinner>
@@ -173,7 +173,7 @@ class AuctionManager extends Component{
             }
         }
         else if(this.state.auctionComplete === true){
-            if (this.state.loading == true){
+            if (this.state.loading === true){
                 return(
                     <Row className="justify-content-md-center">
                             <Spinner animation="border" role="status" variant="light"></Spinner>

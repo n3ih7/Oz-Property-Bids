@@ -130,7 +130,7 @@ class Login extends Component{
                             <Card.Subtitle className="mb-2 text-muted">
                                 <a>Not a member?</a>
                                 <a style={{paddingLeft:"30px"}}> </a>
-                                <Card.Link href="http://localhost:3000/signup">Sign Up!</Card.Link>
+                                <Card.Link href="/signup">Sign Up!</Card.Link>
                             </Card.Subtitle>
                         </Card.Body>
                     </Card>
