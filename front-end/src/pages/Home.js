@@ -87,9 +87,7 @@ class Home extends Component{
       axios.get('v1/suburbs', {params:{
         q: userInput,
       }})
-      .then((response) => {
-        // console.log(response.data.slice(0,6));
-          
+      .then((response) => {          
         if (response.status === 200){
           this.setState({
             autofillResults : response.data.slice(0,3)
