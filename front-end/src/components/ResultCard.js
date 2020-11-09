@@ -7,8 +7,9 @@ class ResultCard extends Component{
 
     constructor(props){
         super(props);
+        console.log(this.props.registeredAuctions);
         this.state = {
-            registered: false,
+            registered: (this.props.registeredAuctions.includes(this.props.propertyId) ? true : false),
             registerForAuction: false,
             payWithCard: false,
             payWithBank: false,
@@ -58,7 +59,7 @@ class ResultCard extends Component{
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
       
         axios.get('/property', {params:{
-        id: this.props.propertyId,
+            id: this.props.propertyId,
         }})
         .then((response) => {
             if (response.status === 200){
@@ -76,12 +77,12 @@ class ResultCard extends Component{
     
 
     buyerCardFeatures(){
-        if (this.props.userType === 'bidder'){
+        if ((this.props.userType === 'bidder') && ((new Date()) < new Date(parseInt(this.props.auctionStart)))){
             if(this.state.registered){
                 return(
                 <Col>
                     <Row className="justify-content-md-center" >
-                        <Button style={{marginTop:"25%"}} variant="success" active>Registered</Button>
+                        <Button style={{marginTop:"50%"}} variant="success" active>Registered</Button>
                     </Row>
                 </Col>
                 );
@@ -90,7 +91,7 @@ class ResultCard extends Component{
                 return(
                 <Col>
                     <Row className="justify-content-md-center" >
-                        <Button style={{background : "#05445E", borderColor: "#05445E", marginTop:"25%"}} onClick={() => {this.setState({registerForAuction: true})}}>Register!</Button>
+                        <Button style={{background : "#05445E", borderColor: "#05445E", marginTop:"50%"}} onClick={() => {this.setState({registerForAuction: true})}}>Register!</Button>
                     </Row>
                 </Col>
              );

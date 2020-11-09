@@ -16,7 +16,7 @@ class Home extends Component{
       date2: new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
       results : false,
       autofillResults : null,
-      dateRange : true      
+      dateRange : true,    
     }
 
     this.cookies = this.props.cookies;
@@ -46,10 +46,11 @@ class Home extends Component{
       this.setState({
         dateRange : true,
         date1 : new Date(),
-        date2 :  new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
+        date2 : new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
       });
     }
   }
+
 
   handleKeyPress(event){
    let key = event.keyCode || event.charCode;
@@ -147,6 +148,7 @@ class Home extends Component{
             initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
             initialAuctionStart:  (this.state.dateRange === true) ? this.state.date1 : null,
             initialAuctionEnd: (this.state.dateRange === true) ? this.state.date2 : null,
+            registeredAuctions : this.state.registeredAuctions
           });
           this.setState({results: true});
         }
@@ -228,7 +230,7 @@ class Home extends Component{
 
               <Col md="auto" style={{paddingTop:"9px"}}>
                     <Form.Group as ={Col}>
-                      <Form.Check type="checkbox" id="default-radio" label="Disable Date Range" onClick={() => {this.handleDateToggle()}}></Form.Check>
+                      <Form.Check type="checkbox" id="default-radio" label="Search All Dates" onClick={() => {this.handleDateToggle()}}></Form.Check>
                     </Form.Group>
               </Col>
             </Row>

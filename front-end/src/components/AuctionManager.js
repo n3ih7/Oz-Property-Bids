@@ -17,7 +17,8 @@ class AuctionManager extends Component{
             highestBid : 0,
             bidHistory : [],
             newBidValue : null,
-            loading : true
+            loading : true,
+            tryVerifyBidder : false
         }
 
         this.verifyRAB = this.verifyRAB.bind(this);

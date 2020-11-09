@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Row, Col, Form, Button} from 'react-bootstrap';
+import {Container, Row, Col, Form, Button, Spinner} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
 import AutoResults from '../components/AutoResults';
 import DatePicker from "react-datepicker";
@@ -11,14 +11,17 @@ class Results extends Component{
         super(props);
 
         this.state = {
-            results : false,
-            autofillResults : null,
-            date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
-            date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
-            searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
-            redirect : false,
-            chosenProperty : null,
-            dateRange : true      
+          loading: true,
+          results : false,
+          autofillResults : null,
+          date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
+          date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
+          searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
+          redirect : false,
+          chosenProperty : null,
+          dateRange : true,
+          registeredAuctions: [],
+          checkedRegisteredAuctions: false   
         }
 
         this.cookies = this.props.cookies;
@@ -36,7 +39,34 @@ class Results extends Component{
         this.handleChange = this.handleChange.bind(this);
         this.checkRedirect = this.checkRedirect.bind(this);
         this.handleDateToggle = this.handleDateToggle.bind(this);
+        this.getRegisteredAuctions = this.getRegisteredAuctions.bind(this);
+    }
 
+    getRegisteredAuctions(){
+      if((this.cookies.get('userType') === 'bidder')&&(!this.state.checkedRegisteredAuctions)){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+  
+        axios.get('/get_rab_status').then((response) => {
+          console.log(response);
+
+          if (response.status === 200){
+            this.setState({
+                registeredAuctions : response.data.rab_registered,
+                checkedRegisteredAuctions : true,
+                loading: false
+            });
+          }
+          else{
+            this.setState({
+              checkedRegisteredAuctions : true,
+              loading: false
+          });
+          }
+        }).catch((error) =>{
+            console.log(error);
+        });
+      }
     }
 
     handleDateToggle(){
@@ -218,7 +248,7 @@ class Results extends Component{
 
                 <Col md="auto" style={{paddingTop:"9px"}}>
                     <Form.Group as ={Col}>
-                    <Form.Check type="checkbox" id="default-radio" label="Disable Date Range" onClick={() => {this.handleDateToggle()}}></Form.Check>
+                    <Form.Check style={{color:"white"}} type="checkbox" id="default-radio" label="Search All Dates" onClick={() => {this.handleDateToggle()}}></Form.Check>
                     </Form.Group>
                 </Col>
               </Row>
@@ -233,12 +263,32 @@ class Results extends Component{
       );
     }
 
+    else if(this.state.loading){
+      return(
+        <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
+      );
+    }
+
     else if(this.state.results){
           return(
               this.state.properties.map(property =>(
                 <>
                   <Row>
-                      <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect} token={this.cookies.get('token')} userType={this.cookies.get('userType')}/>
+                      <ResultCard 
+                        streetAddress={property.address} 
+                        auctionStart ={property.auction_start}
+                        baths={property.baths} beds={property.beds} 
+                        city={property.city} 
+                        propertyType ={property.propertyType} 
+                        carSpots={property.parkingSpace} 
+                        image={property.images[0]} 
+                        propertyId={property.propertyId} 
+                        givePropertyDetails={this.props.retrieveHouse} 
+                        checkRedirect = {this.checkRedirect} 
+                        token={this.cookies.get('token')} 
+                        userType={this.cookies.get('userType')}
+                        registeredAuctions = {this.state.registeredAuctions}
+                      />
                   </Row>
                   <br/>
                   </>
@@ -258,7 +308,8 @@ class Results extends Component{
 
   render(){
       return(
-          <>
+          <>  
+              {this.getRegisteredAuctions()}
               {this.searchBar()}
               <Container fluid style={{marginTop: "1%"}}>
                   <Col>
