@@ -31,7 +31,6 @@ class PropertyBid extends Component{
             timeTillEnd : givenEnd,
             loading : true
         }
-        console.log(givenStart);
     
         this.cookies = this.props.cookies;
     }
@@ -82,6 +81,8 @@ class PropertyBid extends Component{
                                 timeEnd = {this.state.timeTillEnd}
                                 propertyId = {this.props.propertyDetails.propertyId}
                                 token = {this.cookies.get('token')}
+                                userType = {this.cookies.get('userType')}
+                                registered = {this.props.propertyDetails.registered}
                             />
                         </Col>
                     </Row>

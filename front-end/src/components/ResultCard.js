@@ -7,7 +7,7 @@ class ResultCard extends Component{
 
     constructor(props){
         super(props);
-        console.log(this.props.registeredAuctions);
+
         this.state = {
             registered: (this.props.registeredAuctions.includes(this.props.propertyId) ? true : false),
             registerForAuction: false,
@@ -65,8 +65,9 @@ class ResultCard extends Component{
             if (response.status === 200){
             this.setState({
                 redirect : true,
-                propertyDetails : response.data
+                propertyDetails : Object.assign(response.data, {registered: this.state.registered})
             });
+            
             this.props.givePropertyDetails(this.state.propertyDetails);
             this.props.checkRedirect(true);
             }
