@@ -78,24 +78,26 @@ class ResultCard extends Component{
     
 
     buyerCardFeatures(){
-        if ((this.props.userType === 'bidder') && ((new Date()) < new Date(parseInt(this.props.auctionStart)))){
-            if(this.state.registered){
-                return(
-                <Col>
-                    <Row className="justify-content-md-center" >
-                        <Button style={{marginTop:"50%"}} variant="success" active>Registered</Button>
-                    </Row>
-                </Col>
+        if(!this.props.bidderSummaryView){
+            if ((this.props.userType === 'bidder') && ((new Date()) < new Date(parseInt(this.props.auctionStart)))){
+                if(this.state.registered){
+                    return(
+                    <Col>
+                        <Row className="justify-content-md-center" >
+                            <Button style={{marginTop:"50%"}} variant="success" active>Registered</Button>
+                        </Row>
+                    </Col>
+                    );
+                }
+                else{
+                    return(
+                    <Col>
+                        <Row className="justify-content-md-center" >
+                            <Button style={{background : "#05445E", borderColor: "#05445E", marginTop:"50%"}} onClick={() => {this.setState({registerForAuction: true})}}>Register!</Button>
+                        </Row>
+                    </Col>
                 );
-            }
-            else{
-                return(
-                <Col>
-                    <Row className="justify-content-md-center" >
-                        <Button style={{background : "#05445E", borderColor: "#05445E", marginTop:"50%"}} onClick={() => {this.setState({registerForAuction: true})}}>Register!</Button>
-                    </Row>
-                </Col>
-             );
+                }
             }
         }
     }

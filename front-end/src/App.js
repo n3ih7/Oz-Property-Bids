@@ -11,6 +11,7 @@ import Results from './pages/Results';
 import SellerHome from './pages/SellHome';
 import Upload from './pages/Upload';
 import PropertyBid from './pages/PropertyBid';
+import RegisteredHomes from './pages/RegisteredHomes';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
@@ -45,7 +46,6 @@ class App extends Component{
   }
 
   retrieveHouseFromResults(propertyDetails){
-    console.log(propertyDetails);
     this.setState({
       property : propertyDetails
     });
@@ -63,11 +63,12 @@ class App extends Component{
             <Route exact path="/signup"><SignUp  cookies = {this.props.cookies}/></Route>
             <Route exact path="/account"><Account cookies = {this.props.cookies}/></Route>
             <Route exact path="/sell"><SellerHome cookies = {this.props.cookies} retrieveHouse ={this.retrieveHouseFromResults.bind(this)}/></Route>
+            <Route exact path="/registrations"><RegisteredHomes cookies = {this.props.cookies} retrieveHouse ={this.retrieveHouseFromResults.bind(this)}/></Route>
             <Route exact path="/upload"><Upload cookies = {this.props.cookies}/></Route>
             <Route exact path="/house"><PropertyBid propertyDetails={this.state.property} cookies = {this.props.cookies}/></Route>
             <Route exact path="/results"><Results cookies = {this.props.cookies} results={this.state.searchResults} firstSearchParams={this.state.searchParams} retrieveHouse ={this.retrieveHouseFromResults.bind(this)}/></Route>
           </Switch>
-      </div>
+        </div>
       </Router>
     );
   }
