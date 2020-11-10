@@ -328,49 +328,45 @@ class AuctionManager extends Component{
             else{
                 return(
                     <Card style={{width:"22rem", padding:"5px"}}>
-                            <Col md="auto">
-                                <Row className="justify-content-md-center">
-                                    <h2>Last Winning Bid</h2>
-                                </Row>
-                                
-                                <Row className="justify-content-md-center">
-                                    <h2>${this.state.highestBid}</h2>
-                                </Row>
-                                <br/>
-                                {/* <Row className="justify-content-md-center">
-                                    <Countdown className ="timerFormat" date={this.state.timeTillEnd}></Countdown>
-                                </Row>
-                                <br/> */}
-                                <Row className="justify-content-md-center">
-                                    <Accordion defaultActiveKey="1">
-                                        <Card>
-                                            <Accordion.Toggle as={Card.Header} onClick={()=>{this.getBidList()}} eventKey="0">
-                                                Bidding History
-                                            </Accordion.Toggle>
-                                            <Accordion.Collapse eventKey="0">
-                                                <Card.Body>
-                                                    {this.state.bidHistory.map(bid =>(
-                                                        <>
-                                                            <Row className="justify-content-md-center" style={{borderBottom:"1px solid"}}>
-                                                            {bid.bidder_name} : ${bid.offerPrice}
-                                                            </Row>
-                                                            <br/>
-                                                        </>
-                                                    ))}
-                                                </Card.Body>
-                                            </Accordion.Collapse>
-                                        </Card>
-                                    </Accordion>
-                                </Row>
-                            </Col>
-                        </Card>
+                        <Col md="auto">
+                            <Row className="justify-content-md-center">
+                                <h2>Final Bid</h2>
+                            </Row>
+                            
+                            <Row className="justify-content-md-center">
+                                <h2>${this.state.highestBid}</h2>
+                            </Row>
+                            <br/>
+                            <Row className="justify-content-md-center">
+                                <Accordion defaultActiveKey="1">
+                                    <Card>
+                                        <Accordion.Toggle as={Card.Header} onClick={()=>{this.getBidList()}} eventKey="0">
+                                            Bidding History
+                                        </Accordion.Toggle>
+                                        <Accordion.Collapse eventKey="0">
+                                            <Card.Body>
+                                                {this.state.bidHistory.map(bid =>(
+                                                    <>
+                                                        <Row className="justify-content-md-center" style={{borderBottom:"1px solid"}}>
+                                                        {bid.bidder_name} : ${bid.offerPrice}
+                                                        </Row>
+                                                        <br/>
+                                                    </>
+                                                ))}
+                                            </Card.Body>
+                                        </Accordion.Collapse>
+                                    </Card>
+                                </Accordion>
+                            </Row>
+                        </Col>
+                    </Card>
                 );
             }
         }
         else{
             return(
                 <h5>An error has occured, please contact your network admin</h5> 
-            ); //fyi this is a joke
+            );
         }
 
         

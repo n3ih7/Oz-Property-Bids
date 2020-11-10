@@ -139,7 +139,6 @@ class Home extends Component{
     }})
     .then((response) => {
         if (response.status === 200){
-
           this.props.dataCallback(response.data);
           this.props.paramsCallback({
             initialLocation: this.location.current.value,

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Container, Col, Row, Card} from 'react-bootstrap';
 import AuctionManager from '../components/AuctionManager'
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 const axios = require('axios');
 

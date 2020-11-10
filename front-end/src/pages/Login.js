@@ -118,7 +118,7 @@ class Login extends Component{
                                 Submit
                             </Button>
                             <Form.Text className="text-muted" style={{textAlign:"right"}}>
-                                Not a member? <a href="/">Sign Up!</a>
+                                Not a member? <a href="/signup">Sign Up!</a>
                             </Form.Text>
                         </Form>
                     </Card.Body>

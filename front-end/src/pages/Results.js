@@ -57,14 +57,22 @@ class Results extends Component{
                 loading: false
             });
           }
+
           else{
             this.setState({
               checkedRegisteredAuctions : true,
               loading: false
-          });
+            });
           }
         }).catch((error) =>{
             console.log(error);
+        });
+      }
+
+      else if (this.state.loading){
+        this.setState({
+          checkedRegisteredAuctions : true,
+          loading: false
         });
       }
     }
@@ -140,7 +148,7 @@ class Results extends Component{
       this.setState({
         searchValue: result,
         autofillResults: null
-      })
+      });
     }
   }
      
@@ -301,7 +309,7 @@ class Results extends Component{
               this.setState({
                   properties: this.props.results.resp,
                   results : true
-              })
+              });
           }
       }
   }
@@ -309,13 +317,13 @@ class Results extends Component{
   render(){
       return(
           <>  
-              {this.getRegisteredAuctions()}
-              {this.searchBar()}
-              <Container fluid style={{marginTop: "1%"}}>
-                  <Col>
+            {this.getRegisteredAuctions()}
+            {this.searchBar()}
+            <Container fluid style={{marginTop: "1%"}}>
+                <Col>
                   {this.pageContent()}
-                  </Col>
-              </Container>
+                </Col>
+            </Container>
           </>
       );
   }
