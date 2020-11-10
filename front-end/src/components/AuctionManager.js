@@ -23,8 +23,6 @@ class AuctionManager extends Component{
             tryVerifyBidder : false
         }
 
-        console.log(this.props.registered);
-
         this.verifyRAB = this.verifyRAB.bind(this);
         this.getBidList = this.getBidList.bind(this);
         this.bid = this.bid.bind(this);
@@ -103,7 +101,6 @@ class AuctionManager extends Component{
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
         axios.defaults.headers.common['Authorization'] = `Token ${this.props.token}`;
 
-      
         axios.get('/bid', {params:{
             id: this.props.propertyId,
         }})
@@ -112,7 +109,7 @@ class AuctionManager extends Component{
             if (response.status === 200){
                 this.setState({
                     bidHistory : response.data.history.reverse(),
-                    highestBid : (response.data.history[0]).offerPrice,
+                    highestBid : (response.data.history.length !== 0) ? (response.data.history[0]).offerPrice : "0",
                     loading : false
                 });
             }
@@ -122,8 +119,7 @@ class AuctionManager extends Component{
     }
     
     verifyRAB(){
-        //call api to check
-        if(1 === 1){
+        if(this.state.registered){
             return(
                 <>
                     <Row className="justify-content-md-center">
