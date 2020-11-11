@@ -970,22 +970,24 @@ def nearby_returns():
     propertyId = request.args.get('id')
 
     # find address from database
-    query_res = db.session.query(PROPERTY_INFO).filter(PROPERTY_INFO.propertyId == propertyId)
+    i = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
     # print(query_res)
     address = ''
-    if query_res:
-        for i in query_res:
-            if i.unitNumber:
-                address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
-            else:
-                address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+    if i:
+        if i.unitNumber:
+            address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+        else:
+            address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
 
     else:
         return jsonify(error="nothing found, search failed"), 404
 
     # print('address:', address)
     # google the address
+    # now = time.time()
     geocode_result = gmaps.geocode(address)
+    # print(time.time()-now, "s 1")
+
     location_origin = (
         geocode_result[0]['geometry']['location']['lat'], geocode_result[0]['geometry']['location']['lng'])
 
@@ -995,6 +997,7 @@ def nearby_returns():
     nearby_uni = gmaps.places_nearby(location=location_origin, radius=600, type='university')
     nearby_police = gmaps.places_nearby(location=location_origin, radius=2000, type='police')
     nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=500, type='hospital')
+    # print(time.time() - now, "s 2")
 
     # For each establishments, calculate the travel time
     supermarket_res = []
@@ -1129,6 +1132,7 @@ def nearby_returns():
                  'university': university_res,
                  'hospitals': hospitals_res,
                  'police': police_res}
+    # print(time.time() - now, "s 3")
 
     # print(final_res)
     # for i in supermarket_res:

@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "9cc8e482-1595-4fd9-a50f-a282f9e73f35",
-		"name": "9900 09 Nov evening 9.15 PM",
+		"_postman_id": "94a2aa26-b8ab-47a9-bb12-9b5d5cfbb605",
+		"name": "9900 11 Nov evening",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -23,9 +23,10 @@
 					"raw": "http://api.nono.fi:5000/signup",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -45,7 +46,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"testbuy1\",\n    \"password\": \"test\"\n}",
+					"raw": "{\n    \"email\": \"seller\",\n    \"password\": \"111\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -56,13 +57,26 @@
 					"raw": "http://api.nono.fi:5000/login",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
 						"login"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "123",
+							"disabled": true
+						},
+						{
+							"key": "password",
+							"value": "123",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -86,9 +100,10 @@
 					"raw": "http://api.nono.fi:5000/logout",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -116,9 +131,10 @@
 					"raw": "http://api.nono.fi:5000/profile",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -155,9 +171,10 @@
 					"raw": "http://api.nono.fi:5000/profile",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -194,9 +211,10 @@
 					"raw": "http://api.nono.fi:5000/property",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -218,12 +236,13 @@
 					}
 				],
 				"url": {
-					"raw": "http://api.nono.fi:5000/search?keyword=&beds=3&baths=2&carspots=2",
+					"raw": "http://api.nono.fi:5000/search?keyword=",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -236,15 +255,18 @@
 						},
 						{
 							"key": "beds",
-							"value": "3"
+							"value": "3",
+							"disabled": true
 						},
 						{
 							"key": "baths",
-							"value": "2"
+							"value": "2",
+							"disabled": true
 						},
 						{
 							"key": "carspots",
-							"value": "2"
+							"value": "2",
+							"disabled": true
 						},
 						{
 							"key": "auction_start",
@@ -279,9 +301,10 @@
 					"raw": "http://api.nono.fi:5000/property?id=10000",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -309,9 +332,10 @@
 					"raw": "http://api.nono.fi:5000/property?sellerid=51942",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -345,9 +369,10 @@
 					"raw": "http://api.nono.fi:5000/mylisting",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -375,9 +400,10 @@
 					"raw": "http://api.nono.fi:5000/payment_info_check",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -421,9 +447,10 @@
 					"raw": "http://api.nono.fi:5000/bid",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -463,9 +490,10 @@
 					"raw": "http://api.nono.fi:5000/bid?id=84260",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
@@ -482,27 +510,65 @@
 			"response": []
 		},
 		{
-			"name": "get_RAB_status",
+			"name": "get_rab_status",
 			"request": {
 				"method": "GET",
 				"header": [
 					{
 						"key": "Authorization",
-						"type": "text",
-						"value": "Token 4db9684fccd29b1047c4f0b8bc5c3d0879a3a564c263853c9c70c38691e5222d"
+						"value": "Token 4db9684fccd29b1047c4f0b8bc5c3d0879a3a564c263853c9c70c38691e5222d",
+						"type": "text"
 					}
 				],
 				"url": {
 					"raw": "http://api.nono.fi:5000/get_rab_status",
 					"protocol": "http",
 					"host": [
-						"api",
-						"nono",
-						"fi"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
 					"port": "5000",
 					"path": [
 						"get_rab_status"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "nearby info by propertyId",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token a702a97467ac8eed53dd7062549b84e92538e3ae6eadb7105fbd2f5497bd1d63"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/mapinfo?id=10000",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"mapinfo"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "10000"
+						}
 					]
 				}
 			},
