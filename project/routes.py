@@ -1148,8 +1148,8 @@ def nearby_returns_test():
 @app.route('/mapinfo', methods=['GET'])
 def nearby_returns():
     # Set google map api keys:
-    gmaps = googlemaps.Client(key='AIzaSyC8k7cGZgTMu1Qgo9IVZNyq-JYMY-Q2PGU')
-    # AIzaSyBeeHfpZuehFLKU239tacm_j01rmRJlLFk
+    gmaps = googlemaps.Client(key='AIzaSyBeeHfpZuehFLKU239tacm_j01rmRJlLFk')
+    #
 
     # Get Property id
     propertyId = request.args.get('id')
