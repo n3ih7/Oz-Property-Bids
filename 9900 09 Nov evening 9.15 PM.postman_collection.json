@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "9cc8e482-1595-4fd9-a50f-a282f9e73f35",
-		"name": "9900 04 Nov evening 9 PM",
+		"name": "9900 09 Nov evening 9.15 PM",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -45,7 +45,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"email\": \"seller\",\n    \"password\": \"111\"\n}",
+					"raw": "{\n    \"email\": \"testbuy1\",\n    \"password\": \"test\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -63,18 +63,6 @@
 					"port": "5000",
 					"path": [
 						"login"
-					],
-					"query": [
-						{
-							"key": "email",
-							"value": "123",
-							"disabled": true
-						},
-						{
-							"key": "password",
-							"value": "123",
-							"disabled": true
-						}
 					]
 				}
 			},
@@ -488,6 +476,33 @@
 							"key": "id",
 							"value": "84260"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_RAB_status",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Token 4db9684fccd29b1047c4f0b8bc5c3d0879a3a564c263853c9c70c38691e5222d"
+					}
+				],
+				"url": {
+					"raw": "http://api.nono.fi:5000/get_rab_status",
+					"protocol": "http",
+					"host": [
+						"api",
+						"nono",
+						"fi"
+					],
+					"port": "5000",
+					"path": [
+						"get_rab_status"
 					]
 				}
 			},

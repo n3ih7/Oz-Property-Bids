@@ -24,4 +24,9 @@ yarn-debug.log*
 yarn-error.log*
 venv
 
-.idea
+*.pyc
+*.db
+*.sqlite3
+venv
+node_modules
+.DS_Store

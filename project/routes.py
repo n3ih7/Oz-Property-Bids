@@ -577,6 +577,14 @@ def property_get_n_post():
                     "intro_text": i.intro_text
                 }
 
+                a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
+                search_largest = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId).order_by(
+                    desc(BID_ACTIVITY.offerPrice)).first()
+                if search_largest:
+                    result_dict['curr_start_price'] = search_largest.offerPrice
+                else:
+                    result_dict['curr_start_price'] = 0
+
                 if 'Authorization' in request.headers:
                     try:
                         tk = str(request.headers['Authorization']).split(' ')[1]
@@ -776,12 +784,24 @@ def bid():
                                                    )
                                 db.session.add(i_b)
                                 db.session.commit()
+
+                                search_largest = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId).order_by(
+                                    desc(BID_ACTIVITY.offerPrice)).first()
+                                if search_largest:
+                                    if int(offerPrice) > int(search_largest.offerPrice):
+                                        curr_start_price = offerPrice
+                                    else:
+                                        curr_start_price = search_largest.offerPrice
+                                else:
+                                    curr_start_price = 0
+
                                 return jsonify(msg="Your price has been accepted, this is your initial bid",
                                                ref=i_b.lineId,
                                                bid_time=str(i_b.bidPlaceTime) + '000',
                                                expected_finish_time=a.expected_finish_time + '000',
                                                yourPrice=offerPrice,
-                                               start_time=str(a.start_time)), 200
+                                               start_time=str(a.start_time),
+                                               curr_start_price=curr_start_price), 200
 
                             elif b and cur_time < float(a.start_time):
                                 return jsonify(
@@ -870,6 +890,37 @@ def bid():
             result_list.append(r_dict)
 
         return jsonify(history=result_list, length=str(len(result_list)), propertyId=propertyId), 200
+
+
+@app.route('/get_rab_status', methods=['GET'])
+def rab_status():
+    try:
+        tk = str(request.headers['Authorization']).split(' ')[1]
+        user = USER_INFO.query.filter_by(curr_token=tk).first()
+
+        if user and user.login_status == '1' and time.time() < float(user.expire_time):
+            uid = user.uid
+            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
+            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
+                b = BID_ACTIVITY.query.filter_by(uid=uid).all()
+                result_rab = []
+                if b:
+                    for i in b:
+                        c = PROPERTY_BID_RELATION.query.filter_by(bidActivityId=i.bidActivityId).first()
+                        if c.propertyId not in result_rab:
+                            result_rab.append(c.propertyId)
+
+                return jsonify(uid=uid,
+                               rab_registered=result_rab), 200
+
+            else:
+                return jsonify(error="User type not correct, nothing to be changed"), 401
+        else:
+            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
+    except IndexError:
+        return jsonify(error="Token format not valid, nothing to be changed"), 401
+    except KeyError:
+        return jsonify(error="Token not received, nothing to be changed"), 401
 
 # @app.route('/example', methods=['POST'])
 # def example():
