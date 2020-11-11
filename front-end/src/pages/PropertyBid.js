@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Container, Col, Row, Card} from 'react-bootstrap';
-import AuctionManager from '../components/AuctionManager'
+import AuctionManager from '../components/AuctionManager';
+import Map from '../components/Map';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 const axios = require('axios');
@@ -110,7 +111,7 @@ class PropertyBid extends Component{
                                     Map Stats Go Here
                                     </Col>
                                     <Col>
-                                    Google Map Goes Here
+                                    <Map/>
                                     </Col>
                                 </Row>
                             </Card.Body>
