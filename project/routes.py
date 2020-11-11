@@ -2,6 +2,8 @@ import os
 import secrets
 import time
 from random import randint
+
+import googlemaps
 from flask import request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
@@ -625,7 +627,8 @@ def property_get_n_post():
             if query_res:
                 for i in query_res:
                     if i.unitNumber:
-                        address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                        address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' \
+                                  + i.postcode
                     else:
                         address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
 
@@ -682,7 +685,8 @@ def see_my_listing():
                 if query_res:
                     for i in query_res:
                         if i.unitNumber:
-                            address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                            address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' \
+                                      + i.postcode
                         else:
                             address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
 
@@ -922,6 +926,7 @@ def rab_status():
     except KeyError:
         return jsonify(error="Token not received, nothing to be changed"), 401
 
+
 # @app.route('/example', methods=['POST'])
 # def example():
 #     def get_new_example_id():
@@ -954,3 +959,179 @@ def rab_status():
 #         return jsonify(error="Token format not valid, nothing to be changed"), 401
 #     except KeyError:
 #         return jsonify(error="Token not received, nothing to be changed"), 401
+
+
+@app.route('/mapinfo', methods=['GET'])
+def nearby_returns():
+    # Set google map api keys:
+    gmaps = googlemaps.Client(key='AIzaSyBeeHfpZuehFLKU239tacm_j01rmRJlLFk')
+
+    # Get Property id
+    propertyId = request.args.get('id')
+
+    # find address from database
+    query_res = db.session.query(PROPERTY_INFO).filter(PROPERTY_INFO.propertyId == propertyId)
+    # print(query_res)
+    address = ''
+    if query_res:
+        for i in query_res:
+            if i.unitNumber:
+                address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+            else:
+                address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+
+    else:
+        return jsonify(error="nothing found, search failed"), 404
+
+    # print('address:', address)
+    # google the address
+    geocode_result = gmaps.geocode(address)
+    location_origin = (
+        geocode_result[0]['geometry']['location']['lat'], geocode_result[0]['geometry']['location']['lng'])
+
+    # google the nearby establishments
+    nearby_supermarket = gmaps.places_nearby(location=location_origin, radius=200, type='supermarket')
+    nearby_school = gmaps.places_nearby(location=location_origin, radius=1000, type='primary_school')
+    nearby_uni = gmaps.places_nearby(location=location_origin, radius=600, type='university')
+    nearby_police = gmaps.places_nearby(location=location_origin, radius=2000, type='police')
+    nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=500, type='hospital')
+
+    # For each establishments, calculate the travel time
+    supermarket_res = []
+    school_res = []
+    police_res = []
+    hospitals_res = []
+    university_res = []
+
+    # supermarket
+    for i in nearby_supermarket['results']:
+        location_destination = i['geometry']['location']
+        distance_by_walking = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='walking'
+        )
+
+        distance_by_driving = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='driving'
+        )
+
+        supermarket_res.append({'name': i['name'],
+                                'addr': distance_by_walking['destination_addresses'][0],
+                                'location': location_destination,
+                                'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
+                                'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration'][
+                                    'text'],
+                                'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration'][
+                                    'text']
+                                })
+
+    # school
+    for i in nearby_school['results']:
+        location_destination = i['geometry']['location']
+        distance_by_walking = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='walking'
+        )
+
+        distance_by_driving = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='driving'
+        )
+
+        school_res.append({'name': i['name'],
+                           'addr': distance_by_walking['destination_addresses'][0],
+                           'location': location_destination,
+                           'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
+                           'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration']['text'],
+                           'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration']['text']
+                           })
+
+    # university
+    for i in nearby_uni['results']:
+        location_destination = i['geometry']['location']
+        distance_by_walking = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='walking'
+        )
+
+        distance_by_driving = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='driving'
+        )
+
+        university_res.append({'name': i['name'],
+                               'addr': distance_by_walking['destination_addresses'][0],
+                               'location': location_destination,
+                               'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
+                               'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration'][
+                                   'text'],
+                               'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration'][
+                                   'text']
+                               })
+
+    # hospital
+    for i in nearby_hospitals['results']:
+        location_destination = i['geometry']['location']
+        distance_by_walking = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='walking'
+        )
+
+        distance_by_driving = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='driving'
+        )
+
+        hospitals_res.append({'name': i['name'],
+                              'addr': distance_by_walking['destination_addresses'][0],
+                              'location': location_destination,
+                              'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
+                              'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration'][
+                                  'text'],
+                              'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration'][
+                                  'text']
+                              })
+
+    # police station
+    for i in nearby_police['results']:
+        location_destination = i['geometry']['location']
+        distance_by_walking = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='walking'
+        )
+
+        distance_by_driving = gmaps.distance_matrix(
+            origins=location_origin,
+            destinations=location_destination,
+            mode='driving'
+        )
+
+        police_res.append({'name': i['name'],
+                           'addr': distance_by_walking['destination_addresses'][0],
+                           'location': location_destination,
+                           'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
+                           'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration']['text'],
+                           'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration']['text']
+                           })
+
+    final_res = {'supermarkets': supermarket_res,
+                 'schools': school_res,
+                 'university': university_res,
+                 'hospitals': hospitals_res,
+                 'police': police_res}
+
+    # print(final_res)
+    # for i in supermarket_res:
+    # print(i)
+
+    return jsonify(final_res), 200
