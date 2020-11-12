@@ -92,6 +92,7 @@ class ResultCard extends Component{
                     toggleModal = {this.toggleModal}
                     displayRegistered = {this.displayRegistered}
                     propertyId = {this.props.propertyId}
+                    token = {this.props.token}
                 />
                 <Container>
                     <Card fluid style={{height:"260px", padding:"5px"}}>
