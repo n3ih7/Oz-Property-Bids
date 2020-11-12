@@ -30,7 +30,8 @@ class PropertyBid extends Component{
             auctionComplete: (afterAuction) ? true : false,
             timeTillStart : givenStart,
             timeTillEnd : givenEnd,
-            loading : true
+            loading : true,
+            haveMapDetails : false
         }
     
         this.cookies = this.props.cookies;
@@ -106,14 +107,10 @@ class PropertyBid extends Component{
                                     {this.state.propertyDetails.intro_text}
                                 </Row>
                                 <br/>
-                                <Row>
-                                    <Col>
-                                    Map Stats Go Here
-                                    </Col>
-                                    <Col>
-                                    <Map/>
-                                    </Col>
-                                </Row>
+                                <Map
+                                propertyId = {this.state.propertyDetails.propertyId}
+                                propertyAddress = {this.state.propertyDetails.address}
+                                />
                             </Card.Body>
                         </Card>
                     </Col>
