@@ -26,8 +26,6 @@ class SignUp extends Component{
         this.city = React.createRef();
         this.territory = React.createRef();
         this.postCode = React.createRef();
-        this.bsb = React.createRef();
-        this.accountNumber = React.createRef();
         this.phone = React.createRef();
 
         this.cookies = this.props.cookies;
@@ -187,21 +185,6 @@ class SignUp extends Component{
                                     </Form.Group>
                                 </Form.Row>
 
-                                <Form.Row>
-                                    <Form.Group as={Col} controlId="formGridBSB">
-                                    <Form.Label>BSB</Form.Label>
-                                    <Form.Control placeholder="" ref={this.bsb} />
-                                    <Form.Text className="text-muted">
-                                        We will only share these details if you win at auction
-                                    </Form.Text>
-                                    </Form.Group>
-
-                                    <Form.Group as={Col} controlId="formGridAcc" >
-                                    <Form.Label>Account Number</Form.Label>
-                                    <Form.Control type="password" placeholder="" ref={this.accountNumber} />
-                                    </Form.Group>
-                                </Form.Row>
-
                                 {this.formCheckbox()}
 
                                 <Form.Text className="text-muted" style={{textAlign:"right"}}>
@@ -240,7 +223,7 @@ class SignUp extends Component{
             return;
         }
 
-        if(((this.firstName.current.value).length === 0) || ((this.lastName.current.value).length === 0) || ((this.address1.current.value).length === 0) || ((this.city.current.value).length === 0) || ((this.postCode.current.value).length === 0) || ((this.phone.current.value).length === 0) || ((this.bsb.current.value).length === 0) || ((this.accountNumber.current.value).length === 0)){
+        if(((this.firstName.current.value).length === 0) || ((this.lastName.current.value).length === 0) || ((this.address1.current.value).length === 0) || ((this.city.current.value).length === 0) || ((this.postCode.current.value).length === 0) || ((this.phone.current.value).length === 0)){
             this.setState({formError: true, errorMessage: "A mandatory field is empty, please check your form"});
             return;
         }
@@ -263,8 +246,6 @@ class SignUp extends Component{
             state: (this.territory.current.value === null ? "" : `${this.territory.current.value}`),
             postcode: (this.postCode.current.value === null ? "" : `${this.postCode.current.value}`),
             bidder_flag: (this.state.buyer ? "1" : "0"),
-            bsb: (this.bsb.current.value === null ? "" : `${this.bsb.current.value}`),
-            acc_number: (this.accountNumber.current.value === null ? "" : `${this.accountNumber.current.value}`),
             seller_flag: (this.state.seller ? "1" : "0")
         })
         .then((response) => {
