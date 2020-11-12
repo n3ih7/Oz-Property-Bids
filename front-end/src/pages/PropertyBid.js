@@ -61,17 +61,19 @@ class PropertyBid extends Component{
                 <Col md="auto">
                     <Row className="justify-content-md-center">
                         <Col>
-                            <Card style={{width:"1300px", padding:"5px"}}>
+                            <Card style={{width:"1100px", height:"800px", padding:"5px"}}>
                                 <Card.Title style={{fontSize:"30px"}}>
                                     {this.state.propertyDetails.address}
                                 </Card.Title>
-                                <Carousel>
-                                    {this.state.propertyDetails.images.map(image =>(
-                                        <div style={{width:"1000px"}}>
-                                            <img alt="favourites button" src={image}/>
-                                        </div>
-                                    ))}
-                                </Carousel>
+                                <div>
+                                    <Carousel>
+                                        {this.state.propertyDetails.images.map(image =>(
+                                            <div style={{width:"1000px", height:"100%"}}>
+                                                <img alt="house picture" src={image}/>
+                                            </div>
+                                        ))}
+                                    </Carousel>
+                                </div>
                             </Card>
                         </Col>
                         <Col>

@@ -1,7 +1,16 @@
 import React, {Component} from 'react';
 import {Card, Container, Col, Row, Button, Modal, Accordion, Form} from 'react-bootstrap';
 import './ResultCard.css';
+import bed from '../assets/bed.png';
+import bath from '../assets/bathtub.png';
+import car from '../assets/car.png';
+import timer from '../assets/timer.png';
+import gavel from '../assets/gavel.png';
 const axios = require('axios');
+
+const leadingImageSpacingStyle = {marginRight:"5px"};
+const ImageSpacingStyle = {marginRight:"5px", marginLeft: "20px"};
+const ImageStyle = {width:"25px", height:"25px"};
 
 class ResultCard extends Component{
 
@@ -226,13 +235,27 @@ class ResultCard extends Component{
                                 </Card.Title>
                                 <Card.Subtitle className="mb-2 text-muted">{this.props.propertyType}</Card.Subtitle>
                                 <Card.Body>
-                                        Beds: {this.props.beds}
-                                        <br/>
-                                        Baths: {this.props.baths}
-                                        <br/>
-                                        Car Spots: {this.props.carSpots}
-                                        <br/>
-                                        Auction Start: {(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}
+                                    <Row>
+                                        <div style ={leadingImageSpacingStyle}>{this.props.beds} </div> 
+                                        <img src={bed} style={ImageStyle}/>
+                                        <div style ={ImageSpacingStyle}>{this.props.baths}</div> 
+                                        <img src={bath} style={ImageStyle}/>
+                                        <div style ={ImageSpacingStyle}>{this.props.carSpots}</div> 
+                                        <img src={car} style={ImageStyle}/>
+                                    </Row>
+                                    <br/>
+                                    <Row>
+                                        
+                                        <div style ={leadingImageSpacingStyle}>Auction Start</div> 
+                                        <img src={timer} style={ImageStyle}/> 
+                                        <div style ={ImageSpacingStyle}>{(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}</div>
+                                    </Row>
+                                    <Row>
+                                        <div style ={leadingImageSpacingStyle}> Auction End</div> 
+                                        <img src={gavel} style={ImageStyle}/> 
+                                        <div style ={ImageSpacingStyle}>{(new Date(parseInt(this.props.auctionEnd)).toString()).slice(0,24)}</div>
+                                    </Row>
+                                    
                                 </Card.Body>
                             </Col>
                             {this.buyerCardFeatures()}

@@ -24,8 +24,8 @@ class Map extends Component {
         lat :59.95,
         lng :30.33,
       },
-      mapZoom: 10,
-      services : ['',''],
+      mapZoom: 15,
+      services : [],
       serviceNames : ["Hospitals", "Police Stations","Schools","Supermarkets","Universities"],
       serviceImages : [hospital, police, school, supermarket, university],
       haveMapDetails : false
@@ -44,14 +44,16 @@ class Map extends Component {
         .then((response) => {
             if (response.status === 200){
                 console.log(response.data);
+                
                 this.setState({
                   haveMapDetails : true,
+                  houseCenter : response.data.property_location,
                   services : [
-                    (response.data.hospitals.length !== 0) ? response.data.hospitals[0] : null,
-                    (response.data.police.length !== 0) ? response.data.police[0] : null,
-                    (response.data.schools.length !== 0) ? response.data.schools[0] : null,
-                    (response.data.supermarkets.length !== 0) ? response.data.supermarkets[0] : null,
-                    (response.data.university.length !== 0) ? response.data.university[0] : null
+                    (response.data.hospital !== null) ? response.data.hospital : null,
+                    (response.data.police !== null) ? response.data.police : null,
+                    (response.data.school !== null) ? response.data.school : null,
+                    (response.data.supermarket !== null) ? response.data.supermarket : null,
+                    (response.data.university !== null) ? response.data.university : null
                   ]
                 });
             }
@@ -73,8 +75,8 @@ class Map extends Component {
                 defaultZoom={this.state.mapZoom}
               >
                 <MapMarker
-                  lat={59.955413}
-                  lng={30.337844}
+                  lat={this.state.houseCenter.lat}
+                  lng={this.state.houseCenter.lng}
                   text= {this.props.propertyAddress}
                 />
 
