@@ -63,6 +63,7 @@ class PROPERTY_BID_RELATION(db.Model):
     cheque_flag = db.Column('cheque_flag', db.Text)
     # cheque_name = db.Column('cheque_name', db.Text)
     card_flag = db.Column('card_flag', db.Text)
+    email_flag = db.Column('email_flag', db.Text)
 
 
 class MOVEMENT_TRACKING(db.Model):
