@@ -87,6 +87,7 @@ class PropertyBid extends Component{
                                 token = {this.cookies.get('token')}
                                 userType = {this.cookies.get('userType')}
                                 registered = {this.props.propertyDetails.registered}
+                                acceptedPaymentMethods = {this.props.propertyDetails.accepted_payment_method}
                             />
                         </Col>
                     </Row>

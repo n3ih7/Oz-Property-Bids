@@ -48,8 +48,6 @@ class Results extends Component{
         axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
   
         axios.get('/get_rab_status').then((response) => {
-          console.log(response);
-
           if (response.status === 200){
             this.setState({
                 registeredAuctions : response.data.rab_registered,
@@ -296,6 +294,7 @@ class Results extends Component{
                         token={this.cookies.get('token')} 
                         userType={this.cookies.get('userType')}
                         registeredAuctions = {this.state.registeredAuctions}
+                        acceptedPaymentMethods = {property.accepted_payment_method}
                       />
                   </Row>
                   <br/>

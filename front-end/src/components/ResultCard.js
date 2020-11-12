@@ -93,6 +93,7 @@ class ResultCard extends Component{
                     displayRegistered = {this.displayRegistered}
                     propertyId = {this.props.propertyId}
                     token = {this.props.token}
+                    acceptedPaymentMethods = {this.props.acceptedPaymentMethods}
                 />
                 <Container>
                     <Card fluid style={{height:"260px", padding:"5px"}}>

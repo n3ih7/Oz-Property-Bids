@@ -127,6 +127,7 @@ class AuctionManager extends Component{
                     displayRegistered = {this.displayRegistered}
                     propertyId = {this.props.propertyId}
                     token = {this.props.token}
+                    acceptedPaymentMethods = {this.props.acceptedPaymentMethods}
                      />
 
                     <Card style={{width:"22rem", padding:"5px"}}>

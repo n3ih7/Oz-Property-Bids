@@ -58,9 +58,9 @@ class RegisterationModal extends Component{
                     <p>You must place an initial bid in order to register for the full auction.</p>
                     <p>The payment methods available are limited to the options the property seller will accept.</p>
                     <div>
-                        <Form.Check inline label="Credit Card" type='radio' id={`card`} checked={this.state.payWithCard} onClick={()=>{this.setState({payWithCard: !this.state.payWithCard, payWithBank: false, payWithCheque: false, paymentMethod: '0'})}} />
-                        <Form.Check inline label="Bank Transfer" type='radio' id={`bankTransfer`} checked={this.state.payWithBank} onClick={()=>{this.setState({payWithBank: !this.state.payWithBank, payWithCard: false, payWithCheque: false, paymentMethod:"1"})}} />
-                        <Form.Check inline label="Cheque" type='radio' id={`cheque`} checked={this.state.payWithCheque} onClick={()=>{this.setState({payWithCheque: !this.state.payWithCheque, payWithCard: false, payWithBank: false, paymentMethod:"2"})}}/>
+                        <Form.Check inline disabled={!this.props.acceptedPaymentMethods.includes("Credit/Debit Card")} label="Credit Card" type='radio' id={`card`} checked={this.state.payWithCard} onClick={()=>{this.setState({payWithCard: !this.state.payWithCard, payWithBank: false, payWithCheque: false, paymentMethod: '0'})}} />
+                        <Form.Check inline disabled={!this.props.acceptedPaymentMethods.includes("Bank Transfer")} label="Bank Transfer" type='radio' id={`bankTransfer`} checked={this.state.payWithBank} onClick={()=>{this.setState({payWithBank: !this.state.payWithBank, payWithCard: false, payWithCheque: false, paymentMethod:"1"})}} />
+                        <Form.Check inline disabled={!this.props.acceptedPaymentMethods.includes("Cheque")} label="Cheque" type='radio' id={`cheque`} checked={this.state.payWithCheque} onClick={()=>{this.setState({payWithCheque: !this.state.payWithCheque, payWithCard: false, payWithBank: false, paymentMethod:"2"})}}/>
                     </div>
                     <Accordion activeKey = {this.state.paymentMethod}>
                         <Card>

@@ -68,6 +68,7 @@ class SellerHome extends Component{
                                 checkRedirect = {this.checkRedirect} 
                                 token={this.cookies.get('token')} 
                                 userType={this.cookies.get('userType')}
+                                acceptedPaymentMethods = {[]}
                                 />
                             </Row>
                             <br/>
