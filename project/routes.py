@@ -905,12 +905,13 @@ def bid():
                                                    end_time=a.expected_finish_time + '000',
                                                    cur_time=str(cur_time) + '000'), 409
                                 else:
-                                    return jsonify(error="The auction has ended. No one offered more than reserve price",
-                                                   winner="",
-                                                   final_price="",
-                                                   start_time=a.start_time + '000',
-                                                   end_time=a.expected_finish_time + '000',
-                                                   cur_time=str(cur_time) + '000'), 409
+                                    return jsonify(
+                                        error="The auction has ended. No one offered more than reserve price",
+                                        winner="",
+                                        final_price="",
+                                        start_time=a.start_time + '000',
+                                        end_time=a.expected_finish_time + '000',
+                                        cur_time=str(cur_time) + '000'), 409
                             else:
                                 return jsonify(
                                     error="You bid request somehow did not accept by system"), 400
@@ -1139,8 +1140,6 @@ def nearby_returns():
 
     # -----------------------------------------------------------------------------------------------------------------------
 
-
-
     # Method2: get the closest establishments
     # -----------------------------------------------------------------------------------------------------------------------
     # google the nearby establishments
@@ -1307,4 +1306,3 @@ def nearby_returns():
 
     return jsonify(final_res), 200
     # -----------------------------------------------------------------------------------------------------------------------
-
