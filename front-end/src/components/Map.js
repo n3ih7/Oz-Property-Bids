@@ -49,11 +49,11 @@ class Map extends Component {
                   haveMapDetails : true,
                   houseCenter : response.data.property_location,
                   services : [
-                    (response.data.hospital !== null) ? response.data.hospital : null,
-                    (response.data.police !== null) ? response.data.police : null,
-                    (response.data.school !== null) ? response.data.school : null,
-                    (response.data.supermarket !== null) ? response.data.supermarket : null,
-                    (response.data.university !== null) ? response.data.university : null
+                    (response.data.hospital.location !== undefined) ? response.data.hospital : null,
+                    (response.data.police.location !== undefined) ? response.data.police : null,
+                    (response.data.school.location !== undefined) ? response.data.school : null,
+                    (response.data.supermarket.location !== undefined) ? response.data.supermarket : null,
+                    (response.data.university.location !== undefined) ? response.data.university : null
                   ]
                 });
             }
@@ -80,7 +80,7 @@ class Map extends Component {
                   text= {this.props.propertyAddress}
                 />
 
-                {this.state.services.flatMap((service) =>(
+                {this.state.services.flatMap((service, index) =>(
                   (service !== null) ?
                   <MapMarker
                     lat={service.location.lat}
