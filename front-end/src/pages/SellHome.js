@@ -54,7 +54,21 @@ class SellerHome extends Component{
                     {this.state.listings.map(property =>(
                         <>
                             <Row>
-                                <ResultCard streetAddress={property.address} auctionStart ={property.auction_start} baths={property.baths} beds={property.beds} city={property.city} propertyType ={property.propertyType} carSpots={property.parkingSpace} image={property.images[0]} propertyId={property.propertyId} givePropertyDetails={this.props.retrieveHouse} checkRedirect = {this.checkRedirect} token={this.cookies.get('token')} userType={this.cookies.get('userType')}/>
+                                <ResultCard 
+                                streetAddress={property.address} 
+                                auctionStart ={property.auction_start} 
+                                baths={property.baths} beds={property.beds} 
+                                city={property.city} 
+                                propertyType ={property.propertyType} 
+                                carSpots={property.parkingSpace} 
+                                image={property.images[0]} 
+                                propertyId={property.propertyId} 
+                                givePropertyDetails={this.props.retrieveHouse}
+                                registeredAuctions ={[]} 
+                                checkRedirect = {this.checkRedirect} 
+                                token={this.cookies.get('token')} 
+                                userType={this.cookies.get('userType')}
+                                />
                             </Row>
                             <br/>
                         </>

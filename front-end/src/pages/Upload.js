@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Card, Form, Col, Row, Button, Spinner} from 'react-bootstrap';
+import {Container, Card, Form, Col, Row, Button, Spinner, Accordion} from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import {Redirect} from 'react-router-dom';
 import ImageUploading from "react-images-uploading";
@@ -21,7 +21,9 @@ class Upload extends Component{
             dateTimeEnd: null,
             acceptCard: false,
             acceptBank: false,
-            acceptCheque: false
+            acceptCheque: false,
+            account : "",
+            bsb : ""
         }
 
         this.beds = React.createRef();
@@ -203,6 +205,7 @@ class Upload extends Component{
                                 </ImageUploading>
                             </Row>
                             <br/>
+
                             <h4>Auction Details</h4>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridReservePrice">
@@ -211,6 +214,7 @@ class Upload extends Component{
                                     <Form.Text>This information will not be shared with anyone</Form.Text>
                                 </Form.Group>
                             </Form.Row>
+
                             <Form.Row>
                                 <Col controlId="formGridAuctionStartSeller">
                                     <Form.Label>Auction Start Time</Form.Label>
@@ -235,17 +239,44 @@ class Upload extends Component{
                                 </Form.Group>
                             </Form.Row>
                             <br/>
+
                             <h4>Accepted Payment Methods</h4>
                             <Form.Row>
                                 <Form.Group as={Col} controlId="formGridPaymentMethods">
                                     <Form.Row>
                                         <Form.Check style={{marginRight:"15px", marginLeft:"5px"}} type="checkbox" id="default-radio1" label="Credit Card" onClick={() => {this.setState({acceptCard: !this.state.acceptCard})}}></Form.Check>
-                                        <Form.Check style={{marginRight:"15px"}} type="checkbox" id="default-radio2" label="Bank Transfer" onClick={() => {this.setState({acceptBank: !this.state.acceptBank})}}></Form.Check>
+                                        <Form.Check style={{marginRight:"15px"}} type="checkbox" id="default-radio2" label="Bank Transfer" onClick={() => {this.setState({acceptBank: !this.state.acceptBank, toggleBank : (this.state.acceptBank ? "1" : "0")})}}></Form.Check>
                                         <Form.Check style={{marginRight:"5px"}} type="checkbox" id="default-radio3" label="Cheque" onClick={() => {this.setState({acceptCheque: !this.state.acceptCheque})}}></Form.Check>
                                     </Form.Row>
                                     <Form.Text>Payment methods you are willing to accept for your property</Form.Text>
                                 </Form.Group>
                             </Form.Row>
+
+                            <Accordion activeKey = {this.state.toggleBank}>
+                                <Card>
+                                    <Card.Header>
+                                        <Accordion.Toggle as={Row} eventKey="0">
+                                            <div style={{padding:"1px"}}></div>
+                                        </Accordion.Toggle>
+                                    </Card.Header>
+                                    <Accordion.Collapse eventKey="0">
+                                        <Card.Body>
+                                            Bank Details
+                                            <Form>
+                                                <br/>
+                                                <Form.Row>
+                                                    <Form.Group as={Col} controlId="formGridCardName">
+                                                        <Form.Control type="" placeholder="BSB" value={this.state.bsb} onChange ={(e)=>{this.setState({bsb :e.target.value})}} />
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} controlId="formGridCardNumber">
+                                                        <Form.Control type="" placeholder="Account" value={this.state.account} onChange ={(e)=>{this.setState({account: e.target.value})}} />
+                                                    </Form.Group>
+                                                </Form.Row>
+                                            </Form>
+                                        </Card.Body>
+                                    </Accordion.Collapse>
+                                </Card>
+                            </Accordion>
                         </Form>
                         <br/>
                         <Button style={{background : "#05445E", border: "#05445E"}} type="submit" onClick = {(e) => {this.handleSubmit(e)}}>
@@ -279,7 +310,12 @@ class Upload extends Component{
             auction_duration : `${(86400 * this.state.auctionDuration)}`,
             intro_title: this.title.current.value,
             intro_text: this.description.current.value,
-            images : this.state.mappedImages
+            images : this.state.mappedImages,
+            bsb : this.state.bsb,
+            acc_number : this.state.account,
+            cheque_flag : (this.state.acceptCheque ? '1' : '0'),
+            card_flag: (this.state.acceptCard ? '1' : '0'),
+            bank_transfer_flag: (this.state.acceptBank ? '1' : '0')
         })
         .then((response) => {
             console.log(response);
