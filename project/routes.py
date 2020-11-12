@@ -1069,74 +1069,74 @@ def nearby_returns():
 
     # -----------------------------------------------------------------------------------------------------------------------
 
-    # nearby_supermarket = gmaps.places_nearby(location=location_origin, radius=200, type='supermarket')['results']
-    # nearby_school = gmaps.places_nearby(location=location_origin, radius=1000, type='primary_school')['results']
-    # nearby_uni = gmaps.places_nearby(location=location_origin, radius=600, type='university')['results']
-    # nearby_police = gmaps.places_nearby(location=location_origin, radius=1000, type='police')['results']
-    # nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=500, type='hospital')['results']
-    #
-    # all_nearby = [nearby_supermarket,nearby_school,nearby_uni,nearby_police,nearby_hospitals]
-    # all_nearby_filter = []
-    # for i in all_nearby:
-    #     if len(i) > 0:
-    #         all_nearby_filter.append(i[0])
-    #     else:
-    #         all_nearby_filter.append(i)
-    # nearby_supermarket = all_nearby_filter[0]
-    # nearby_school = all_nearby_filter[1]
-    # nearby_uni = all_nearby_filter[2]
-    # nearby_police = all_nearby_filter[3]
-    # nearby_hospitals = all_nearby_filter[4]
-    #
-    # # calculate the travel time
-    # supermarket_res = []
-    # school_res = []
-    # police_res = []
-    # hospitals_res = []
-    # university_res = []
-    # # print(all_nearby[0])
-    # all_res = [supermarket_res,school_res,university_res,police_res,hospitals_res]
-    # counter = 0
-    # for i in all_nearby_filter:
-    #     if len(i) > 0:
-    #         location_destination = i['geometry']['location']
-    #         distance_by_walking = gmaps.distance_matrix(
-    #             origins=location_origin,
-    #             destinations=location_destination,
-    #             mode='walking'
-    #         )
-    #         distance_by_driving = gmaps.distance_matrix(
-    #             origins=location_origin,
-    #             destinations=location_destination,
-    #             mode='driving'
-    #         )
-    #         all_res[counter].append({  'name': i['name'],
-    #                     'addr': distance_by_walking['destination_addresses'][0],
-    #                     'location': location_destination,
-    #                     'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
-    #                     'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration'][
-    #                         'text'],
-    #                     'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration'][
-    #                         'text']
-    #                     })
-    #     counter+=1
-    #
-    # all_res_filter = []
-    # for i in all_res:
-    #     if len(i) == 0:
-    #         all_res_filter.append({})
-    #     else:
-    #         all_res_filter.append(i[0])
-    #
-    #
-    # final_res = {'property_location': location_origin,
-    #              'supermarket': all_res_filter[0],
-    #              'school': all_res_filter[1],
-    #              'university': all_res_filter[2],
-    #              'police': all_res_filter[3]},
-    #              'hospital': all_res_filter[4]
-    #
-    # return jsonify(final_res), 200
+    nearby_supermarket = gmaps.places_nearby(location=location_origin, radius=200, type='supermarket')['results']
+    nearby_school = gmaps.places_nearby(location=location_origin, radius=1000, type='primary_school')['results']
+    nearby_uni = gmaps.places_nearby(location=location_origin, radius=600, type='university')['results']
+    nearby_police = gmaps.places_nearby(location=location_origin, radius=1000, type='police')['results']
+    nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=500, type='hospital')['results']
+
+    all_nearby = [nearby_supermarket,nearby_school,nearby_uni,nearby_police,nearby_hospitals]
+    all_nearby_filter = []
+    for i in all_nearby:
+        if len(i) > 0:
+            all_nearby_filter.append(i[0])
+        else:
+            all_nearby_filter.append(i)
+    nearby_supermarket = all_nearby_filter[0]
+    nearby_school = all_nearby_filter[1]
+    nearby_uni = all_nearby_filter[2]
+    nearby_police = all_nearby_filter[3]
+    nearby_hospitals = all_nearby_filter[4]
+
+    # calculate the travel time
+    supermarket_res = []
+    school_res = []
+    police_res = []
+    hospitals_res = []
+    university_res = []
+    # print(all_nearby[0])
+    all_res = [supermarket_res,school_res,university_res,police_res,hospitals_res]
+    counter = 0
+    for i in all_nearby_filter:
+        if len(i) > 0:
+            location_destination = i['geometry']['location']
+            distance_by_walking = gmaps.distance_matrix(
+                origins=location_origin,
+                destinations=location_destination,
+                mode='walking'
+            )
+            distance_by_driving = gmaps.distance_matrix(
+                origins=location_origin,
+                destinations=location_destination,
+                mode='driving'
+            )
+            all_res[counter].append({  'name': i['name'],
+                        'addr': distance_by_walking['destination_addresses'][0],
+                        'location': location_destination,
+                        'distance': distance_by_walking['rows'][0]['elements'][0]['distance']['text'],
+                        'travel_time_by_walking': distance_by_walking['rows'][0]['elements'][0]['duration'][
+                            'text'],
+                        'travel_time_by_driving': distance_by_driving['rows'][0]['elements'][0]['duration'][
+                            'text']
+                        })
+        counter+=1
+
+    all_res_filter = []
+    for i in all_res:
+        if len(i) == 0:
+            all_res_filter.append({})
+        else:
+            all_res_filter.append(i[0])
+
+
+    final_res = {'property_location': location_origin,
+                 'supermarket': all_res_filter[0],
+                 'school': all_res_filter[1],
+                 'university': all_res_filter[2],
+                 'police': all_res_filter[3],
+                 'hospital': all_res_filter[4]}
+
+    return jsonify(final_res), 200
 
     # -----------------------------------------------------------------------------------------------------------------------
 
