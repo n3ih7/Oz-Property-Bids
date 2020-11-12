@@ -1061,11 +1061,10 @@ def nearby_returns():
     location_origin = {'lat': geocode_result[0]['geometry']['location']['lat'],
                        'lng': geocode_result[0]['geometry']['location']['lng']}
 
-    # Method 1: 1 entry method,favor the prominent place, not the closest one, have better efficiency
-    # google the nearby establishments
-    # Not default
+    # Method 1: 1 entry method,favor the prominent place, not the closest one.
 
-    # Not runable currently
+    # HAVE BETTER EFFICIENCY than Method2 Below
+    # google the nearby establishments
 
     # -----------------------------------------------------------------------------------------------------------------------
 
@@ -1074,36 +1073,30 @@ def nearby_returns():
     # nearby_uni = gmaps.places_nearby(location=location_origin, radius=600, type='university')['results']
     # nearby_police = gmaps.places_nearby(location=location_origin, radius=1000, type='police')['results']
     # nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=500, type='hospital')['results']
-    # print(time.time() - now, "s 2")
-
+    #
     # all_nearby = [nearby_supermarket,nearby_school,nearby_uni,nearby_police,nearby_hospitals]
-    # print(all_nearby[0])
+    # all_nearby_filter = []
     # for i in all_nearby:
     #     if len(i) > 0:
-    #         i = i[0]
-    #
-    # nearby_supermarket = all_nearby[0][0]
-    # nearby_school = all_nearby[1][0]
-    # nearby_uni = all_nearby[2][0]
-    # nearby_police = all_nearby[3][0]
-    # nearby_hospitals = all_nearby[4][0]
-    #
-    # print(all_nearby[0])
+    #         all_nearby_filter.append(i[0])
+    #     else:
+    #         all_nearby_filter.append(i)
+    # nearby_supermarket = all_nearby_filter[0]
+    # nearby_school = all_nearby_filter[1]
+    # nearby_uni = all_nearby_filter[2]
+    # nearby_police = all_nearby_filter[3]
+    # nearby_hospitals = all_nearby_filter[4]
     #
     # # calculate the travel time
-    #
-    #
-    #
     # supermarket_res = []
     # school_res = []
     # police_res = []
     # hospitals_res = []
     # university_res = []
-    # all_nearby = [nearby_supermarket,nearby_school,nearby_uni,nearby_police,nearby_hospitals]
     # # print(all_nearby[0])
     # all_res = [supermarket_res,school_res,university_res,police_res,hospitals_res]
     # counter = 0
-    # for i in all_nearby:
+    # for i in all_nearby_filter:
     #     if len(i) > 0:
     #         location_destination = i['geometry']['location']
     #         distance_by_walking = gmaps.distance_matrix(
@@ -1127,24 +1120,35 @@ def nearby_returns():
     #                     })
     #     counter+=1
     #
+    # all_res_filter = []
+    # for i in all_res:
+    #     if len(i) == 0:
+    #         all_res_filter.append({})
+    #     else:
+    #         all_res_filter.append(i[0])
+    #
+    #
     # final_res = {'property_location': location_origin,
-    #              'supermarket': supermarket_res,
-    #              'school': school_res,
-    #              'university': university_res,
-    #              'hospital': hospitals_res,
-    #              'police': police_res}
+    #              'supermarket': all_res_filter[0],
+    #              'school': all_res_filter[1],
+    #              'university': all_res_filter[2],
+    #              'police': all_res_filter[3]},
+    #              'hospital': all_res_filter[4]
+    #
     # return jsonify(final_res), 200
 
     # -----------------------------------------------------------------------------------------------------------------------
 
-    # 1 entry Method2: get the closest establishments
 
+
+    # Method2: get the closest establishments
+    # -----------------------------------------------------------------------------------------------------------------------
     # google the nearby establishments
-    nearby_supermarket = gmaps.places_nearby(location=location_origin, radius=200, type='supermarket')
+    nearby_supermarket = gmaps.places_nearby(location=location_origin, radius=1000, type='supermarket')
     nearby_school = gmaps.places_nearby(location=location_origin, radius=1000, type='primary_school')
-    nearby_uni = gmaps.places_nearby(location=location_origin, radius=600, type='university')
-    nearby_police = gmaps.places_nearby(location=location_origin, radius=2000, type='police')
-    nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=500, type='hospital')
+    nearby_uni = gmaps.places_nearby(location=location_origin, radius=1000, type='university')
+    nearby_police = gmaps.places_nearby(location=location_origin, radius=1000, type='police')
+    nearby_hospitals = gmaps.places_nearby(location=location_origin, radius=1000, type='hospital')
     # For each establishments, calculate the travel time
     supermarket_res = []
     school_res = []
@@ -1287,8 +1291,10 @@ def nearby_returns():
             closest = distances.index(min(distances))
             # print(closest)
             all_res_closest.append(estab_type[closest])
+        elif len(estab_type) == 0:
+            all_res_closest.append({})
         else:
-            all_res_closest.append(estab_type)
+            all_res_closest.append(estab_type[0])
         # print(estab_type)
 
     final_res = {'property_location': location_origin,
@@ -1300,3 +1306,5 @@ def nearby_returns():
     # print(time.time() - now, "s 3")
 
     return jsonify(final_res), 200
+    # -----------------------------------------------------------------------------------------------------------------------
+
