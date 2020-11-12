@@ -102,8 +102,6 @@ def signup():
                                             state=jsonContent['state'],
                                             postcode=jsonContent['postcode'],
                                             bidder_flag=jsonContent['bidder_flag'],
-                                            bsb=jsonContent['bsb'],
-                                            acc_number=jsonContent['acc_number'],
                                             seller_flag=jsonContent['seller_flag']
                                             )
                 db.session.add(nu)
@@ -143,8 +141,6 @@ def profile_update():
                     "state": user_ext.state,
                     "postcode": user_ext.postcode,
                     "bidder_flag": user_ext.bidder_flag,
-                    "bsb": user_ext.bsb,
-                    "acc_number": user_ext.acc_number,
                     "seller_flag": user_ext.seller_flag
                 }
                 return jsonify(result_dict), 200
@@ -193,18 +189,6 @@ def profile_update():
                                         error='Please check your old password old_password, profile update failed'), 401
                                 else:
                                     user.password = generate_password_hash(v, method='sha256')
-                            elif k == 'new_bsb':
-                                if not check_password_hash(user.password, jsonContent['old_password']):
-                                    return jsonify(
-                                        error='Please check your old password old_password, profile update failed'), 401
-                                else:
-                                    user_ext.bsb = v
-                            elif k == 'new_acc_number':
-                                if not check_password_hash(user.password, jsonContent['old_password']):
-                                    return jsonify(
-                                        error='Please check your old password old_password, profile update failed'), 401
-                                else:
-                                    user_ext.acc_number = v
                             elif k == 'firstname':
                                 user_ext.firstname = v
                             elif k == 'lastname':
@@ -350,13 +334,13 @@ def property_search():
             else:
                 query_res = query_res.filter(PROPERTY_INFO.parkingSpace >= 3)
         if start_timeStamp != '':
-            print(start_timeStamp)
+            # print(start_timeStamp)
             query_res = query_res.filter(start_timeStamp <= PROPERTY_INFO.auction_start)
         if end_timeStamp != '':
-            print(end_timeStamp)
+            # print(end_timeStamp)
             query_res = query_res.filter(PROPERTY_INFO.auction_end <= end_timeStamp)
 
-        print(len(query_res.all()))
+        # print(len(query_res.all()))
 
         result_list = []
         if query_res:
@@ -374,6 +358,15 @@ def property_search():
                     images_list.append(str(image_str))
                     os.remove(file_name)
 
+                j = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                payment_method_list = []
+                if j.bank_transfer_flag == '1':
+                    payment_method_list.append("Bank Transfer")
+                if j.cheque_flag == '1':
+                    payment_method_list.append("Cheque")
+                if j.card_flag == '1':
+                    payment_method_list.append("Credit/Debit Card")
+
                 result_dict = {
                     "propertyId": i.propertyId,
                     "propertyType": i.propertyType,
@@ -385,7 +378,8 @@ def property_search():
                     "landSize": i.landSize,
                     "auction_start": str(i.auction_start) + '000',
                     "images": images_list,
-                    "intro_title": i.intro_title
+                    "intro_title": i.intro_title,
+                    "accepted_payment_method": payment_method_list
                 }
 
                 if 'Authorization' in request.headers:
@@ -458,6 +452,15 @@ def property_get_n_post():
                                                sellerId=user.uid,
                                                propertyPostDate=str(int(time.time()))
                                                )
+
+                            bank_transfer_flag = ''
+                            bsb = ''
+                            acc_number = ''
+                            cheque_flag = ''
+                            cheque_name = ''
+                            card_flag = ''
+                            card_number = ''
+
                             for k, v in jsonContent.items():
                                 if k == 'propertyId' or k == 'sellerId' or k == 'propertyPostDate' \
                                         or k == 'compare_addr' or k == 'auction_end':
@@ -508,15 +511,40 @@ def property_get_n_post():
                                         np.images = str(seq)
                                     else:
                                         np.images = '0'
+                                elif k == 'bank_transfer_flag':
+                                    if v and v == "1":
+                                        bank_transfer_flag = "1"
+                                elif k == 'bsb':
+                                    if v and v != "":
+                                        bsb = v
+                                elif k == 'acc_number':
+                                    if v and v != "":
+                                        acc_number = v
+                                elif k == 'cheque_flag':
+                                    if v and v == "1":
+                                        cheque_flag = "1"
+                                # elif k == 'cheque_name':
+                                #     if v and v != "":
+                                #         cheque_name = v
+                                elif k == 'card_flag':
+                                    if v and v == "1":
+                                        card_flag = "1"
                                 else:
                                     return jsonify(error="Unexpected attributes received, nothing changed"), 400
+
                             db.session.merge(np)
 
                             pbr = PROPERTY_BID_RELATION(bidActivityId=get_new_bid_activity_id(),
                                                         propertyId=np.propertyId,
                                                         reserve_price=np.reservePrice,
                                                         start_time=np.auction_start,
-                                                        expected_finish_time=np.auction_end
+                                                        expected_finish_time=np.auction_end,
+                                                        bank_transfer_flag=bank_transfer_flag,
+                                                        bsb=bsb,
+                                                        acc_number=acc_number,
+                                                        cheque_flag=cheque_flag,
+                                                        # cheque_name=cheque_name,
+                                                        card_flag=card_flag
                                                         )
                             db.session.merge(pbr)
 
@@ -560,6 +588,15 @@ def property_get_n_post():
 
                 seller = USER_INFO_EXTENDED.query.filter_by(uid=i.sellerId).first()
 
+                j = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
+                payment_method_list = []
+                if j.bank_transfer_flag == '1':
+                    payment_method_list.append("Bank Transfer")
+                if j.cheque_flag == '1':
+                    payment_method_list.append("Cheque")
+                if j.card_flag == '1':
+                    payment_method_list.append("Credit/Debit Card")
+
                 result_dict = {
                     "propertyId": i.propertyId,
                     "sellerName": seller.firstname + ' ' + seller.lastname,
@@ -576,7 +613,8 @@ def property_get_n_post():
                     "auction_start": i.auction_start + '000',
                     "auction_end": i.auction_end + '000',
                     "intro_title": i.intro_title,
-                    "intro_text": i.intro_text
+                    "intro_text": i.intro_text,
+                    "accepted_payment_method": payment_method_list
                 }
 
                 a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
@@ -640,6 +678,15 @@ def property_get_n_post():
                         images_list.append(str(image_str))
                         os.remove(file_name)
 
+                    j = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                    payment_method_list = []
+                    if j.bank_transfer_flag == '1':
+                        payment_method_list.append("Bank Transfer")
+                    if j.cheque_flag == '1':
+                        payment_method_list.append("Cheque")
+                    if j.card_flag == '1':
+                        payment_method_list.append("Credit/Debit Card")
+
                     r_property_dict = {
                         "propertyId": i.propertyId,
                         "propertyType": i.propertyType,
@@ -651,7 +698,8 @@ def property_get_n_post():
                         "landSize": i.landSize,
                         "auction_start": str(i.auction_start) + '000',
                         "images": images_list,
-                        "intro_title": i.intro_title
+                        "intro_title": i.intro_title,
+                        "accepted_payment_method": payment_method_list
                     }
                     pp_list.append(r_property_dict)
 
@@ -698,6 +746,15 @@ def see_my_listing():
                             images_list.append(str(image_str))
                             os.remove(file_name)
 
+                        j = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                        payment_method_list = []
+                        if j.bank_transfer_flag == '1':
+                            payment_method_list.append("Bank Transfer")
+                        if j.cheque_flag == '1':
+                            payment_method_list.append("Cheque")
+                        if j.card_flag == '1':
+                            payment_method_list.append("Credit/Debit Card")
+
                         r_property_dict = {
                             "propertyId": i.propertyId,
                             "propertyType": i.propertyType,
@@ -709,7 +766,8 @@ def see_my_listing():
                             "landSize": i.landSize,
                             "auction_start": str(i.auction_start) + '000',
                             "images": images_list,
-                            "intro_title": i.intro_title
+                            "intro_title": i.intro_title,
+                            "accepted_payment_method": payment_method_list
                         }
                         pp_list.append(r_property_dict)
 
@@ -722,31 +780,6 @@ def see_my_listing():
                 }
 
                 return jsonify(return_dict), 200
-            else:
-                return jsonify(error="User type not correct, nothing to be changed"), 401
-        else:
-            return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
-    except IndexError:
-        return jsonify(error="Token format not valid, nothing to be changed"), 401
-    except KeyError:
-        return jsonify(error="Token not received, nothing to be changed"), 401
-
-
-@app.route('/payment_info_check', methods=['GET'])
-def payment_info_check():
-    try:
-        tk = str(request.headers['Authorization']).split(' ')[1]
-        user = USER_INFO.query.filter_by(curr_token=tk).first()
-
-        if user and user.login_status == '1' and time.time() < float(user.expire_time):
-            uid = user.uid
-            user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
-            if user_ext.bidder_flag == '1' and user_ext.seller_flag == '0':
-                if user_ext.bsb != '' and len(user_ext.bsb) == 6 and user_ext.acc_number != '':
-                    return jsonify(bsb=user_ext.bsb, acc_number=user_ext.acc_number), 200
-                else:
-                    return jsonify(bsb=user_ext.bsb, acc_number=user_ext.acc_number, error='needs to update payment '
-                                                                                           'info'), 402
             else:
                 return jsonify(error="User type not correct, nothing to be changed"), 401
         else:
@@ -784,7 +817,13 @@ def bid():
                                 i_b = BID_ACTIVITY(uid=uid,
                                                    bidActivityId=a.bidActivityId,
                                                    offerPrice=offerPrice,
-                                                   bidPlaceTime=str(cur_time)
+                                                   bidPlaceTime=str(cur_time),
+                                                   initial_bid_flag="1",
+                                                   payment_method_as_buyer=jsonContent['paymentMethod'],
+                                                   cardholderName=jsonContent['cardHolderName'],
+                                                   cardNumber=jsonContent['cardNumber'],
+                                                   cardExp=jsonContent['cardExpiration'],
+                                                   cardCVV=jsonContent['cardCV']
                                                    )
                                 db.session.add(i_b)
                                 db.session.commit()
@@ -847,7 +886,8 @@ def bid():
                                 db.session.add(nb)
                                 db.session.commit()
 
-                                return jsonify(msg="Your price has been accepted", ref=nb.lineId,
+                                return jsonify(msg="Your price has been accepted",
+                                               ref=nb.lineId,
                                                bid_time=str(nb.bidPlaceTime) + '000',
                                                expected_finish_time=a.expected_finish_time + '000',
                                                yourPrice=offerPrice,
@@ -855,6 +895,7 @@ def bid():
 
                             elif cur_time > float(a.expected_finish_time):
                                 return jsonify(error="The auction has ended",
+                                               start_time=a.start_time + '000',
                                                end_time=a.expected_finish_time + '000',
                                                cur_time=str(cur_time) + '000'), 409
                             else:
@@ -893,7 +934,12 @@ def bid():
                       }
             result_list.append(r_dict)
 
-        return jsonify(history=result_list, length=str(len(result_list)), propertyId=propertyId), 200
+        return jsonify(history=result_list,
+                       length=str(len(result_list)),
+                       propertyId=propertyId,
+                       start_time=a.start_time + '000',
+                       end_time=a.expected_finish_time + '000',
+                       cur_time=str(int(time.time())) + '000'), 200
 
 
 @app.route('/get_rab_status', methods=['GET'])

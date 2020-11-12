@@ -22,8 +22,6 @@ class USER_INFO_EXTENDED(db.Model):
     state = db.Column('state', db.Text)
     postcode = db.Column('postcode', db.Text)
     bidder_flag = db.Column('bidder_flag', db.Text)
-    bsb = db.Column('bsb', db.Text)
-    acc_number = db.Column('accnumber', db.Text)
     seller_flag = db.Column('seller_flag', db.Text)
 
 
@@ -59,6 +57,12 @@ class PROPERTY_BID_RELATION(db.Model):
     final_price = db.Column('final_price', db.Text)
     start_time = db.Column('start_time', db.Text)
     expected_finish_time = db.Column('expected_finish_time', db.Text)
+    bank_transfer_flag = db.Column('bank_transfer_flag', db.Text)
+    bsb = db.Column('bsb', db.Text)
+    acc_number = db.Column('accnumber', db.Text)
+    cheque_flag = db.Column('cheque_flag', db.Text)
+    # cheque_name = db.Column('cheque_name', db.Text)
+    card_flag = db.Column('card_flag', db.Text)
 
 
 class MOVEMENT_TRACKING(db.Model):
@@ -83,4 +87,9 @@ class BID_ACTIVITY(db.Model):
     bidActivityId = db.Column('bid_activity_id', db.INTEGER)
     offerPrice = db.Column('offer_price', db.INTEGER)
     bidPlaceTime = db.Column('bid_place_time', db.Text)
-
+    payment_method_as_buyer = db.Column('payment_method_as_buyer', db.Text)
+    initial_bid_flag = db.Column('initial_bid_flag', db.Text)
+    cardholderName = db.Column('cardholdername', db.Text)
+    cardNumber = db.Column('cardnumber', db.Text)
+    cardExp = db.Column('cardexp', db.Text)
+    cardCVV = db.Column('cardcv', db.Text)
