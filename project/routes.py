@@ -874,6 +874,10 @@ def bid():
                                                        yourPrice=offerPrice,
                                                        curr_higest_price=str(search_largest.offerPrice),
                                                        start_time=str(a.start_time)), 409
+                                # record curr_winner
+                                a.winnerId = uid
+                                a.final_price = offerPrice
+                                db.session.merge(a)
 
                                 nb = BID_ACTIVITY(uid=uid,
                                                   bidActivityId=a.bidActivityId,
@@ -891,13 +895,25 @@ def bid():
                                                start_time=str(a.start_time)), 200
 
                             elif cur_time > float(a.expected_finish_time):
-                                return jsonify(error="The auction has ended",
-                                               start_time=a.start_time + '000',
-                                               end_time=a.expected_finish_time + '000',
-                                               cur_time=str(cur_time) + '000'), 409
+                                # check if winner valid
+                                if a.final_price and int(a.final_price) > int(a.reserve_price):
+                                    n = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
+                                    return jsonify(error="The auction has ended",
+                                                   winner=n.firstname + ' ' + n.lastname,
+                                                   final_price=a.final_price,
+                                                   start_time=a.start_time + '000',
+                                                   end_time=a.expected_finish_time + '000',
+                                                   cur_time=str(cur_time) + '000'), 409
+                                else:
+                                    return jsonify(error="The auction has ended. No one offered more than reserve price",
+                                                   winner="",
+                                                   final_price="",
+                                                   start_time=a.start_time + '000',
+                                                   end_time=a.expected_finish_time + '000',
+                                                   cur_time=str(cur_time) + '000'), 409
                             else:
                                 return jsonify(
-                                    error="WeYou bid request somehow did not accept by system"), 409
+                                    error="You bid request somehow did not accept by system"), 400
 
                         except KeyError:
                             return jsonify(error="Expected attributes not received, post failed"), 400
@@ -931,12 +947,22 @@ def bid():
                       }
             result_list.append(r_dict)
 
+        winnerName = ''
+        final_price = ''
+        if a.winnerId:
+            if int(a.final_price) > int(a.reserve_price):
+                u = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
+                winnerName = u.firstname + ' ' + u.lastname
+                final_price = a.final_price
+
         return jsonify(history=result_list,
                        length=str(len(result_list)),
                        propertyId=propertyId,
                        start_time=a.start_time + '000',
                        end_time=a.expected_finish_time + '000',
-                       cur_time=str(int(time.time())) + '000'), 200
+                       cur_time=str(int(time.time())) + '000',
+                       winner=winnerName,
+                       final_price=final_price), 200
 
 
 @app.route('/get_rab_status', methods=['GET'])
