@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {Container, Col, Row, Card} from 'react-bootstrap';
+import { Col, Row, Card} from 'react-bootstrap';
 import AuctionManager from '../components/AuctionManager';
 import Map from '../components/Map';
+import {Redirect} from 'react-router-dom';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 const axios = require('axios');
@@ -32,9 +33,10 @@ class PropertyBid extends Component{
                 timeTillStart : givenStart,
                 timeTillEnd : givenEnd,
                 loading : true,
-                haveMapDetails : false
+                haveMapDetails : false,
+                redirect : false
             }
-
+            localStorage.clear();
             localStorage.setItem('propertyBidState', JSON.stringify(this.state));
         }
 
@@ -45,10 +47,15 @@ class PropertyBid extends Component{
     
         this.cookies = this.props.cookies;
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
+        this.checkRedirect = this.checkRedirect.bind(this);
     }
 
     saveStateToLocalStorage(){
         localStorage.setItem('propertyBidState', JSON.stringify(this.state));
+    }
+
+    checkRedirect(redirectNow){
+        this.setState({redirect: redirectNow});
     }
 
     refreshPropertyInfo(){
@@ -70,71 +77,82 @@ class PropertyBid extends Component{
     }
 
     render(){
-        return(
-            <>
-                <Row className="justify-content-md-center" style ={{marginTop: "1%"}}>
-                    <Col md="auto">
-                        <Row className="justify-content-md-center">
-                            <Col>
-                                <Card style={{width:"900px", height:"810px", padding:"10px"}}>
-                                    <Card.Title style={{fontSize:"30px"}}>
-                                        {this.state.propertyDetails.address}
-                                    </Card.Title>
-                                    <div>
-                                        <Carousel autoPlay axis="horizontal" infiniteLoop>
-                                            {this.state.propertyDetails.images.map(image =>(
-                                                <div>
-                                                    <img alt="house picture" src={image}/>
-                                                </div>
-                                            ))}
-                                        </Carousel>
-                                    </div>
-                                </Card>
-                            </Col>
-                            <Col>
-                                <AuctionManager 
-                                    pendingAuction={this.state.pendingAuction} 
-                                    activeAuction ={this.state.activeAuction} 
-                                    auctionComplete={this.state.auctionComplete}
-                                    timeStart = {this.state.timeTillStart}
-                                    timeEnd = {this.state.timeTillEnd}
+        if (this.state.redirect){
+            return(
+                <>
+                    <Redirect to="/house"/>
+                </>
+            );
+        }
+        else{
+            return(
+                <>
+                    <Row className="justify-content-md-center" style ={{marginTop: "1%"}}>
+                        <Col md="auto">
+                            <Row className="justify-content-md-center">
+                                <Col>
+                                    <Card style={{width:"900px", height:"810px", padding:"10px"}}>
+                                        <Card.Title style={{fontSize:"30px"}}>
+                                            {this.state.propertyDetails.address}
+                                        </Card.Title>
+                                        <div>
+                                            <Carousel autoPlay axis="horizontal" infiniteLoop>
+                                                {this.state.propertyDetails.images.map(image =>(
+                                                    <div>
+                                                        <img alt="house picture" src={image}/>
+                                                    </div>
+                                                ))}
+                                            </Carousel>
+                                        </div>
+                                    </Card>
+                                </Col>
+                                <Col>
+                                    <AuctionManager 
+                                        pendingAuction={this.state.pendingAuction} 
+                                        activeAuction ={this.state.activeAuction} 
+                                        auctionComplete={this.state.auctionComplete}
+                                        timeStart = {this.state.timeTillStart}
+                                        timeEnd = {this.state.timeTillEnd}
+                                        propertyId = {this.state.propertyDetails.propertyId}
+                                        token = {this.cookies.get('token')}
+                                        userType = {this.cookies.get('userType')}
+                                        registered = {this.state.propertyDetails.registered}
+                                        acceptedPaymentMethods = {this.state.propertyDetails.accepted_payment_method}
+                                        givePropertyDetails={this.props.retrieveHouse}
+                                        checkRedirect = {this.checkRedirect}
+                                    />
+                                </Col>
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Row className="justify-content-md-center" style={{marginTop:"50px", marginBottom:"50px"}}>
+                        <Col md="auto">
+                            <Card style={{width:"1800px", padding:"5px"}}>
+                                <Card.Title style={{fontSize:"30px"}}>
+                                    {this.state.propertyDetails.intro_title}
+                                </Card.Title>
+                                <Card.Body>
+                                    <Row>
+                                        Beds: {this.state.propertyDetails.beds+" "}
+                                        Baths: {this.state.propertyDetails.baths+" "}
+                                        Car Spots: {this.state.propertyDetails.parkingSpace+" "}
+                                    </Row>
+                                    <br/>
+                                    <Row>
+                                        {this.state.propertyDetails.intro_text}
+                                    </Row>
+                                    <br/>
+                                    <Map
                                     propertyId = {this.state.propertyDetails.propertyId}
-                                    token = {this.cookies.get('token')}
-                                    userType = {this.cookies.get('userType')}
-                                    registered = {this.state.propertyDetails.registered}
-                                    acceptedPaymentMethods = {this.state.propertyDetails.accepted_payment_method}
-                                />
-                            </Col>
-                        </Row>
-                    </Col>
-                </Row>
-                <Row className="justify-content-md-center" style={{marginTop:"50px", marginBottom:"50px"}}>
-                    <Col md="auto">
-                        <Card style={{width:"1800px", padding:"5px"}}>
-                            <Card.Title style={{fontSize:"30px"}}>
-                                {this.state.propertyDetails.intro_title}
-                            </Card.Title>
-                            <Card.Body>
-                                <Row>
-                                    Beds: {this.state.propertyDetails.beds+" "}
-                                    Baths: {this.state.propertyDetails.baths+" "}
-                                    Car Spots: {this.state.propertyDetails.parkingSpace+" "}
-                                </Row>
-                                <br/>
-                                <Row>
-                                    {this.state.propertyDetails.intro_text}
-                                </Row>
-                                <br/>
-                                <Map
-                                propertyId = {this.state.propertyDetails.propertyId}
-                                propertyAddress = {this.state.propertyDetails.address}
-                                />
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
-            </>
-        );
+                                    propertyAddress = {this.state.propertyDetails.address}
+                                    />
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </>
+            );
+        }
     }
 }
 

@@ -21,7 +21,7 @@ class AuctionManager extends Component{
             bidHistory : [],
             newBidValue : null,
             loading : true,
-            tryVerifyBidder : false
+            tryVerifyBidder : false,
         }
 
         this.verifyRAB = this.verifyRAB.bind(this);
@@ -30,6 +30,7 @@ class AuctionManager extends Component{
         this.toggleModal = this.toggleModal.bind(this);
         this.displayRegistered = this.displayRegistered.bind(this);
         this.buyerCardFeatures = this.buyerCardFeatures.bind(this);
+        this.refreshPage = this.refreshPage.bind(this);
     }
 
     toggleModal(){
@@ -38,6 +39,27 @@ class AuctionManager extends Component{
 
     displayRegistered(){
         this.setState({registered : true});
+    }
+
+    refreshPage(){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';      
+        axios.get('/property', {params:{
+            id: this.props.propertyId,
+        }})
+        .then((response) => {
+            if (response.status === 200){
+                this.setState({
+                    propertyDetails : Object.assign(response.data, {registered: this.state.registered})
+                });
+                
+                this.props.givePropertyDetails(this.state.propertyDetails);
+                this.props.checkRedirect(true);
+                localStorage.clear();
+
+            }
+        }).catch((error) =>{
+            console.log(error);
+        });
     }
 
     buyerCardFeatures(){
@@ -74,7 +96,6 @@ class AuctionManager extends Component{
         .then((response) => {
             console.log(response);
             if (response.status === 200){
-                this.setState({redirect :true});
                 this.getBidList();
             }
         }).catch((error) => {
@@ -136,7 +157,7 @@ class AuctionManager extends Component{
                                 <h2 >Time Till Auction</h2>
                             </Row>
                             <Row className="justify-content-md-center">
-                                <Countdown className ="timerFormat" date={this.state.timeTillStart}></Countdown>
+                                <Countdown className ="timerFormat" date={this.state.timeTillStart} onComplete={() => {this.refreshPage()}}></Countdown>
                             </Row>
                             <br/>
                             {this.buyerCardFeatures()}
@@ -168,7 +189,7 @@ class AuctionManager extends Component{
                             </Row>
                             <br/>
                             <Row className="justify-content-md-center">
-                                <Countdown className ="timerFormat" date={this.state.timeTillEnd}></Countdown>
+                                <Countdown className ="timerFormat" date={this.state.timeTillEnd} onComplete={()=>(this.refreshPage())}></Countdown>
                             </Row>
                             <br/>
                             {this.verifyRAB()}

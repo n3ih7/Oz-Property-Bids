@@ -9,12 +9,24 @@ import university from '../assets/university.png';
 import walking from '../assets/walking.png';
 import driving from '../assets/drive.png';
 import marker from '../assets/marker.png';
+import './Map.css';
 const axios = require('axios');
 
 const MapMarker = ({ text }) => 
   <Col>
     <Row style={{backgroundImage:{marker}}}>{text}</Row>
+    <img style={{width:"10%", height:"10%"}} src={marker}/>
   </Col>;
+
+const Marker = ({ text }) => {
+  return <>
+  
+    <div className="pin"></div>
+    <div className="pulse"></div>
+    <br/>
+    <Row style={{fontSize:"20px"}}>{text}</Row>
+  </>
+}
 
 class Map extends Component {
   constructor(props){
@@ -24,9 +36,9 @@ class Map extends Component {
         lat :59.95,
         lng :30.33,
       },
-      mapZoom: 15,
+      mapZoom: 14,
       services : [],
-      serviceNames : ["Hospitals", "Police Stations","Schools","Supermarkets","Universities"],
+      serviceNames : ["Hospital", "Police Station","School","Supermarket","University"],
       serviceImages : [hospital, police, school, supermarket, university],
       haveMapDetails : false
     }
@@ -82,10 +94,10 @@ class Map extends Component {
 
                 {this.state.services.flatMap((service, index) =>(
                   (service !== null) ?
-                  <MapMarker
+                  <Marker
                     lat={service.location.lat}
                     lng={service.location.lng}
-                    text= {service.addr}
+                    text= {this.state.serviceNames[index]}
                   />
                   : []
                 ))}
