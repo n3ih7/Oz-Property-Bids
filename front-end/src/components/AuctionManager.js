@@ -33,6 +33,7 @@ class AuctionManager extends Component{
         this.displayRegistered = this.displayRegistered.bind(this);
         this.buyerCardFeatures = this.buyerCardFeatures.bind(this);
         this.getLatestBids = this.getLatestBids.bind(this);
+        this.refreshComponent = this.refreshComponent.bind(this);
     }
 
     toggleModal(){
@@ -41,6 +42,11 @@ class AuctionManager extends Component{
 
     displayRegistered(){
         this.setState({registered : true});
+    }
+
+    refreshComponent(){
+        this.props.checkRefresh(true);
+        this.forceUpdate();
     }
 
     buyerCardFeatures(){
@@ -103,7 +109,8 @@ class AuctionManager extends Component{
                 this.setState({
                     bidHistory : response.data.history.reverse(),
                     highestBid : (response.data.history.length !== 0) ? (response.data.history[0]).offerPrice : "0",
-                    loading : false
+                    loading : false,
+                    timeTillEnd: new Date(parseInt(response.data.end_time))
                 });
             }
         }).catch((error) =>{
@@ -150,7 +157,7 @@ class AuctionManager extends Component{
                                 <h2 >Time Till Auction</h2>
                             </Row>
                             <Row className="justify-content-md-center">
-                                <Countdown className ="timerFormat" date={this.state.timeTillStart} onComplete={() => {this.props.checkRefresh(true)}}></Countdown>
+                                <Countdown className ="timerFormat" date={this.state.timeTillStart} onComplete={() => {this.refreshComponent()}}></Countdown>
                             </Row>
                             <br/>
                             {this.buyerCardFeatures()}
@@ -183,7 +190,7 @@ class AuctionManager extends Component{
                             </Row>
                             <br/>
                             <Row className="justify-content-md-center">
-                                <Countdown className ="timerFormat" date={this.state.timeTillEnd} onComplete={()=>this.props.checkRefresh(true)}></Countdown>
+                                <Countdown className ="timerFormat" date={this.state.timeTillEnd} onComplete={()=> {this.refreshComponent()}}></Countdown>
                             </Row>
                             <br/>
                             {this.verifyRAB()}

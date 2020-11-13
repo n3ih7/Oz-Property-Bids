@@ -134,7 +134,6 @@ class PropertyBid extends Component{
                         refresh: false
                     });
                     this.saveStateToLocalStorage();
-                    window.location.reload(false);
                 }
             }).catch((error) =>{
                 console.log(error);
