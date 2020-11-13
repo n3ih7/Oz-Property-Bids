@@ -1,6 +1,0 @@
-Week 1: The group Last-Bus was successfully formed and the project we were going to do was determined: an online property bid website. Then we prepare to write user stories first based on the content in the lecture.
-
-Week 2:I made additions and changes based on the user stories edited by my group members, and classified them. At the weekly meeting, I accepted the master’s division of work for me, and carried out web page allocation and API design based on each user story.
-
-Week 3: Completed the User stories backlog design required in Proposal, based on a variety of user stories, the UI design of home page, login and registration interface.
-
