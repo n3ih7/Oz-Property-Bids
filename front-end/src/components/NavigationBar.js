@@ -15,14 +15,14 @@ class NavigationBar extends Component{
     if((this.cookies.get("authenticated") === "true") && (this.cookies.get("userType") === "bidder")){
       return(
         <>
-            <Nav.Link href="/registrations">Registered Auctions</Nav.Link>
+            <Nav.Link href="/registrations" onClick={ () =>{localStorage.clear()}}>Registered Auctions</Nav.Link>
         </>
       );
     }
     else if ((this.cookies.get("authenticated") === "true") && (this.cookies.get("userType") === "seller")){
       return(
         <>
-            <Nav.Link href="/sell">Sell Houses</Nav.Link>
+            <Nav.Link href="/sell" onClick={ () =>{localStorage.clear()}}>Sell Houses</Nav.Link>
         </>
       );
     }
@@ -32,16 +32,16 @@ class NavigationBar extends Component{
     if(this.cookies.get("authenticated") === "true"){
       return(
         <>
-        <Nav.Link className = "ml-auto" href="/account">My Account</Nav.Link>
-        <Nav.Link href="/logout">Log Out</Nav.Link>
+        <Nav.Link className = "ml-auto" href="/account" onClick={ () =>{localStorage.clear()}}>My Account</Nav.Link>
+        <Nav.Link href="/logout" onClick={ () =>{localStorage.clear()}}>Log Out</Nav.Link>
         </>
       );
     }
     else{
       return(
       <>
-        <Nav.Link className = "ml-auto" href="/login">Login</Nav.Link>
-        <Nav.Link href="/signup">Sign Up!</Nav.Link>
+        <Nav.Link className = "ml-auto" href="/login" onClick={ () =>{localStorage.clear()}}>Login</Nav.Link>
+        <Nav.Link href="/signup" onClick={ () =>{localStorage.clear()}}>Sign Up!</Nav.Link>
       </>
       );
     }
@@ -51,7 +51,7 @@ class NavigationBar extends Component{
   render(){
       return(
           <Navbar bg="light" variant="light">
-          <Navbar.Brand href="/">Oz Property Bids</Navbar.Brand>
+          <Navbar.Brand href="/" onClick={ () =>{localStorage.clear()}}>Oz Property Bids</Navbar.Brand>
             <Nav className="container-fluid" >
               {this.userOnlyOptions()}
               {this.accountPage()}

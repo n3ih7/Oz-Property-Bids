@@ -99,6 +99,7 @@ class RegisteredHomes extends Component{
                                     userType={this.cookies.get('userType')}
                                     registeredAuctions = {[property.propertyId]}
                                     bidderSummaryView = {true}
+                                    acceptedPaymentMethods = {property.accepted_payment_method}
                                     />
                                 </Row>
                                 <br/>

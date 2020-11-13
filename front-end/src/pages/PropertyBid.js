@@ -12,7 +12,7 @@ class PropertyBid extends Component{
         
         let currentTime = new Date();
         let givenStart = new Date(parseInt(this.props.propertyDetails.auction_start));
-        let givenEnd =  new Date(parseInt(this.props.propertyDetails.auction_end))
+        let givenEnd =  new Date(parseInt(this.props.propertyDetails.auction_end));
         let currentAuction = false;
         let afterAuction = false;
 

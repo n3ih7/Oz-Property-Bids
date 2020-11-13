@@ -57,7 +57,6 @@ class ResultCard extends Component{
             console.log(error);
         });
     }
-    
 
     buyerCardFeatures(){
         if(!this.props.bidderSummaryView){
@@ -123,7 +122,7 @@ class ResultCard extends Component{
                                         <div style ={ImageSpacingStyle}>{(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}</div>
                                     </Row>
                                     <Row>
-                                        <div style ={leadingImageSpacingStyle}> Auction End</div> 
+                                        <div style ={leadingImageSpacingStyle}>Auction End</div> 
                                         <img src={gavel} style={ImageStyle}/> 
                                         <div style ={ImageSpacingStyle}>{(new Date(parseInt(this.props.auctionEnd)).toString()).slice(0,24)}</div>
                                     </Row>

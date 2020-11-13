@@ -8,38 +8,48 @@ const axios = require('axios');
 
 class Results extends Component{
     constructor(props){
-        super(props);
+      super(props);
 
-        this.state = {
-          loading: true,
-          results : false,
-          autofillResults : null,
-          date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
-          date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
-          searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
-          redirect : false,
-          chosenProperty : null,
-          dateRange : true,
-          registeredAuctions: [],
-          checkedRegisteredAuctions: false   
-        }
+      this.resultState = {
+        loading: true,
+        results : false,
+        autofillResults : null,
+        date1: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date(),
+        date2: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
+        searchValue: (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialLocation : null,
+        redirect : false,
+        dateRange : true,
+        registeredAuctions: [],
+        checkedRegisteredAuctions: false   
+      }
 
-        this.cookies = this.props.cookies;
+      this.state = ((localStorage.getItem('resultState') !== null) ? JSON.parse(localStorage.getItem('resultState')) : this.resultState);
+      this.state['date1'] = (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date();
+      this.state['date2'] = (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000));
+      
+      console.log(JSON.parse(localStorage.getItem('resultState')));
 
-        this.numberBeds = React.createRef();
-        this.numberBaths = React.createRef();
-        this.numberCarSpots = React.createRef();
-        this.location = React.createRef();
+      this.cookies = this.props.cookies;
 
-        this.pageContent = this.pageContent.bind(this);
-        this.searchBar = this.searchBar.bind(this);
-        this.autoFill = this.autoFill.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.checkRedirect = this.checkRedirect.bind(this);
-        this.handleDateToggle = this.handleDateToggle.bind(this);
-        this.getRegisteredAuctions = this.getRegisteredAuctions.bind(this);
+      this.numberBeds = React.createRef();
+      this.numberBaths = React.createRef();
+      this.numberCarSpots = React.createRef();
+      this.location = React.createRef();
+
+      this.pageContent = this.pageContent.bind(this);
+      this.searchBar = this.searchBar.bind(this);
+      this.autoFill = this.autoFill.bind(this);
+      this.handleKeyPress = this.handleKeyPress.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleChange = this.handleChange.bind(this);
+      this.checkRedirect = this.checkRedirect.bind(this);
+      this.handleDateToggle = this.handleDateToggle.bind(this);
+      this.getRegisteredAuctions = this.getRegisteredAuctions.bind(this);
+      this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
+    }
+
+    saveStateToLocalStorage(){
+      localStorage.setItem('resultState', JSON.stringify(this.state));
     }
 
     getRegisteredAuctions(){
@@ -54,6 +64,7 @@ class Results extends Component{
                 checkedRegisteredAuctions : true,
                 loading: false
             });
+            this.saveStateToLocalStorage();
           }
 
           else{
@@ -61,6 +72,7 @@ class Results extends Component{
               checkedRegisteredAuctions : true,
               loading: false
             });
+            this.saveStateToLocalStorage();
           }
         }).catch((error) =>{
             console.log(error);
@@ -72,6 +84,7 @@ class Results extends Component{
           checkedRegisteredAuctions : true,
           loading: false
         });
+        this.saveStateToLocalStorage();
       }
     }
 
@@ -82,6 +95,7 @@ class Results extends Component{
           date1 : null,
           date2 : null
         });
+        this.saveStateToLocalStorage();
       }
   
       else if(!this.state.dateRange){
@@ -90,6 +104,7 @@ class Results extends Component{
           date1 : new Date(),
           date2 :  new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000))
         });
+        this.saveStateToLocalStorage();
       }
     }
 
@@ -123,7 +138,8 @@ class Results extends Component{
             this.setState({
                 results : true,
                 properties : response.data.resp
-            })
+            });
+            this.saveStateToLocalStorage();
           }
       }).catch((error) =>{
           console.log(error);
@@ -138,6 +154,7 @@ class Results extends Component{
        }
        else if(key === 46 || key === 8){
          this.setState({searchValue: null});
+         this.saveStateToLocalStorage();
        }
      }
      
@@ -147,6 +164,7 @@ class Results extends Component{
         searchValue: result,
         autofillResults: null
       });
+      this.saveStateToLocalStorage();
     }
   }
      
@@ -171,6 +189,7 @@ class Results extends Component{
           this.setState({
             autofillResults : response.data.slice(0,3)
           });
+          this.saveStateToLocalStorage();
         }
       }).catch((error) =>{
           console.log(error);
@@ -187,6 +206,7 @@ class Results extends Component{
           this.setState({
             autofillResults : response.data.slice(0,3)
           });
+          this.saveStateToLocalStorage();
         }
       }).catch((error) =>{
           console.log(error);
@@ -244,12 +264,12 @@ class Results extends Component{
 
               <Row style={{paddingLeft:"5px"}}>
                 <h6 className="auction-label-one" style={{paddingLeft:"5px", color:"white"}}>Auction Date Range:</h6>
-                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => this.setState({date1 : date})}/>
+                <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date1} onChange={date => {this.setState({date1 : date}); this.saveStateToLocalStorage();}}/>
                 </Row>
               
                 <Row style={{paddingLeft:"30px"}}>
                   <h6 className="auction-label-two" style={{paddingLeft:"5px", color:"white"}}>-</h6>
-                  <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => this.setState({date2 : date})}/>
+                  <DatePicker className = "calendar" showTimeSelect dateFormat="Pp" selected = {this.state.date2} onChange={date => {this.setState({date2 : date}); this.saveStateToLocalStorage();}}/>
                 </Row>
 
                 <Col md="auto" style={{paddingTop:"9px"}}>
@@ -309,6 +329,7 @@ class Results extends Component{
                   properties: this.props.results.resp,
                   results : true
               });
+              this.saveStateToLocalStorage();
           }
       }
   }
