@@ -12,11 +12,14 @@ import marker from '../assets/marker.png';
 import './Map.css';
 const axios = require('axios');
 
-const MapMarker = ({ text }) => 
-  <Col>
-    <Row style={{backgroundImage:{marker}}}>{text}</Row>
-    <img style={{width:"10%", height:"10%"}} src={marker}/>
-  </Col>;
+const HomeMarker = ({ text }) => {
+ return <>
+  <div className="pinHome"></div>
+  <div className="pulse"></div>
+  <br/>
+  <Row style={{fontSize:"20px"}}>Home</Row>
+</>
+}
 
 const Marker = ({ text }) => {
   return <>
@@ -86,7 +89,7 @@ class Map extends Component {
                 defaultCenter={this.state.houseCenter}
                 defaultZoom={this.state.mapZoom}
               >
-                <MapMarker
+                <HomeMarker
                   lat={this.state.houseCenter.lat}
                   lng={this.state.houseCenter.lng}
                   text= {this.props.propertyAddress}
