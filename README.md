@@ -71,3 +71,6 @@ Wait for all modules to install
 
 Should start the program! Hosted on localhost:3000
 
+# capstone-project-comp9900-h16a-last_bus
+
+### ‘Online Property Sales’ facilitates online auctions for selling property online.

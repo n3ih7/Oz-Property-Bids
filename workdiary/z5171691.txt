@@ -1,0 +1,24 @@
+Week 1
+
+Group formed. I created the Jira account and group chat channel. I was planning to start writing the initial 
+version of the story & sprints section of the proposal. We agreed on a weekly meeting each Monday at 7 pm. 
+However, the outcome was not so good as the proposal was not even started by the end of week 1. I wrote about 
+40 sprints in Jira backlog for the whole project, the format of them yet to be confirmed. I also wrote the 
+test API request with flask and had a try with sqlalchemy (successful) and drew the basic concept of the UI 
+of the homepage, login, register page, search result list and inside the introduction of the property page.
+
+Week 2
+
+For week 2, we set a goal of finishing our first draft of our project proposal. My part is to list the 
+functional modules and briefly point out the technical keywords I would use in the system diagram. Also, my 
+part of this project is confirmed as the back-end development (API service layer, Data Access Layer and 
+Database). The outcome looks good to me. Our group further detailed the Jira backlog format and specified 
+the task there. I also gave the group a brief about the tech I would use.
+
+Week 3
+
+Was able to successfully last week goal. For this week, the main job is to finish the proposal on time. 
+I further detailed the technical spec and the inside contents of each layer I will be working on and let 
+others draw the diagram of this whole project architecture. Based on the progress on Friday, we will be 
+able to finish it on time. I will be working on the API programming and the communication between the 
+service layer and database. Also, pay much attention to the logic behind each request, e.g. user authentication.
