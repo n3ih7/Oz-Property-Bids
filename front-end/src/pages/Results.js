@@ -27,7 +27,6 @@ class Results extends Component{
       this.state['date1'] = (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionStart :new Date();
       this.state['date2'] = (this.props.firstSearchParams != null) ? this.props.firstSearchParams.initialAuctionEnd :new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000));
       
-      console.log(JSON.parse(localStorage.getItem('resultState')));
 
       this.cookies = this.props.cookies;
 

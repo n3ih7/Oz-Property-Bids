@@ -37,7 +37,7 @@ class PropertyBid extends Component{
 
             localStorage.setItem('propertyBidState', JSON.stringify(this.state));
         }
-        
+
         else{
             this.state = (JSON.parse(localStorage.getItem('propertyBidState')));
         }
@@ -72,43 +72,43 @@ class PropertyBid extends Component{
     render(){
         return(
             <>
-            <Container fluid style ={{marginTop: "2%"}}>
-                <Col md="auto">
-                    <Row className="justify-content-md-center">
-                        <Col>
-                            <Card style={{width:"1100px", height:"800px", padding:"5px"}}>
-                                <Card.Title style={{fontSize:"30px"}}>
-                                    {this.state.propertyDetails.address}
-                                </Card.Title>
-                                <div>
-                                    <Carousel>
-                                        {this.state.propertyDetails.images.map(image =>(
-                                            <div style={{width:"1000px", height:"100%"}}>
-                                                <img alt="house picture" src={image}/>
-                                            </div>
-                                        ))}
-                                    </Carousel>
-                                </div>
-                            </Card>
-                        </Col>
-                        <Col>
-                            <AuctionManager 
-                                pendingAuction={this.state.pendingAuction} 
-                                activeAuction ={this.state.activeAuction} 
-                                auctionComplete={this.state.auctionComplete}
-                                timeStart = {this.state.timeTillStart}
-                                timeEnd = {this.state.timeTillEnd}
-                                propertyId = {this.state.propertyDetails.propertyId}
-                                token = {this.cookies.get('token')}
-                                userType = {this.cookies.get('userType')}
-                                registered = {this.state.propertyDetails.registered}
-                                acceptedPaymentMethods = {this.state.propertyDetails.accepted_payment_method}
-                            />
-                        </Col>
-                    </Row>
-                </Col>
-            </Container>
-            <Row className="justify-content-md-center" style={{marginTop:"50px", marginBottom:"50px"}}>
+                <Row className="justify-content-md-center" style ={{marginTop: "1%"}}>
+                    <Col md="auto">
+                        <Row className="justify-content-md-center">
+                            <Col>
+                                <Card style={{width:"900px", height:"810px", padding:"10px"}}>
+                                    <Card.Title style={{fontSize:"30px"}}>
+                                        {this.state.propertyDetails.address}
+                                    </Card.Title>
+                                    <div>
+                                        <Carousel autoPlay axis="horizontal" infiniteLoop>
+                                            {this.state.propertyDetails.images.map(image =>(
+                                                <div>
+                                                    <img alt="house picture" src={image}/>
+                                                </div>
+                                            ))}
+                                        </Carousel>
+                                    </div>
+                                </Card>
+                            </Col>
+                            <Col>
+                                <AuctionManager 
+                                    pendingAuction={this.state.pendingAuction} 
+                                    activeAuction ={this.state.activeAuction} 
+                                    auctionComplete={this.state.auctionComplete}
+                                    timeStart = {this.state.timeTillStart}
+                                    timeEnd = {this.state.timeTillEnd}
+                                    propertyId = {this.state.propertyDetails.propertyId}
+                                    token = {this.cookies.get('token')}
+                                    userType = {this.cookies.get('userType')}
+                                    registered = {this.state.propertyDetails.registered}
+                                    acceptedPaymentMethods = {this.state.propertyDetails.accepted_payment_method}
+                                />
+                            </Col>
+                        </Row>
+                    </Col>
+                </Row>
+                <Row className="justify-content-md-center" style={{marginTop:"50px", marginBottom:"50px"}}>
                     <Col md="auto">
                         <Card style={{width:"1800px", padding:"5px"}}>
                             <Card.Title style={{fontSize:"30px"}}>
