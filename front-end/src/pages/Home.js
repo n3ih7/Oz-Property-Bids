@@ -33,6 +33,8 @@ class Home extends Component{
     this.handleDateToggle = this.handleDateToggle.bind(this);
   }
 
+
+
   handleDateToggle(){
     if(this.state.dateRange){
       this.setState({

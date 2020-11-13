@@ -9,32 +9,46 @@ const axios = require('axios');
 class PropertyBid extends Component{
     constructor(props) {
         super(props);
+
+        if(this.props.propertyDetails !== null){
+            let currentTime = new Date();
+            let givenStart =  new Date(parseInt(this.props.propertyDetails.auction_start));
+            let givenEnd =  new Date(parseInt(this.props.propertyDetails.auction_end));
+            let currentAuction = false;
+            let afterAuction = false;
+
+            if ((currentTime >= givenStart) && (currentTime < givenEnd)){
+                currentAuction = true;
+            }
+            else if (currentTime >= givenEnd){
+                afterAuction = true;
+            }
+
+            this.state = {
+                propertyDetails : (this.props.propertyDetails != null) ? this.props.propertyDetails : false,
+                pendingAuction: (currentAuction === afterAuction) ? true : false,
+                activeAuction: (currentAuction) ? true : false,
+                auctionComplete: (afterAuction) ? true : false,
+                timeTillStart : givenStart,
+                timeTillEnd : givenEnd,
+                loading : true,
+                haveMapDetails : false
+            }
+
+            localStorage.setItem('propertyBidState', JSON.stringify(this.state));
+        }
         
-        let currentTime = new Date();
-        let givenStart = new Date(parseInt(this.props.propertyDetails.auction_start));
-        let givenEnd =  new Date(parseInt(this.props.propertyDetails.auction_end));
-        let currentAuction = false;
-        let afterAuction = false;
-
-        if ((currentTime >= givenStart) && (currentTime < givenEnd)){
-            currentAuction = true;
+        else{
+            this.state = (JSON.parse(localStorage.getItem('propertyBidState')));
         }
-        else if (currentTime >= givenEnd){
-            afterAuction = true;
-        }
-
-        this.state = {
-            propertyDetails : (this.props.propertyDetails != null) ? this.props.propertyDetails : false,
-            pendingAuction: (currentAuction === afterAuction) ? true : false,
-            activeAuction: (currentAuction) ? true : false,
-            auctionComplete: (afterAuction) ? true : false,
-            timeTillStart : givenStart,
-            timeTillEnd : givenEnd,
-            loading : true,
-            haveMapDetails : false
-        }
+        
     
         this.cookies = this.props.cookies;
+        this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
+    }
+
+    saveStateToLocalStorage(){
+        localStorage.setItem('propertyBidState', JSON.stringify(this.state));
     }
 
     refreshPropertyInfo(){
@@ -48,6 +62,7 @@ class PropertyBid extends Component{
                 this.setState({
                     propertyDetails : response.data
                 });
+                this.saveStateToLocalStorage();
             }
         }).catch((error) =>{
             console.log(error);
@@ -83,11 +98,11 @@ class PropertyBid extends Component{
                                 auctionComplete={this.state.auctionComplete}
                                 timeStart = {this.state.timeTillStart}
                                 timeEnd = {this.state.timeTillEnd}
-                                propertyId = {this.props.propertyDetails.propertyId}
+                                propertyId = {this.state.propertyDetails.propertyId}
                                 token = {this.cookies.get('token')}
                                 userType = {this.cookies.get('userType')}
-                                registered = {this.props.propertyDetails.registered}
-                                acceptedPaymentMethods = {this.props.propertyDetails.accepted_payment_method}
+                                registered = {this.state.propertyDetails.registered}
+                                acceptedPaymentMethods = {this.state.propertyDetails.accepted_payment_method}
                             />
                         </Col>
                     </Row>
