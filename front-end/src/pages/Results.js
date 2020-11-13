@@ -296,8 +296,8 @@ class Results extends Component{
 
     else if(this.state.results){
           return(
-              this.state.properties.map(property =>(
-                <>
+              this.state.properties.map((property, index) =>(
+                <div key={index}>
                   <Row>
                       <ResultCard 
                         streetAddress={property.address} 
@@ -314,10 +314,11 @@ class Results extends Component{
                         userType={this.cookies.get('userType')}
                         registeredAuctions = {this.state.registeredAuctions}
                         acceptedPaymentMethods = {property.accepted_payment_method}
+                        introTitle = {property.intro_title}
                       />
                   </Row>
                   <br/>
-                  </>
+                  </div>
               ))
           );
       }

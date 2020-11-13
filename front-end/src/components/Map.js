@@ -8,7 +8,6 @@ import supermarket from '../assets/supermarket.png';
 import university from '../assets/university.png';
 import walking from '../assets/walking.png';
 import driving from '../assets/drive.png';
-import marker from '../assets/marker.png';
 import './Map.css';
 const axios = require('axios');
 

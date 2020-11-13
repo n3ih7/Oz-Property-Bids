@@ -5,7 +5,6 @@ import './ResultCard.css';
 import bed from '../assets/bed.png';
 import bath from '../assets/bathtub.png';
 import car from '../assets/car.png';
-import timer from '../assets/timer.png';
 import gavel from '../assets/gavel.png';
 const axios = require('axios');
 
@@ -95,7 +94,7 @@ class ResultCard extends Component{
                     acceptedPaymentMethods = {this.props.acceptedPaymentMethods}
                 />
                 <Container>
-                    <Card fluid style={{height:"260px", padding:"5px"}}>
+                    <Card style={{height:"260px", padding:"5px"}}>
                         <Row>
                             <Col md="auto" onClick ={() => this.redirectToProperty()}>
                                 <Card.Img  variant = "left" src={this.props.image} alt="House Image" style={{height:"250px", width:"300px"}}/>
@@ -107,26 +106,23 @@ class ResultCard extends Component{
                                 <Card.Subtitle className="mb-2 text-muted">{this.props.propertyType}</Card.Subtitle>
                                 <Card.Body>
                                     <Row>
-                                        <div style ={leadingImageSpacingStyle}>{this.props.beds} </div> 
-                                        <img src={bed} style={ImageStyle}/>
-                                        <div style ={ImageSpacingStyle}>{this.props.baths}</div> 
-                                        <img src={bath} style={ImageStyle}/>
-                                        <div style ={ImageSpacingStyle}>{this.props.carSpots}</div> 
-                                        <img src={car} style={ImageStyle}/>
+                                        <h3>{this.props.introTitle}</h3>
                                     </Row>
                                     <br/>
-                                    <Row>
-                                        
-                                        <div style ={leadingImageSpacingStyle}>Auction Start</div> 
-                                        <img src={timer} style={ImageStyle}/> 
+                                    <Row style={{bottom:"40px", position:"absolute"}}>
+                                        <div style ={leadingImageSpacingStyle}>{this.props.beds} </div> 
+                                        <img src={bed} style={ImageStyle} alt="Beds"/>
+                                        <div style ={ImageSpacingStyle}>{this.props.baths}</div> 
+                                        <img src={bath} style={ImageStyle} alt="Baths"/>
+                                        <div style ={ImageSpacingStyle}>{this.props.carSpots}</div> 
+                                        <img src={car} style={ImageStyle} alt="Car Spots"/>
+                                    </Row>
+                                    <Row style={{bottom:"10px", position:"absolute"}}>
+                                        <div style ={leadingImageSpacingStyle}>Auction Start</div>
+                                        <div style={{paddingRight:"2px"}}> </div> 
+                                        <img src={gavel} style={ImageStyle} alt="Auction Gavel"/> 
                                         <div style ={ImageSpacingStyle}>{(new Date(parseInt(this.props.auctionStart)).toString()).slice(0,24)}</div>
                                     </Row>
-                                    <Row>
-                                        <div style ={leadingImageSpacingStyle}>Auction End</div> 
-                                        <img src={gavel} style={ImageStyle}/> 
-                                        <div style ={ImageSpacingStyle}>{(new Date(parseInt(this.props.auctionEnd)).toString()).slice(0,24)}</div>
-                                    </Row>
-                                    
                                 </Card.Body>
                             </Col>
                             {this.buyerCardFeatures()}

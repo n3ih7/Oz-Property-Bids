@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import { Col, Row, Card} from 'react-bootstrap';
 import AuctionManager from '../components/AuctionManager';
 import Map from '../components/Map';
-import {Redirect} from 'react-router-dom';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 const axios = require('axios');
@@ -116,7 +115,7 @@ class PropertyBid extends Component{
                                             <Carousel autoPlay axis="horizontal" infiniteLoop>
                                                 {this.state.propertyDetails.images.map(image =>(
                                                     <div>
-                                                        <img alt="house picture" src={image}/>
+                                                        <img alt="house" src={image}/>
                                                     </div>
                                                 ))}
                                             </Carousel>
