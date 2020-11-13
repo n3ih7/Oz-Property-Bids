@@ -1,5 +1,6 @@
 import os
 import secrets
+import subprocess
 import time
 import googlemaps
 from random import randint
@@ -7,11 +8,10 @@ from flask import request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from . import db, create_app
 from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO, PROPERTY_BID_RELATION, BID_ACTIVITY, MOVEMENT_TRACKING
 from .blob import *
-from .email_notification import email_send
+
 
 app = create_app()
 SQLAlchemy(app)
@@ -726,7 +726,7 @@ def see_my_listing():
             user_ext = USER_INFO_EXTENDED.query.filter_by(uid=uid).first()
             if user_ext.bidder_flag == '0' and user_ext.seller_flag == '1':
                 query_res = PROPERTY_INFO.query.filter_by(sellerId=uid).all()
-                print(query_res)
+                # print(query_res)
                 pp_list = []
                 if query_res:
                     for i in query_res:
@@ -857,14 +857,6 @@ def bid():
 
                             elif b and float(a.start_time) <= cur_time <= float(
                                     a.expected_finish_time):
-                                check = int(a.expected_finish_time) - int(cur_time)
-                                if check <= 5 * 60:
-                                    # a.expected_finish_time = str(int(a.expected_finish_time) + 2 * 60)
-                                    a.expected_finish_time = str(int(a.expected_finish_time) + 1)
-                                    db.session.merge(a)
-                                    c = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
-                                    c.auction_end = a.expected_finish_time
-                                    db.session.merge(c)
 
                                 offerPrice = jsonContent['offerPrice']
                                 search_largest = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId).order_by(
@@ -877,6 +869,15 @@ def bid():
                                                        yourPrice=offerPrice,
                                                        curr_higest_price=search_largest.offerPrice,
                                                        start_time=str(a.start_time)), 409
+
+                                check = int(a.expected_finish_time) - int(cur_time)
+                                if check <= 5 * 60:
+                                    a.expected_finish_time = str(int(a.expected_finish_time) + 2 * 60)
+                                    # a.expected_finish_time = str(int(a.expected_finish_time) + 1)
+                                    db.session.merge(a)
+                                    c = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+                                    c.auction_end = a.expected_finish_time
+                                    db.session.merge(c)
 
                                 nb = BID_ACTIVITY(uid=uid,
                                                   bidActivityId=a.bidActivityId,
@@ -906,17 +907,6 @@ def bid():
                                             db.session.commit()
                                             u = USER_INFO_EXTENDED.query.filter_by(uid=search_largest.uid).first()
 
-                                            # bid result notifications
-                                            if a.email_flag != "1":
-                                                a.email_flag = "1"
-                                                db.session.merge(a)
-                                                db.session.commit()
-
-                                                # email_send("DearXXX\mn",
-                                                #            "zack@nono.fi")
-                                                # email_send("DearXXX\mn",
-                                                #            "zack@nono.fi")
-
                                             return jsonify(msg="The auction has finished. We have a winner",
                                                            winner=u.firstname + ' ' + u.lastname,
                                                            final_price=a.final_price,
@@ -940,14 +930,6 @@ def bid():
                                             end_time=a.expected_finish_time + '000',
                                             cur_time=str(cur_time) + '000'), 409
                                 else:
-                                    # bid result notifications
-                                    if a.email_flag != "1":
-                                        a.email_flag = "1"
-                                        db.session.merge(a)
-                                        db.session.commit()
-                                        email_send("you will this auction",
-                                                   "zack@nono.fi")
-
                                     u = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
                                     return jsonify(msg="The auction has finished. We have a winner",
                                                    winner=u.firstname + ' ' + u.lastname,
@@ -955,11 +937,9 @@ def bid():
                                                    start_time=a.start_time + '000',
                                                    end_time=a.expected_finish_time + '000',
                                                    cur_time=str(cur_time) + '000'), 409
-
                             else:
                                 return jsonify(
                                     error="You bid request somehow did not accepted by system"), 400
-
                         except KeyError:
                             return jsonify(error="Expected attributes not received, post failed"), 400
                     except ValueError:
@@ -991,6 +971,7 @@ def bid():
                       'bidPlaceTime': k.bidPlaceTime
                       }
             bid_history_list.append(r_dict)
+
         search_largest = BID_ACTIVITY.query.filter_by(
             bidActivityId=a.bidActivityId).order_by(
             desc(BID_ACTIVITY.offerPrice)).first()
@@ -1004,6 +985,9 @@ def bid():
                            ), 409
 
         elif float(a.start_time) < cur_time < float(a.expected_finish_time):
+            curr_highest_price = ''
+            if search_largest:
+                curr_highest_price = search_largest.offerPrice
             return jsonify(msg="The auction is undergoing.",
                            history=bid_history_list,
                            length=str(len(bid_history_list)),
@@ -1011,7 +995,7 @@ def bid():
                            start_time=a.start_time + '000',
                            end_time=a.expected_finish_time + '000',
                            cur_time=str(int(time.time())) + '000',
-                           curr_higest_price=search_largest.offerPrice
+                           curr_highest_price=curr_highest_price
                            ), 200
 
         elif cur_time > float(a.expected_finish_time):
@@ -1029,9 +1013,44 @@ def bid():
                             a.email_flag = "1"
                             db.session.merge(a)
                             db.session.commit()
-                            # email_send("you will this auction",
-                            #            "10000@gmail.com")
-                            # sachinkrish7 @ gmail.com
+                            # print("aaa")
+                            sellerId = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first().sellerId
+                            seller_info_ext = USER_INFO_EXTENDED.query.filter_by(uid=sellerId).first()
+                            seller_email = USER_INFO.query.filter_by(uid=sellerId).first().email
+                            i = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+                            if i.unitNumber:
+                                property_address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + \
+                                                   i.state + ' ' + i.postcode
+                            else:
+                                property_address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                            pm = BID_ACTIVITY.query.filter_by(uid=a.winnerId, bidActivityId=a.bidActivityId,
+                                                              initial_bid_flag="1").first().payment_method_as_buyer
+                            buyer_email = USER_INFO.query.filter_by(uid=a.winnerId).first().email
+                            p = subprocess.Popen(["python3",
+                                                  "project/email_notification.py",
+                                                  "successToSeller",
+                                                  seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
+                                                  "zack@nono.fi",
+                                                  property_address,
+                                                  str(a.final_price),
+                                                  u.firstname + ' ' + u.lastname,
+                                                  pm,
+                                                  buyer_email,
+                                                  u.phone,
+                                                  u.address + ', ' + u.suburb + ' ' + u.state + ' ' + u.postcode
+                                                  ])
+                            q = subprocess.Popen(["python3",
+                                                  "project/email_notification.py",
+                                                  "successToBuyer",
+                                                  u.firstname + ' ' + u.lastname,
+                                                  "zack@nono.fi",
+                                                  property_address,
+                                                  str(a.final_price),
+                                                  pm,
+                                                  seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
+                                                  seller_email,
+                                                  seller_info_ext.phone,
+                                                  ])
 
                         return jsonify(msg="The auction has finished. We have a winner",
                                        winner=u.firstname + ' ' + u.lastname,
@@ -1042,8 +1061,28 @@ def bid():
                                        history=bid_history_list,
                                        length=str(len(bid_history_list)),
                                        propertyId=propertyId
-                                       ), 409
+                                       ), 200
                     else:
+                        if a.email_flag != "1":
+                            a.email_flag = "1"
+                            db.session.merge(a)
+                            db.session.commit()
+                            sellerId = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first().sellerId
+                            seller_info_ext = USER_INFO_EXTENDED.query.filter_by(uid=sellerId).first()
+                            seller_email = USER_INFO.query.filter_by(uid=sellerId).first().email
+                            i = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+                            if i.unitNumber:
+                                property_address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + \
+                                                   i.state + ' ' + i.postcode
+                            else:
+                                property_address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                            p = subprocess.Popen(["python3",
+                                                  "project/email_notification.py",
+                                                  "failToSeller",
+                                                  seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
+                                                  "zack@nono.fi",
+                                                  property_address
+                                                  ])
                         return jsonify(
                             error="The auction has ended. No one offered more than reserve price",
                             winner="",
@@ -1054,7 +1093,28 @@ def bid():
                             history=bid_history_list,
                             length=str(len(bid_history_list)),
                             propertyId=propertyId
-                        ), 409
+                        ), 200
+
+                if a.email_flag != "1":
+                    a.email_flag = "1"
+                    db.session.merge(a)
+                    db.session.commit()
+                    sellerId = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first().sellerId
+                    seller_info_ext = USER_INFO_EXTENDED.query.filter_by(uid=sellerId).first()
+                    seller_email = USER_INFO.query.filter_by(uid=sellerId).first().email
+                    i = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+                    if i.unitNumber:
+                        property_address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + \
+                                           i.state + ' ' + i.postcode
+                    else:
+                        property_address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                    p = subprocess.Popen(["python3",
+                                          "project/email_notification.py",
+                                          "failToSeller",
+                                          seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
+                                          "zack@nono.fi",
+                                          property_address
+                                          ])
                 return jsonify(
                     error="The auction has ended. No one offered more than reserve price",
                     winner="",
@@ -1065,17 +1125,53 @@ def bid():
                     history=bid_history_list,
                     length=str(len(bid_history_list)),
                     propertyId=propertyId
-                ), 409
+                ), 200
             else:
+                u = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
                 # bid result notifications
                 if a.email_flag != "1":
                     a.email_flag = "1"
                     db.session.merge(a)
                     db.session.commit()
-                    email_send("you will this auction",
-                               "zack@nono.fi")
 
-                u = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
+                    sellerId = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first().sellerId
+                    seller_info_ext = USER_INFO_EXTENDED.query.filter_by(uid=sellerId).first()
+                    seller_email = USER_INFO.query.filter_by(uid=sellerId).first().email
+                    i = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
+                    if i.unitNumber:
+                        property_address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + \
+                                           i.state + ' ' + i.postcode
+                    else:
+                        property_address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                    pm = BID_ACTIVITY.query.filter_by(uid=a.winnerId, bidActivityId=a.bidActivityId,
+                                                      initial_bid_flag="1").first().payment_method_as_buyer
+                    buyer_email = USER_INFO.query.filter_by(uid=a.winnerId).first().email
+                    p = subprocess.Popen(["python3",
+                                          "project/email_notification.py",
+                                          "successToSeller",
+                                          seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
+                                          "zack@nono.fi",
+                                          property_address,
+                                          str(a.final_price),
+                                          u.firstname + ' ' + u.lastname,
+                                          pm,
+                                          buyer_email,
+                                          u.phone,
+                                          u.address + ', ' + u.suburb + ' ' + u.state + ' ' + u.postcode
+                                          ])
+                    q = subprocess.Popen(["python3",
+                                          "project/email_notification.py",
+                                          "successToBuyer",
+                                          u.firstname + ' ' + u.lastname,
+                                          "zack@nono.fi",
+                                          property_address,
+                                          str(a.final_price),
+                                          pm,
+                                          seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
+                                          seller_email,
+                                          seller_info_ext.phone,
+                                          ])
+
                 return jsonify(msg="The auction has finished. We have a winner",
                                winner=u.firstname + ' ' + u.lastname,
                                final_price=a.final_price,
@@ -1085,7 +1181,7 @@ def bid():
                                history=bid_history_list,
                                length=str(len(bid_history_list)),
                                propertyId=propertyId
-                               ), 409
+                               ), 200
 
 
 @app.route('/get_rab_status', methods=['GET'])
