@@ -34,7 +34,7 @@ class PropertyBid extends Component{
                 timeTillEnd : givenEnd,
                 loading : true,
                 haveMapDetails : false,
-                redirect : false
+                refresh : false
             }
             localStorage.clear();
             localStorage.setItem('propertyBidState', JSON.stringify(this.state));
@@ -47,46 +47,63 @@ class PropertyBid extends Component{
     
         this.cookies = this.props.cookies;
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
-        this.checkRedirect = this.checkRedirect.bind(this);
+        this.checkRefresh = this.checkRefresh.bind(this);
+        this.refreshPropertyInfo = this.refreshPropertyInfo.bind(this);
     }
 
     saveStateToLocalStorage(){
         localStorage.setItem('propertyBidState', JSON.stringify(this.state));
     }
 
-    checkRedirect(redirectNow){
-        this.setState({redirect: redirectNow});
+    checkRefresh(refreshNow){
+        this.setState({refresh: refreshNow});
     }
 
     refreshPropertyInfo(){
-        axios.defaults.baseURL = 'http://api.nono.fi:5000';
-      
-        axios.get('/property', {params:{
-            id: this.state.propertyDetails.propertyId,
-        }})
-        .then((response) => {
-            if (response.status === 200){
-                this.setState({
-                    propertyDetails : response.data
-                });
-                this.saveStateToLocalStorage();
-            }
-        }).catch((error) =>{
-            console.log(error);
-        });
+        if (this.state.refresh){
+            axios.defaults.baseURL = 'http://api.nono.fi:5000';
+            axios.get('/property', {params:{
+                id: this.state.propertyDetails.propertyId,
+            }})
+            .then((response) => {
+                if (response.status === 200){
+                    console.log(response)
+                    let currentTime = new Date();
+                    let givenStart =  new Date(parseInt(response.data.auction_start));
+                    let givenEnd =  new Date(parseInt(response.data.auction_end));
+                    let currentAuction = false;
+                    let afterAuction = false;
+
+                    if ((currentTime >= givenStart) && (currentTime < givenEnd)){
+                        currentAuction = true;
+                    }
+                    else if (currentTime >= givenEnd){
+                        afterAuction = true;
+                    }
+
+                    this.setState({
+                        propertyDetails : response.data,
+                        pendingAuction: (currentAuction === afterAuction) ? true : false,
+                        activeAuction: (currentAuction) ? true : false,
+                        auctionComplete: (afterAuction) ? true : false,
+                        timeTillStart : givenStart,
+                        timeTillEnd : givenEnd,
+                        refresh: false
+                    });
+                    this.saveStateToLocalStorage();
+                    window.location.reload(false);
+                }
+            }).catch((error) =>{
+                console.log(error);
+            });
+        }
     }
 
     render(){
-        if (this.state.redirect){
+        
             return(
                 <>
-                    <Redirect to="/house"/>
-                </>
-            );
-        }
-        else{
-            return(
-                <>
+                {this.refreshPropertyInfo()}
                     <Row className="justify-content-md-center" style ={{marginTop: "1%"}}>
                         <Col md="auto">
                             <Row className="justify-content-md-center">
@@ -119,7 +136,7 @@ class PropertyBid extends Component{
                                         registered = {this.state.propertyDetails.registered}
                                         acceptedPaymentMethods = {this.state.propertyDetails.accepted_payment_method}
                                         givePropertyDetails={this.props.retrieveHouse}
-                                        checkRedirect = {this.checkRedirect}
+                                        checkRefresh = {this.checkRefresh}
                                     />
                                 </Col>
                             </Row>
@@ -154,6 +171,6 @@ class PropertyBid extends Component{
             );
         }
     }
-}
+
 
 export default PropertyBid;

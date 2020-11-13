@@ -24,13 +24,15 @@ class AuctionManager extends Component{
             tryVerifyBidder : false,
         }
 
+        this.timer = null;
+
         this.verifyRAB = this.verifyRAB.bind(this);
         this.getBidList = this.getBidList.bind(this);
         this.bid = this.bid.bind(this);
         this.toggleModal = this.toggleModal.bind(this);
         this.displayRegistered = this.displayRegistered.bind(this);
         this.buyerCardFeatures = this.buyerCardFeatures.bind(this);
-        this.refreshPage = this.refreshPage.bind(this);
+        this.getLatestBids = this.getLatestBids.bind(this);
     }
 
     toggleModal(){
@@ -39,27 +41,6 @@ class AuctionManager extends Component{
 
     displayRegistered(){
         this.setState({registered : true});
-    }
-
-    refreshPage(){
-        axios.defaults.baseURL = 'http://api.nono.fi:5000';      
-        axios.get('/property', {params:{
-            id: this.props.propertyId,
-        }})
-        .then((response) => {
-            if (response.status === 200){
-                this.setState({
-                    propertyDetails : Object.assign(response.data, {registered: this.state.registered})
-                });
-                
-                this.props.givePropertyDetails(this.state.propertyDetails);
-                this.props.checkRedirect(true);
-                localStorage.clear();
-
-            }
-        }).catch((error) =>{
-            console.log(error);
-        });
     }
 
     buyerCardFeatures(){
@@ -104,6 +85,12 @@ class AuctionManager extends Component{
     }
 
     getBidList(){
+        console.log('Updating Bids');
+        this.timer = null;
+        if(this.props.userType !== 'bidder'){
+            this.setState({loading : false});
+        }
+
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
         axios.defaults.headers.common['Authorization'] = `Token ${this.props.token}`;
 
@@ -122,6 +109,12 @@ class AuctionManager extends Component{
         }).catch((error) =>{
             console.log(error);
         });
+    }
+
+    getLatestBids(){
+        if(this.timer === null){
+            this.timer = setTimeout(() => this.getBidList(), 5000);
+        }
     }
     
     verifyRAB(){
@@ -143,12 +136,12 @@ class AuctionManager extends Component{
             return(
                 <>
                     <RegistrationModal
-                    registerForAuction = {this.state.registerForAuction}
-                    toggleModal = {this.toggleModal}
-                    displayRegistered = {this.displayRegistered}
-                    propertyId = {this.props.propertyId}
-                    token = {this.props.token}
-                    acceptedPaymentMethods = {this.props.acceptedPaymentMethods}
+                        registerForAuction = {this.state.registerForAuction}
+                        toggleModal = {this.toggleModal}
+                        displayRegistered = {this.displayRegistered}
+                        propertyId = {this.props.propertyId}
+                        token = {this.props.token}
+                        acceptedPaymentMethods = {this.props.acceptedPaymentMethods}
                      />
 
                     <Card style={{width:"22rem", padding:"5px"}}>
@@ -157,7 +150,7 @@ class AuctionManager extends Component{
                                 <h2 >Time Till Auction</h2>
                             </Row>
                             <Row className="justify-content-md-center">
-                                <Countdown className ="timerFormat" date={this.state.timeTillStart} onComplete={() => {this.refreshPage()}}></Countdown>
+                                <Countdown className ="timerFormat" date={this.state.timeTillStart} onComplete={() => {this.props.checkRefresh(true)}}></Countdown>
                             </Row>
                             <br/>
                             {this.buyerCardFeatures()}
@@ -179,6 +172,7 @@ class AuctionManager extends Component{
             else{
                 return(
                     <Card style={{width:"22rem", padding:"5px"}}>
+                        {this.getLatestBids()}
                         <Col md="auto">
                             <Row className="justify-content-md-center">
                                 <h2>Current Winning Bid</h2>
@@ -189,7 +183,7 @@ class AuctionManager extends Component{
                             </Row>
                             <br/>
                             <Row className="justify-content-md-center">
-                                <Countdown className ="timerFormat" date={this.state.timeTillEnd} onComplete={()=>(this.refreshPage())}></Countdown>
+                                <Countdown className ="timerFormat" date={this.state.timeTillEnd} onComplete={()=>this.props.checkRefresh(true)}></Countdown>
                             </Row>
                             <br/>
                             {this.verifyRAB()}
