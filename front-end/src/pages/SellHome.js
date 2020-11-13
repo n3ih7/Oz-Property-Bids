@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Button, Row} from 'react-bootstrap';
+import {Container, Button, Row, Spinner} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
 import {Redirect} from 'react-router-dom';
 const axios = require('axios');
@@ -11,7 +11,8 @@ class SellerHome extends Component{
         this.state = {
             listings : null,
             redirect : false,
-            gotListings: false
+            gotListings: false,
+            loading : true
         }
     
         this.cookies = this.props.cookies;
@@ -36,7 +37,8 @@ class SellerHome extends Component{
             if(response.status === 200){
                 this.setState({
                     listings : response.data.listing,
-                    gotListings: true
+                    gotListings: true,
+                    loading : false
                 });
             }
         }).catch((error) =>{
@@ -46,7 +48,15 @@ class SellerHome extends Component{
     }
     
     pageContent(){
-        if ((this.state.listings !== null) && (this.state.listings.length !== 0)){
+        if (this.state.loading){
+            
+            return(
+                <Row className="justify-content-md-center">
+                    <Spinner animation="border" variant="light" role="status" style={{marginTop:"20%"}}></Spinner>
+                </Row>
+            );
+        }
+        else if ((this.state.listings !== null) && (this.state.listings.length !== 0)){
             return(
                 <Container style={{marginTop: "5%"}}>
                     <h1 style={{color:"white"}}>Current Listings</h1>

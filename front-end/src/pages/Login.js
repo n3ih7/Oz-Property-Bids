@@ -80,7 +80,7 @@ class Login extends Component{
 
         else if (this.state.loading === true){
             return(
-                <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
+                <Spinner animation="border" variant="light" role="status" style={{marginTop:"20%"}}></Spinner>
             );
         }
 

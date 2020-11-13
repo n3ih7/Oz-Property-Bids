@@ -21,7 +21,7 @@ class LogOut extends Component{
         if (this.state.loading === true){
             return(
                 <Row className="justify-content-md-center">
-                    <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
+                    <Spinner animation="border" variant="light" role="status" style={{marginTop:"20%"}}></Spinner>
                 </Row>
             );
         }
@@ -45,6 +45,7 @@ class LogOut extends Component{
             this.cookies.remove('token');
             this.cookies.remove('expireTime');
             window.location.reload(false);
+
         }).catch((error) =>{
             this.setState({loading : false });
             this.cookies.set('authenticated',false);

@@ -1,10 +1,15 @@
 import React, {Component} from 'react';
-import { Col, Row, Card} from 'react-bootstrap';
+import { Col, Row, Card, Spinner} from 'react-bootstrap';
 import AuctionManager from '../components/AuctionManager';
 import Map from '../components/Map';
+import bed from '../assets/bed.png';
+import bath from '../assets/bathtub.png';
+import car from '../assets/car.png';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; 
 import { Carousel } from 'react-responsive-carousel';
 const axios = require('axios');
+
+const ImageStyle = {width:"25px", height:"25px", marginLeft:"5px", marginRight:"15px"};
 
 class PropertyBid extends Component{
     constructor(props) {
@@ -33,7 +38,12 @@ class PropertyBid extends Component{
                 timeTillEnd : givenEnd,
                 loading : true,
                 haveMapDetails : false,
-                refresh : false
+                houseCenter: {
+                    lat :59.95,
+                    lng :30.33,
+                  },
+                services : [],
+                refresh : false,
             }
             localStorage.clear();
             localStorage.setItem('propertyBidState', JSON.stringify(this.state));
@@ -48,10 +58,44 @@ class PropertyBid extends Component{
         this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
         this.checkRefresh = this.checkRefresh.bind(this);
         this.refreshPropertyInfo = this.refreshPropertyInfo.bind(this);
+        this.getMapDetails = this.getMapDetails.bind(this);
     }
 
     saveStateToLocalStorage(){
         localStorage.setItem('propertyBidState', JSON.stringify(this.state));
+    }
+
+
+    getMapDetails(){
+        if(!this.state.haveMapDetails){
+    
+            axios.defaults.baseURL = 'http://api.nono.fi:5000';
+            axios.get('/mapinfo', {params:{
+                id: this.state.propertyDetails.propertyId,
+            }})
+            .then((response) => {
+                if (response.status === 200){
+                    console.log(response.data);
+                    
+                    this.setState({
+                      haveMapDetails : true,
+                      houseCenter : response.data.property_location,
+                      services : [
+                        (response.data.hospital.location !== undefined) ? response.data.hospital : null,
+                        (response.data.police.location !== undefined) ? response.data.police : null,
+                        (response.data.school.location !== undefined) ? response.data.school : null,
+                        (response.data.supermarket.location !== undefined) ? response.data.supermarket : null,
+                        (response.data.university.location !== undefined) ? response.data.university : null
+                      ],
+                      loading : false
+                    });
+
+                    this.saveStateToLocalStorage();
+                }
+            }).catch((error) =>{
+                console.log(error);
+            });
+        }
     }
 
     checkRefresh(refreshNow){
@@ -99,7 +143,15 @@ class PropertyBid extends Component{
     }
 
     render(){
-        
+        if (this.state.loading){
+            return(
+                <Row className="justify-content-md-center">
+                    {this.getMapDetails()}
+                    <Spinner animation="border" variant="light" role="status" style={{marginTop:"20%"}}></Spinner>
+                </Row>
+            );
+        }
+        else{
             return(
                 <>
                 {this.refreshPropertyInfo()}
@@ -149,9 +201,9 @@ class PropertyBid extends Component{
                                 </Card.Title>
                                 <Card.Body>
                                     <Row>
-                                        Beds: {this.state.propertyDetails.beds+" "}
-                                        Baths: {this.state.propertyDetails.baths+" "}
-                                        Car Spots: {this.state.propertyDetails.parkingSpace+" "}
+                                        {this.state.propertyDetails.beds+" "} <img style={ImageStyle} src={bed} alt="beds"/>
+                                        {this.state.propertyDetails.baths+" "} <img style={ImageStyle} src={bath} alt="baths"/>
+                                        {this.state.propertyDetails.parkingSpace+" "} <img style={ImageStyle} src={car} alt="cars"/>
                                     </Row>
                                     <br/>
                                     <Row>
@@ -161,6 +213,10 @@ class PropertyBid extends Component{
                                     <Map
                                     propertyId = {this.state.propertyDetails.propertyId}
                                     propertyAddress = {this.state.propertyDetails.address}
+                                    mapHasLoaded = {this.state.mapHasLoaded}
+                                    houseCenter ={this.state.houseCenter}
+                                    services = {this.state.services}
+                                    haveMapDetails = {this.state.haveMapDetails}
                                     />
                                 </Card.Body>
                             </Card>
@@ -168,6 +224,7 @@ class PropertyBid extends Component{
                     </Row>
                 </>
             );
+        } 
         }
     }
 

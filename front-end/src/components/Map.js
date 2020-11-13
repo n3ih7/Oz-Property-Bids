@@ -9,7 +9,6 @@ import university from '../assets/university.png';
 import walking from '../assets/walking.png';
 import driving from '../assets/drive.png';
 import './Map.css';
-const axios = require('axios');
 
 const HomeMarker = ({ text }) => {
  return <>
@@ -42,59 +41,28 @@ class Map extends Component {
       services : [],
       serviceNames : ["Hospital", "Police Station","School","Supermarket","University"],
       serviceImages : [hospital, police, school, supermarket, university],
-      haveMapDetails : false
     }
 
-    this.getMapDetails = this.getMapDetails.bind(this);
   }
-  
-  getMapDetails(){
-    if(!this.state.haveMapDetails){
-
-        axios.defaults.baseURL = 'http://api.nono.fi:5000';
-        axios.get('/mapinfo', {params:{
-            id: this.props.propertyId,
-        }})
-        .then((response) => {
-            if (response.status === 200){
-                console.log(response.data);
-                
-                this.setState({
-                  haveMapDetails : true,
-                  houseCenter : response.data.property_location,
-                  services : [
-                    (response.data.hospital.location !== undefined) ? response.data.hospital : null,
-                    (response.data.police.location !== undefined) ? response.data.police : null,
-                    (response.data.school.location !== undefined) ? response.data.school : null,
-                    (response.data.supermarket.location !== undefined) ? response.data.supermarket : null,
-                    (response.data.university.location !== undefined) ? response.data.university : null
-                  ]
-                });
-            }
-        }).catch((error) =>{
-            console.log(error);
-        });
-    }
-}
 
   render() {
-    if (this.state.haveMapDetails){
+    if (this.props.haveMapDetails){
       return(
         <Row>
             <Col>
             <div style={{ height: '80vh', width: '100%' }}>
               <GoogleMapReact
                 bootstrapURLKeys={{ key: "AIzaSyBeeHfpZuehFLKU239tacm_j01rmRJlLFk" }}
-                defaultCenter={this.state.houseCenter}
+                defaultCenter={this.props.houseCenter}
                 defaultZoom={this.state.mapZoom}
               >
                 <HomeMarker
-                  lat={this.state.houseCenter.lat}
-                  lng={this.state.houseCenter.lng}
+                  lat={this.props.houseCenter.lat}
+                  lng={this.props.houseCenter.lng}
                   text= {this.props.propertyAddress}
                 />
 
-                {this.state.services.flatMap((service, index) =>(
+                {this.props.services.flatMap((service, index) =>(
                   (service !== null) ?
                   <Marker
                     lat={service.location.lat}
@@ -108,7 +76,7 @@ class Map extends Component {
           </Col>
           <Col>
           <ListGroup>
-          {this.state.services.map((service, index) =>(
+          {this.props.services.map((service, index) =>(
             <ListGroup.Item>
               <Row>
                 <Col>
@@ -116,7 +84,7 @@ class Map extends Component {
                   <Row className="justify-content-md-center"><img src ={this.state.serviceImages[index]} style={{height:"50px", width:"50px"}} alt =""/></Row>
                 </Col>
                 <Col>
-                {(service !== null ? service.name : "Look's like there are no "+ (this.state.serviceNames[index]).toLowerCase() + " in the immediate area.")}
+                {(service !== null ? service.name : "Look's like there is no "+ (this.state.serviceNames[index]).toLowerCase() + " in the immediate area.")}
                 </Col>
                 <Col>
                 <Row className="justify-content-md-center">
@@ -138,15 +106,7 @@ class Map extends Component {
         </Row>
       );
     }
-
-  else{
-    return (
-      <>
-      {this.getMapDetails()}
-      </>
-    );
   }
-}
 }
 
 export default Map;

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Container, Row} from 'react-bootstrap';
+import {Container, Row, Spinner} from 'react-bootstrap';
 import ResultCard from '../components/ResultCard';
 import {Redirect} from 'react-router-dom';
 const axios = require('axios');
@@ -75,7 +75,15 @@ class RegisteredHomes extends Component{
     }
     
     pageContent(){
-        if(this.state.gotListings){
+        if (this.state.loading){
+            
+            return(
+                <Row className="justify-content-md-center">
+                    <Spinner animation="border" variant="light" role="status" style={{marginTop:"20%"}}></Spinner>
+                </Row>
+            );
+        }
+        else if (this.state.gotListings){
             if ((this.state.listings.length !== 0)){
                 return(
                     <Container style={{marginTop: "5%"}}>
@@ -122,7 +130,7 @@ class RegisteredHomes extends Component{
     }
     
     render(){
-        if (this.state.redirect === true){
+        if (this.state.redirect){
             return(
             <>
                 <Redirect to="/house"/>

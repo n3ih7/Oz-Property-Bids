@@ -101,7 +101,7 @@ class Account extends Component{
             return(
                 <Container className = "pageContent">
                     <Row className="justify-content-md-center">
-                        <Spinner animation="border" role="status" style={{marginTop:"20%"}}></Spinner>
+                        <Spinner animation="border" variant="light" role="status" style={{marginTop:"20%"}}></Spinner>
                         {this.getAccountDetails()}
                     </Row>
                 </Container>
