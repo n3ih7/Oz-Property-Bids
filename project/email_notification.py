@@ -2,13 +2,13 @@ import smtplib
 from email.message import EmailMessage
 
 
-def email_send(subject, content, receiver):
+def email_send(content, receiver):
     gmail_user = 'nono.z14c@gmail.com'
     gmail_password = 'XntVXoL9gadkqbJupT'
 
     msg = EmailMessage()
-    msg['From'] = "nono.z14c@gmail.com"
-    msg['Subject'] = subject
+    msg['From'] = "Ozpb Online Services"
+    msg['Subject'] = "Auction result notice"
     msg['To'] = receiver
     msg.set_content(content)
 

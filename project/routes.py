@@ -9,7 +9,7 @@ from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from . import db, create_app
-from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO, PROPERTY_BID_RELATION, BID_ACTIVITY
+from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO, PROPERTY_BID_RELATION, BID_ACTIVITY, MOVEMENT_TRACKING
 from .blob import *
 from .email_notification import email_send
 
@@ -829,12 +829,12 @@ def bid():
                                 search_largest = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId).order_by(
                                     desc(BID_ACTIVITY.offerPrice)).first()
                                 if search_largest:
-                                    if int(offerPrice) > int(search_largest.offerPrice):
-                                        curr_start_price = offerPrice
-                                    else:
+                                    if int(offerPrice) < int(search_largest.offerPrice):
                                         curr_start_price = search_largest.offerPrice
+                                    else:
+                                        curr_start_price = offerPrice
                                 else:
-                                    curr_start_price = 0
+                                    curr_start_price = offerPrice
 
                                 return jsonify(msg="Your price has been accepted, this is your initial bid",
                                                ref=i_b.lineId,
@@ -846,7 +846,8 @@ def bid():
 
                             elif b and cur_time < float(a.start_time):
                                 return jsonify(
-                                    error="You cannot change initial bid and the auction has not started yet"), 409
+                                    error="You cannot change initial bid and the auction has not started yet",
+                                    yourInitialBid=int(b.offerPrice)), 409
 
                             elif not b and float(a.start_time) <= cur_time <= float(
                                     a.expected_finish_time):
@@ -858,7 +859,8 @@ def bid():
                                     a.expected_finish_time):
                                 check = int(a.expected_finish_time) - int(cur_time)
                                 if check <= 5 * 60:
-                                    a.expected_finish_time = str(int(a.expected_finish_time) + 2 * 60)
+                                    # a.expected_finish_time = str(int(a.expected_finish_time) + 2 * 60)
+                                    a.expected_finish_time = str(int(a.expected_finish_time) + 1)
                                     db.session.merge(a)
                                     c = PROPERTY_INFO.query.filter_by(propertyId=propertyId).first()
                                     c.auction_end = a.expected_finish_time
@@ -873,12 +875,8 @@ def bid():
                                                        bid_time=str(cur_time) + '000',
                                                        expected_finish_time=a.expected_finish_time + '000',
                                                        yourPrice=offerPrice,
-                                                       curr_higest_price=str(search_largest.offerPrice),
+                                                       curr_higest_price=search_largest.offerPrice,
                                                        start_time=str(a.start_time)), 409
-                                # record curr_winner
-                                a.winnerId = uid
-                                a.final_price = offerPrice
-                                db.session.merge(a)
 
                                 nb = BID_ACTIVITY(uid=uid,
                                                   bidActivityId=a.bidActivityId,
@@ -896,26 +894,71 @@ def bid():
                                                start_time=str(a.start_time)), 200
 
                             elif cur_time > float(a.expected_finish_time):
-                                # check if winner valid
-                                if a.final_price and int(a.final_price) > int(a.reserve_price):
-                                    n = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
-                                    return jsonify(error="The auction has ended",
-                                                   winner=n.firstname + ' ' + n.lastname,
+                                if not a.winnerId:
+                                    search_largest = BID_ACTIVITY.query.filter_by(
+                                        bidActivityId=a.bidActivityId).order_by(
+                                        desc(BID_ACTIVITY.offerPrice)).first()
+                                    if search_largest:
+                                        if int(search_largest.offerPrice) > int(a.reserve_price):
+                                            a.winnerId = search_largest.uid
+                                            a.final_price = search_largest.offerPrice
+                                            db.session.merge(a)
+                                            db.session.commit()
+                                            u = USER_INFO_EXTENDED.query.filter_by(uid=search_largest.uid).first()
+
+                                            # bid result notifications
+                                            if a.email_flag != "1":
+                                                a.email_flag = "1"
+                                                db.session.merge(a)
+                                                db.session.commit()
+
+                                                # email_send("DearXXX\mn",
+                                                #            "zack@nono.fi")
+                                                # email_send("DearXXX\mn",
+                                                #            "zack@nono.fi")
+
+                                            return jsonify(msg="The auction has finished. We have a winner",
+                                                           winner=u.firstname + ' ' + u.lastname,
+                                                           final_price=a.final_price,
+                                                           start_time=a.start_time + '000',
+                                                           end_time=a.expected_finish_time + '000',
+                                                           cur_time=str(cur_time) + '000'), 409
+                                        else:
+                                            return jsonify(
+                                                error="The auction has ended. No one offered more than reserve price",
+                                                winner="",
+                                                final_price="",
+                                                start_time=a.start_time + '000',
+                                                end_time=a.expected_finish_time + '000',
+                                                cur_time=str(cur_time) + '000'), 409
+                                    else:
+                                        return jsonify(
+                                            error="The auction has ended. No one offered more than reserve price",
+                                            winner="",
+                                            final_price="",
+                                            start_time=a.start_time + '000',
+                                            end_time=a.expected_finish_time + '000',
+                                            cur_time=str(cur_time) + '000'), 409
+                                else:
+                                    # bid result notifications
+                                    if a.email_flag != "1":
+                                        a.email_flag = "1"
+                                        db.session.merge(a)
+                                        db.session.commit()
+                                        email_send("you will this auction",
+                                                   "zack@nono.fi")
+
+                                    u = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
+                                    return jsonify(msg="The auction has finished. We have a winner",
+                                                   winner=u.firstname + ' ' + u.lastname,
                                                    final_price=a.final_price,
                                                    start_time=a.start_time + '000',
                                                    end_time=a.expected_finish_time + '000',
                                                    cur_time=str(cur_time) + '000'), 409
-                                else:
-                                    return jsonify(
-                                        error="The auction has ended. No one offered more than reserve price",
-                                        winner="",
-                                        final_price="",
-                                        start_time=a.start_time + '000',
-                                        end_time=a.expected_finish_time + '000',
-                                        cur_time=str(cur_time) + '000'), 409
+
                             else:
                                 return jsonify(
-                                    error="You bid request somehow did not accept by system"), 400
+                                    error="You bid request somehow did not accepted by system"), 400
 
                         except KeyError:
                             return jsonify(error="Expected attributes not received, post failed"), 400
@@ -933,13 +976,13 @@ def bid():
     if request.method == 'GET':
         if 'id' not in request.args:
             return jsonify(message="expected condition 'id' not received"), 400
-
         propertyId = request.args['id']
+        cur_time = int(time.time())
         a = PROPERTY_BID_RELATION.query.filter_by(propertyId=propertyId).first()
         if not a:
             return jsonify(error="No such auction exists"), 400
         b = BID_ACTIVITY.query.filter_by(bidActivityId=a.bidActivityId)
-        result_list = []
+        bid_history_list = []
         for k in b:
             bidder = USER_INFO_EXTENDED.query.filter_by(uid=k.uid).first()
             bidder_name = bidder.firstname + ' ' + bidder.lastname
@@ -947,32 +990,102 @@ def bid():
                       'offerPrice': k.offerPrice,
                       'bidPlaceTime': k.bidPlaceTime
                       }
-            result_list.append(r_dict)
+            bid_history_list.append(r_dict)
+        search_largest = BID_ACTIVITY.query.filter_by(
+            bidActivityId=a.bidActivityId).order_by(
+            desc(BID_ACTIVITY.offerPrice)).first()
 
-        # bid result notifications
-        # if int(time.time()) > int(a.expected_finish_time):
-        #     if a.email_flag != "1":
-        #         a.email_flag = "1"
-        #         db.session.merge(a)
-        #         db.session.commit()
-        #         email_send("auction result came out", "you win the auction", "zack@nono.fi")
+        if cur_time < float(a.start_time):
+            return jsonify(error='The auction has not started yet.',
+                           propertyId=propertyId,
+                           start_time=a.start_time + '000',
+                           end_time=a.expected_finish_time + '000',
+                           cur_time=str(int(time.time())) + '000'
+                           ), 409
 
-        winnerName = ''
-        final_price = ''
-        if a.winnerId:
-            if int(a.final_price) > int(a.reserve_price):
+        elif float(a.start_time) < cur_time < float(a.expected_finish_time):
+            return jsonify(msg="The auction is undergoing.",
+                           history=bid_history_list,
+                           length=str(len(bid_history_list)),
+                           propertyId=propertyId,
+                           start_time=a.start_time + '000',
+                           end_time=a.expected_finish_time + '000',
+                           cur_time=str(int(time.time())) + '000',
+                           curr_higest_price=search_largest.offerPrice
+                           ), 200
+
+        elif cur_time > float(a.expected_finish_time):
+            if not a.winnerId:
+                if search_largest:
+                    if int(search_largest.offerPrice) > int(a.reserve_price):
+                        a.winnerId = search_largest.uid
+                        a.final_price = search_largest.offerPrice
+                        db.session.merge(a)
+                        db.session.commit()
+                        u = USER_INFO_EXTENDED.query.filter_by(uid=search_largest.uid).first()
+
+                        # bid result notifications
+                        if a.email_flag != "1":
+                            a.email_flag = "1"
+                            db.session.merge(a)
+                            db.session.commit()
+                            # email_send("you will this auction",
+                            #            "10000@gmail.com")
+                            # sachinkrish7 @ gmail.com
+
+                        return jsonify(msg="The auction has finished. We have a winner",
+                                       winner=u.firstname + ' ' + u.lastname,
+                                       final_price=a.final_price,
+                                       start_time=a.start_time + '000',
+                                       end_time=a.expected_finish_time + '000',
+                                       cur_time=str(cur_time) + '000',
+                                       history=bid_history_list,
+                                       length=str(len(bid_history_list)),
+                                       propertyId=propertyId
+                                       ), 409
+                    else:
+                        return jsonify(
+                            error="The auction has ended. No one offered more than reserve price",
+                            winner="",
+                            final_price="",
+                            start_time=a.start_time + '000',
+                            end_time=a.expected_finish_time + '000',
+                            cur_time=str(cur_time) + '000',
+                            history=bid_history_list,
+                            length=str(len(bid_history_list)),
+                            propertyId=propertyId
+                        ), 409
+                return jsonify(
+                    error="The auction has ended. No one offered more than reserve price",
+                    winner="",
+                    final_price="",
+                    start_time=a.start_time + '000',
+                    end_time=a.expected_finish_time + '000',
+                    cur_time=str(cur_time) + '000',
+                    history=bid_history_list,
+                    length=str(len(bid_history_list)),
+                    propertyId=propertyId
+                ), 409
+            else:
+                # bid result notifications
+                if a.email_flag != "1":
+                    a.email_flag = "1"
+                    db.session.merge(a)
+                    db.session.commit()
+                    email_send("you will this auction",
+                               "zack@nono.fi")
+
                 u = USER_INFO_EXTENDED.query.filter_by(uid=a.winnerId).first()
-                winnerName = u.firstname + ' ' + u.lastname
-                final_price = a.final_price
-
-        return jsonify(history=result_list,
-                       length=str(len(result_list)),
-                       propertyId=propertyId,
-                       start_time=a.start_time + '000',
-                       end_time=a.expected_finish_time + '000',
-                       cur_time=str(int(time.time())) + '000',
-                       winner=winnerName,
-                       final_price=final_price), 200
+                return jsonify(msg="The auction has finished. We have a winner",
+                               winner=u.firstname + ' ' + u.lastname,
+                               final_price=a.final_price,
+                               start_time=a.start_time + '000',
+                               end_time=a.expected_finish_time + '000',
+                               cur_time=str(cur_time) + '000',
+                               history=bid_history_list,
+                               length=str(len(bid_history_list)),
+                               propertyId=propertyId
+                               ), 409
 
 
 @app.route('/get_rab_status', methods=['GET'])
