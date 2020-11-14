@@ -47,6 +47,7 @@ class AuctionManager extends Component{
     refreshComponent(){
         this.props.checkRefresh(true);
         this.forceUpdate();
+        window.location.reload(true);
     }
 
     buyerCardFeatures(){
@@ -139,7 +140,7 @@ class AuctionManager extends Component{
     }
 
     render(){
-        if(this.state.pendingAuction === true){
+        if(this.state.pendingAuction){
             return(
                 <>
                     <RegistrationModal
@@ -160,6 +161,11 @@ class AuctionManager extends Component{
                                 <Countdown className ="timerFormat" date={this.state.timeTillStart} onComplete={() => {this.refreshComponent()}}></Countdown>
                             </Row>
                             <br/>
+                            <Row className="justify-content-md-center">
+                                 <h6>Auction Started: {new Date((this.state.timeTillStart)).toString().slice(4,21)}</h6>
+                                 <h6>Auction Ends: {new Date((this.state.timeTillEnd)).toString().slice(4,21)}</h6>
+                            </Row>
+                            <br/>
                             {this.buyerCardFeatures()}
                         </Col>
                     </Card>
@@ -167,8 +173,8 @@ class AuctionManager extends Component{
             );
         }
         
-        else if(this.state.activeAuction === true){
-            if (this.state.loading === true){
+        else if(this.state.activeAuction ){
+            if (this.state.loading){
                 return(
                     <Row className="justify-content-md-center">
                             <Spinner animation="border" role="status" variant="light"></Spinner>
@@ -193,12 +199,17 @@ class AuctionManager extends Component{
                                 <Countdown className ="timerFormat" date={this.state.timeTillEnd} onComplete={()=> {this.refreshComponent()}}></Countdown>
                             </Row>
                             <br/>
+                            <Row className="justify-content-md-center">
+                                 <h6>Auction Started: {new Date((this.state.timeTillStart)).toString().slice(4,21)}</h6>
+                                 <h6>Auction Ends: {new Date((this.state.timeTillEnd)).toString().slice(4,21)}</h6>
+                            </Row>
+                            <br/>
                             {this.verifyRAB()}
                             <Row className="justify-content-md-center">
                                 <Accordion defaultActiveKey="1">
                                     <Card>
                                         <Accordion.Toggle as={Card.Header} onClick={()=>{this.getBidList()}} eventKey="0">
-                                            Bidding History
+                                            <div style={{textAlign:"center"}}>Total Bids - {this.state.bidHistory.length}</div>
                                         </Accordion.Toggle>
                                         <Accordion.Collapse eventKey="0">
                                             <Card.Body>
@@ -220,8 +231,8 @@ class AuctionManager extends Component{
                 );
             }
         }
-        else if(this.state.auctionComplete === true){
-            if (this.state.loading === true){
+        else if(this.state.auctionComplete){
+            if (this.state.loading){
                 return(
                     <Row className="justify-content-md-center">
                             <Spinner animation="border" role="status" variant="light"></Spinner>
@@ -239,6 +250,11 @@ class AuctionManager extends Component{
                             
                             <Row className="justify-content-md-center">
                                 <h2>${this.state.highestBid}</h2>
+                            </Row>
+                            <br/>
+                            <Row className="justify-content-md-center">
+                                 <h6>Auction Started: {new Date((this.state.timeTillStart)).toString().slice(4,21)}</h6>
+                                 <h6>Auction Ended: {new Date((this.state.timeTillEnd)).toString().slice(4,21)}</h6>
                             </Row>
                             <br/>
                             <Row className="justify-content-md-center">
