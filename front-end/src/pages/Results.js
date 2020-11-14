@@ -21,7 +21,7 @@ class Results extends Component{
         dateRange : true,
         registeredAuctions: [],
         checkedRegisteredAuctions: false,
-        suggestedProperties : false,
+        suggestedProperties : this.props.firstSearchParams.suggested,
         properties : []   
       }
 
@@ -47,10 +47,23 @@ class Results extends Component{
       this.handleDateToggle = this.handleDateToggle.bind(this);
       this.getRegisteredAuctions = this.getRegisteredAuctions.bind(this);
       this.saveStateToLocalStorage = this.saveStateToLocalStorage.bind(this);
+      this.showSuggestedTitle = this.showSuggestedTitle.bind(this);
     }
 
     saveStateToLocalStorage(){
       localStorage.setItem('resultState', JSON.stringify(this.state));
+    }
+
+    showSuggestedTitle(){
+      if(this.state.suggestedProperties){
+        return(
+          <>
+          <h4 style={{color:"white", textAlign:"center"}}>Sorry! None of our properties match your search criteria</h4>
+          <h4 style={{color:"white", textAlign:"center"}}>We've listed some other options that you might find interesting!</h4>
+          <br/>
+          </>
+        );
+      }
     }
 
     getRegisteredAuctions(){
@@ -147,7 +160,8 @@ class Results extends Component{
           console.log(response);
           this.setState({
               results : true,
-              properties : response.data.resp
+              properties : response.data.resp,
+              suggestedProperties : false
           });
           this.saveStateToLocalStorage();
           this.cookies.set('cid', response.data.cid,{path:'/'});
@@ -322,7 +336,7 @@ class Results extends Component{
   }
 
   pageContent(){
-    if(this.state.redirect === true){
+    if(this.state.redirect){
       return(
         <Redirect to="/house"/>
       );
@@ -337,7 +351,9 @@ class Results extends Component{
     else if(this.state.results){
       this.saveStateToLocalStorage();
           return(
-              this.state.properties.map((property, index) =>(
+            <>
+              {this.showSuggestedTitle()}
+              {this.state.properties.map((property, index) =>(
                 <div key={index}>
                   <Row>
                       <ResultCard 
@@ -360,7 +376,8 @@ class Results extends Component{
                   </Row>
                   <br/>
                   </div>
-              ))
+              ))}
+              </>
           );
       }
 

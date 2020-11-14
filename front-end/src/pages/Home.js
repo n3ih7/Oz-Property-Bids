@@ -35,6 +35,12 @@ class Home extends Component{
     this.handleChange = this.handleChange.bind(this);
     this.handleDateToggle = this.handleDateToggle.bind(this);
     this.getSuggested = this.getSuggested.bind(this);
+    this.checkRedirect = this.checkRedirect.bind(this);
+
+  }
+
+  checkRedirect(redirectNow){
+    this.setState({redirect: redirectNow});
   }
 
   getSuggested(){
@@ -236,7 +242,12 @@ class Home extends Component{
   }
 
   pageContent(){
-    if(this.state.results){
+    if(this.state.redirect){
+      return(
+        <Redirect to="/house"/>
+      );
+    }
+    else if(this.state.results){
       return(
         <Redirect to="/results"/>
       );
@@ -312,10 +323,11 @@ class Home extends Component{
                     </Form.Group>
               </Col>
             </Row>
-            <Row className = "justify-content-md-center" style={{marginTop:"100px"}}>
+            <Row className = "justify-content-md-center" style={{marginTop:"150px"}}>
               {this.getSuggested()}
               {this.state.suggestedProperties.map((property, index) =>(
                     <Col md = "auto" key={index}>
+                      <h6 style={{textAlign :"center"}}>Based on your search histroy, this property might be relevant for you</h6>
                       <ResultCard 
                         streetAddress={property.address} 
                         auctionStart ={property.auction_start}

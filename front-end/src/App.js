@@ -57,7 +57,7 @@ class App extends Component{
         <div className="App-background">
           <NavigationBar cookies = {this.props.cookies}/>
           <Switch>
-            <Route exact path ="/"><Home cookies= {this.props.cookies} dataCallback={this.retrieveSearchResults.bind(this)} paramsCallback={this.retrieveSearchParams.bind(this)} /></Route>
+            <Route exact path ="/"><Home cookies= {this.props.cookies} dataCallback={this.retrieveSearchResults.bind(this)} paramsCallback={this.retrieveSearchParams.bind(this)} retrieveHouse ={this.retrieveHouseFromResults.bind(this)}/></Route>
             <Route exact path ="/login" ><Login cookies= {this.props.cookies} /></Route>
             <Route exact path ="/logout" ><LogOut cookies= {this.props.cookies} /></Route>
             <Route exact path="/signup"><SignUp  cookies = {this.props.cookies}/></Route>
