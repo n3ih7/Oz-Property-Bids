@@ -4,6 +4,7 @@ import './Home.css';
 import DatePicker from "react-datepicker";
 import {Redirect} from 'react-router-dom';
 import AutoResults from '../components/AutoResults';
+import ResultCard from '../components/ResultCard';
 const axios = require('axios');
 
 class Home extends Component{
@@ -16,7 +17,9 @@ class Home extends Component{
       date2: new Date((new Date()).setTime((new Date()).getTime() + 7 * 86400000)),
       results : false,
       autofillResults : null,
-      dateRange : true,    
+      dateRange : true,
+      gotSuggested : false,
+      suggestedProperties : []    
     }
 
     this.cookies = this.props.cookies;
@@ -31,9 +34,35 @@ class Home extends Component{
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleDateToggle = this.handleDateToggle.bind(this);
+    this.getSuggested = this.getSuggested.bind(this);
   }
 
+  getSuggested(){
+    if(!this.state.gotSuggested){
+      
+      if(this.cookies.get('cid') && (this.cookies.get('userType') !== 'seller')){
+        axios.defaults.baseURL = 'http://api.nono.fi:5000';
+        axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
 
+        if(this.cookies.get('token')){
+          axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+        }
+
+        axios.get('/recommendation')
+        .then((response) => {
+            console.log(response);
+            this.setState({
+              suggestedProperties: response.data.resp.slice(0,1),
+              gotSuggested : true
+            });
+
+        }).catch((error) =>{
+            console.log(error);
+        });
+      }
+      this.setState({gotSuggested:true});
+    }
+  }
 
   handleDateToggle(){
     if(this.state.dateRange){
@@ -77,6 +106,7 @@ class Home extends Component{
   autoFill(){
     let userInput = this.location.current.value;
     axios.defaults.baseURL = 'http://api.jsacreative.com.au/';
+    delete axios.defaults.headers.common['CID']
 
     if(userInput.length === 0){
       this.setState({
@@ -106,7 +136,8 @@ class Home extends Component{
         postcode: userInput,
       }})
       .then((response) => {
-          
+        console.log(response);
+
         if (response.status === 200){
           this.setState({
             autofillResults : response.data.slice(0,3)
@@ -130,6 +161,14 @@ class Home extends Component{
   handleSubmit(){
     axios.defaults.baseURL = 'http://api.nono.fi:5000';
 
+    if(this.cookies.get('token')){
+      axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+    }
+
+    if(this.cookies.get('cid')){
+      axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+    }
+
     axios.get('/search', {params:{
       keyword: this.location.current.value.slice(this.location.current.value.length - 4),
       beds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
@@ -140,6 +179,7 @@ class Home extends Component{
       
     }})
     .then((response) => {
+      console.log(response);
         if (response.status === 200){
           this.props.dataCallback(response.data);
           this.props.paramsCallback({
@@ -149,12 +189,49 @@ class Home extends Component{
             initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
             initialAuctionStart:  (this.state.dateRange === true) ? this.state.date1 : null,
             initialAuctionEnd: (this.state.dateRange === true) ? this.state.date2 : null,
-            registeredAuctions : this.state.registeredAuctions
+            registeredAuctions : this.state.registeredAuctions,
+            suggested : false
           });
+          this.cookies.set('cid', response.data.cid,{path:'/'});
           this.setState({results: true});
         }
+
+        
     }).catch((error) =>{
-        console.log(error);
+
+      if (error.response.status !== undefined){
+        if(error.response.status === 404){
+          
+          axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+          if(this.cookies.get('token')){
+            axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+          }
+          if(this.cookies.get('token')){
+            axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+          }
+  
+          axios.get('/recommendation')
+          .then((response) => {
+              this.props.dataCallback(response.data);
+              this.props.paramsCallback({
+                initialLocation: this.location.current.value,
+                initialBeds : (this.numberBeds.current.value != null) ? this.numberBeds.current.value : "Any",
+                initialBaths : (this.numberBaths.current.value != null) ? this.numberBaths.current.value : "Any",
+                initialCarSpots: (this.numberCarSpots.current.value != null) ? this.numberCarSpots.current.value : "Any",
+                initialAuctionStart:  (this.state.dateRange === true) ? this.state.date1 : null,
+                initialAuctionEnd: (this.state.dateRange === true) ? this.state.date2 : null,
+                registeredAuctions : this.state.registeredAuctions,
+                suggested : true
+              });
+              this.cookies.set('cid', response.data.cid,{path:'/'});
+              this.setState({results: true});
+  
+          }).catch((error) =>{
+              console.log(error);
+          });
+        }
+      }
     });
   }
 
@@ -234,6 +311,32 @@ class Home extends Component{
                       <Form.Check type="checkbox" id="default-radio" label="Search All Dates" onClick={() => {this.handleDateToggle()}}></Form.Check>
                     </Form.Group>
               </Col>
+            </Row>
+            <Row className = "justify-content-md-center" style={{marginTop:"100px"}}>
+              {this.getSuggested()}
+              {this.state.suggestedProperties.map((property, index) =>(
+                    <Col md = "auto" key={index}>
+                      <ResultCard 
+                        streetAddress={property.address} 
+                        auctionStart ={property.auction_start}
+                        baths={property.baths} beds={property.beds} 
+                        city={property.city} 
+                        propertyType ={property.propertyType} 
+                        carSpots={property.parkingSpace} 
+                        image={property.images[0]} 
+                        propertyId={property.propertyId} 
+                        givePropertyDetails={this.props.retrieveHouse} 
+                        checkRedirect = {this.checkRedirect} 
+                        token={this.cookies.get('token')} 
+                        userType={this.cookies.get('userType')}
+                        registeredAuctions = {[]}
+                        acceptedPaymentMethods = {property.accepted_payment_method}
+                        introTitle = {property.intro_title}
+                        front = {true}
+                      />
+                    </Col>
+                 
+              ))}
             </Row>
           </Container>
         </Jumbotron>

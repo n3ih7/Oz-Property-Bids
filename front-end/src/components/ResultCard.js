@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {Card, Container, Col, Row, Button} from 'react-bootstrap';
 import RegistrationModal from '../components/RegistrationModal';
-import './ResultCard.css';
 import bed from '../assets/bed.png';
 import bath from '../assets/bathtub.png';
 import car from '../assets/car.png';
@@ -11,6 +10,8 @@ const axios = require('axios');
 const leadingImageSpacingStyle = {marginRight:"5px"};
 const ImageSpacingStyle = {marginRight:"5px", marginLeft: "20px"};
 const ImageStyle = {width:"25px", height:"25px"};
+const resultPageCard = {height:"260px", padding:"5px", color: "black"};
+const frontPageCard = {height:"300px", width:"1000px", padding:"5px", color: "black"};
 
 class ResultCard extends Component{
 
@@ -94,7 +95,7 @@ class ResultCard extends Component{
                     acceptedPaymentMethods = {this.props.acceptedPaymentMethods}
                 />
                 <Container>
-                    <Card style={{height:"260px", padding:"5px"}}>
+                    <Card style={(this.props.front ? frontPageCard : resultPageCard)}>
                         <Row>
                             <Col md="auto" onClick ={() => this.redirectToProperty()}>
                                 <Card.Img  variant = "left" src={this.props.image} alt="House Image" style={{height:"250px", width:"300px"}}/>

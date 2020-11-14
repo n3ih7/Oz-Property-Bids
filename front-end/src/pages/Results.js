@@ -20,7 +20,9 @@ class Results extends Component{
         redirect : false,
         dateRange : true,
         registeredAuctions: [],
-        checkedRegisteredAuctions: false   
+        checkedRegisteredAuctions: false,
+        suggestedProperties : false,
+        properties : []   
       }
 
       this.state = ((localStorage.getItem('resultState') !== null) ? JSON.parse(localStorage.getItem('resultState')) : this.resultState);
@@ -111,17 +113,26 @@ class Results extends Component{
       this.setState({redirect: redirectNow});
     }
 
-    handleChange(){
+    handleChange(e){
       clearTimeout(this.state.timer);
       this.setState({
         timer: setTimeout(() => {
           this.autoFill();
-          }, 1000)
+          }, 1000),
+        searchValue : e.target.value
         });
     }
 
     handleSubmit(){
       axios.defaults.baseURL = 'http://api.nono.fi:5000';
+
+      if(this.cookies.get('token')){
+        axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+      }
+      
+      if(this.cookies.get('cid')){
+        axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+      }
   
       axios.get('/search', {params:{
         keyword: this.location.current.value.slice(this.location.current.value.length - 4),
@@ -132,16 +143,44 @@ class Results extends Component{
         auction_end: (this.state.dateRange === true) ? `${(this.state.date2.getTime())}` : ""
       }})
       .then((response) => {
-          if (response.status === 200){
-            console.log(response);
-            this.setState({
-                results : true,
-                properties : response.data.resp
-            });
-            this.saveStateToLocalStorage();
-          }
+        if (response.status === 200){
+          console.log(response);
+          this.setState({
+              results : true,
+              properties : response.data.resp
+          });
+          this.saveStateToLocalStorage();
+          this.cookies.set('cid', response.data.cid,{path:'/'});
+        }
+
       }).catch((error) =>{
-          console.log(error);
+        if (error.response.status !== undefined){
+          if (error.response.status === 404){
+        
+            axios.defaults.baseURL = 'http://api.nono.fi:5000';
+  
+            if(this.cookies.get('token')){
+              axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+            }
+            if(this.cookies.get('token')){
+              axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
+            }
+    
+            axios.get('/recommendation')
+            .then((response) => {
+              console.log(response);
+              this.setState({
+                results: true,
+                suggestedProperties : true,
+                properties : response.data.resp
+              });
+              this.cookies.set('cid', response.data.cid,{path:'/'});
+    
+            }).catch((error) =>{
+                console.log(error);
+            });
+          }
+        }
       });
     }
 
@@ -170,6 +209,7 @@ class Results extends Component{
   autoFill(){
     let userInput = this.location.current.value;
     axios.defaults.baseURL = 'http://api.jsacreative.com.au/';
+    delete axios.defaults.headers.common['CID']
 
     if(userInput.length === 0){
       this.setState({
@@ -221,7 +261,7 @@ class Results extends Component{
                   <Form.Group>
                   <Form.Row>
                       <Col>
-                      <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {this.handleChange} onKeyDown = {this.handleKeyPress} />
+                      <Form.Control size="lg" type="text" placeholder="Search by Suburb or Postcode" ref ={this.location} value = {this.state.searchValue } onChange = {(e) => {this.handleChange(e)}} onKeyDown = {this.handleKeyPress} />
                       </Col>
                       <Button column="lg" className="searchButton" lg={2} style={{background : "#05445E", borderColor: "white"}} onClick = {this.handleSubmit}>
                       Search
@@ -295,6 +335,7 @@ class Results extends Component{
     }
 
     else if(this.state.results){
+      this.saveStateToLocalStorage();
           return(
               this.state.properties.map((property, index) =>(
                 <div key={index}>
@@ -323,13 +364,12 @@ class Results extends Component{
           );
       }
 
-      else if(this.props.results.resp){
-          if(this.props.results.resp.length > 0){
+      else if(this.props.results){
+          if(this.props.results.length > 0){
               this.setState({
-                  properties: this.props.results.resp,
+                  properties: this.props.results,
                   results : true
               });
-              this.saveStateToLocalStorage();
           }
       }
   }

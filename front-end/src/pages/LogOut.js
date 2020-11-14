@@ -44,6 +44,7 @@ class LogOut extends Component{
             this.cookies.remove('userType');
             this.cookies.remove('token');
             this.cookies.remove('expireTime');
+            this.cookies.remove('cid');
             window.location.reload(false);
 
         }).catch((error) =>{
@@ -52,6 +53,7 @@ class LogOut extends Component{
             this.cookies.remove('userType');
             this.cookies.remove('token');
             this.cookies.remove('expireTime');
+            this.cookies.remove('cid');
             window.location.reload(false);
         });
     }

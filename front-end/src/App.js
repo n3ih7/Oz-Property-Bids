@@ -35,7 +35,7 @@ class App extends Component{
 
   retrieveSearchResults = (results) => {
     this.setState({
-      searchResults : results
+      searchResults : results.resp
     });
   }
 
