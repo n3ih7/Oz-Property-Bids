@@ -61,7 +61,6 @@ class PROPERTY_BID_RELATION(db.Model):
     bsb = db.Column('bsb', db.Text)
     acc_number = db.Column('accnumber', db.Text)
     cheque_flag = db.Column('cheque_flag', db.Text)
-    # cheque_name = db.Column('cheque_name', db.Text)
     card_flag = db.Column('card_flag', db.Text)
     email_flag = db.Column('email_flag', db.Text)
 
@@ -69,16 +68,13 @@ class PROPERTY_BID_RELATION(db.Model):
 class MOVEMENT_TRACKING(db.Model):
     __tablename__ = 'MOVEMENT_TRACKING'
     movementId = db.Column('moveid', db.INTEGER, primary_key=True)
-    email = db.Column('email', db.Text)
+    uid = db.Column('uid', db.Text)
     cid = db.Column('cid', db.Text)
     accessDate = db.Column('accessdate', db.Text)
     searchKeyword = db.Column('searchkeyword', db.Text)
-    propertyType = db.Column('type', db.Text)
     beds = db.Column('beds', db.INTEGER)
     baths = db.Column('baths', db.INTEGER)
-    minPrice = db.Column('minprice', db.INTEGER)
-    maxPrice = db.Column('maxprice', db.INTEGER)
-    minLandSize = db.Column('minlandsize', db.INTEGER)
+    carspots = db.Column('carspots', db.INTEGER)
 
 
 class BID_ACTIVITY(db.Model):

@@ -2,6 +2,8 @@ import os
 import secrets
 import subprocess
 import time
+import uuid
+
 import googlemaps
 from random import randint
 from flask import request, jsonify
@@ -11,7 +13,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from . import db, create_app
 from .models import USER_INFO, USER_INFO_EXTENDED, PROPERTY_INFO, PROPERTY_BID_RELATION, BID_ACTIVITY, MOVEMENT_TRACKING
 from .blob import *
-
 
 app = create_app()
 SQLAlchemy(app)
@@ -229,50 +230,251 @@ def profile_update():
             return jsonify(error="Token not received, nothing changed"), 401
 
 
+@app.route('/recommendation', methods=['GET'])
+def recommendation_get():
+    def random_5_p():
+        recent_temp = PROPERTY_INFO.query.filter(PROPERTY_INFO.auction_start > str(int(time.time()))).limit(5).all()
+        result_list = []
+        if recent_temp:
+            for i in recent_temp:
+                # print(i)
+                if i.unitNumber:
+                    address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+                else:
+                    address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+
+                images_list = []
+                if i.images and i.images != '0':
+                    file_name = str(i.propertyId) + '-0'
+                    download_blob(file_name)
+                    image_str = open(file_name, 'r').read()
+                    images_list.append(str(image_str))
+                    os.remove(file_name)
+
+                j = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                payment_method_list = []
+                if j.bank_transfer_flag == '1':
+                    payment_method_list.append("Bank Transfer")
+                if j.cheque_flag == '1':
+                    payment_method_list.append("Cheque")
+                if j.card_flag == '1':
+                    payment_method_list.append("Credit/Debit Card")
+
+                result_dict = {
+                    "propertyId": i.propertyId,
+                    "propertyType": i.propertyType,
+                    "address": address,
+                    "city": i.suburb,
+                    "beds": i.beds,
+                    "baths": i.baths,
+                    "parkingSpace": i.parkingSpace,
+                    "landSize": i.landSize,
+                    "auction_start": str(i.auction_start) + '000',
+                    "images": images_list,
+                    "intro_title": i.intro_title,
+                    "accepted_payment_method": payment_method_list
+                }
+
+                result_list.append(result_dict)
+            return result_list
+
+    last_search_timestamp = ''
+    last_search_by_uid = ''
+    last_search_by_cid = ''
+    if 'Authorization' in request.headers:
+        try:
+            tk = str(request.headers['Authorization']).split(' ')[1]
+            user = USER_INFO.query.filter_by(curr_token=tk).first()
+            if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                search_uid = user.uid
+                if search_uid != '':
+                    uid_history = MOVEMENT_TRACKING.query.filter_by(uid=search_uid)
+                    last_search_by_uid_point = uid_history.order_by(
+                        desc(MOVEMENT_TRACKING.accessDate)).first()
+                    if last_search_by_uid_point:
+                        last_search_by_uid = last_search_by_uid_point.accessDate
+            else:
+                nothing = True
+        except IndexError:
+            nothing = True
+        except KeyError:
+            nothing = True
+
+    if 'CID' in request.headers:
+        try:
+            current_CID = str(request.headers['CID'])
+            search_cid = current_CID
+            if search_cid != '':
+                cid_history = MOVEMENT_TRACKING.query.filter_by(cid=search_cid)
+                # print(cid_history)
+                last_search_by_cid_point = cid_history.order_by(
+                    desc(MOVEMENT_TRACKING.accessDate)).first()
+                if last_search_by_cid_point:
+                    last_search_by_cid = last_search_by_cid_point.accessDate
+            else:
+                nothing = True
+        except IndexError:
+            nothing = True
+        except KeyError:
+            nothing = True
+
+    if last_search_by_uid != '' and last_search_by_cid != '':
+        if last_search_by_uid > last_search_by_cid:
+            last_search_timestamp = last_search_by_uid
+        else:
+            last_search_timestamp = last_search_by_cid
+
+    if last_search_by_uid != '' and last_search_by_cid == '':
+        last_search_timestamp = last_search_by_uid
+
+    if last_search_by_uid == '' and last_search_by_cid != '':
+        last_search_timestamp = last_search_by_cid
+
+    if last_search_timestamp != '':
+        # print(last_search_timestamp)
+        last_search = MOVEMENT_TRACKING.query.filter_by(accessDate=last_search_timestamp).first()
+        if last_search:
+            # core recommendation
+            if not last_search.beds and not last_search.baths and not last_search.carspots:
+                print("000")
+                recent_5_list = random_5_p()
+                return jsonify(resp=recent_5_list), 200
+            else:
+                recent = PROPERTY_INFO.query.filter(PROPERTY_INFO.auction_start > str(int(time.time())))
+                if last_search.beds:
+                    r = recent.filter(PROPERTY_INFO.beds == str(last_search.beds))
+                else:
+                    r = recent
+
+                if last_search.baths:
+                    rr = r.filter(PROPERTY_INFO.baths == str(last_search.baths))
+                else:
+                    rr = r
+
+                if last_search.carspots:
+                    rrr = rr.filter(PROPERTY_INFO.parkingSpace == str(last_search.carspots)).all()
+                else:
+                    rrr = rr
+
+                if not rrr:
+                    # print("no rrr")
+                    recent_5_list = random_5_p()
+                    return jsonify(resp=recent_5_list), 200
+                else:
+                    # print(rrr)
+                    ll = []
+                    for i in rrr:
+                        # print(i)
+                        if i.unitNumber:
+                            address = i.unitNumber + '/' + i.streetAddress + ', ' + i.suburb + ' ' \
+                                      + i.state + ' ' + i.postcode
+                        else:
+                            address = i.streetAddress + ', ' + i.suburb + ' ' + i.state + ' ' + i.postcode
+
+                        images_list = []
+                        if i.images and i.images != '0':
+                            file_name = str(i.propertyId) + '-0'
+                            download_blob(file_name)
+                            image_str = open(file_name, 'r').read()
+                            images_list.append(str(image_str))
+                            os.remove(file_name)
+
+                        j = PROPERTY_BID_RELATION.query.filter_by(propertyId=i.propertyId).first()
+                        payment_method_list = []
+                        if j.bank_transfer_flag == '1':
+                            payment_method_list.append("Bank Transfer")
+                        if j.cheque_flag == '1':
+                            payment_method_list.append("Cheque")
+                        if j.card_flag == '1':
+                            payment_method_list.append("Credit/Debit Card")
+
+                        result_dict = {
+                            "propertyId": i.propertyId,
+                            "propertyType": i.propertyType,
+                            "address": address,
+                            "city": i.suburb,
+                            "beds": i.beds,
+                            "baths": i.baths,
+                            "parkingSpace": i.parkingSpace,
+                            "landSize": i.landSize,
+                            "auction_start": str(i.auction_start) + '000',
+                            "images": images_list,
+                            "intro_title": i.intro_title,
+                            "accepted_payment_method": payment_method_list
+                        }
+
+                        ll.append(result_dict)
+
+                    if ll:
+                        return jsonify(resp=ll), 200
+                    else:
+                        recent_5_list = random_5_p()
+                        return jsonify(resp=recent_5_list), 200
+
+
+        else:
+            print("no search history")
+            recent_5_list = random_5_p()
+            return jsonify(resp=recent_5_list), 200
+    else:
+        print("no search history")
+        recent_5_list = random_5_p()
+        return jsonify(resp=recent_5_list), 200
+
+
 @app.route('/search', methods=['GET'])
 def property_search():
     if 'keyword' not in request.args:
         return jsonify(message="expected conditions not received", status="search failed"), 400
     else:
         # Record search history
-        # mov = MOVEMENT_TRACKING(movementId=randint(100000000, 999999999))
-        # new_cookies_CID = str(uuid.uuid4())
-        #
-        # if 'Authorization' in request.headers:
-        #     try:
-        #         tk = str(request.headers['Authorization']).split(' ')[1]
-        #         user = USER_INFO.query.filter_by(curr_token=tk).first()
-        #         if user and user.login_status == '1' and time.time() < float(user.expire_time):
-        #             mov.email = user.email
-        #         else:
-        #             return jsonify(error="Token not valid, nothing to be changed, try login first"), 401
-        #     except IndexError:
-        #         return jsonify(error="Token format not valid, user not found"), 401
-        #     except KeyError:
-        #         return jsonify(error="Token not received"), 401
-        #
-        # if 'CID' not in request.cookies:
-        #     mov.cid = new_cookies_CID
-        # else:
-        #     mov.cid = request.cookies['CID']
-        # mov.accessDate = time.strftime("%H:%M:%S %d-%b-%Y", time.localtime())
-        # mov.searchKeyword = request.args.get('keyword')
-        # if 'type' in request.args:
-        #     mov.propertyType = request.args.get('type')
-        # if 'bedrooms' in request.args:
-        #     mov.beds = int(request.args.get('bedroom'))
-        # if 'bathrooms' in request.args:
-        #     mov.baths = int(request.args.get('bathroom'))
-        # if 'minprice' in request.args:
-        #     mov.minPrice = int(request.args.get('minprice'))
-        # if 'maxprice' in request.args:
-        #     mov.maxPrice = int(request.args.get('maxprice'))
-        # if 'minlandsize' in request.args:
-        #     mov.minLandSize = int(request.args.get('minlandsize'))
-        #
-        # db.session.add(mov)
-        # db.session.commit()
+        def get_new_movement_id():
+            n = randint(10000, 99999)
+            check_temp_movement_id = MOVEMENT_TRACKING.query.filter_by(movementId=n).first()
+            if check_temp_movement_id:
+                get_new_movement_id()
+            else:
+                return n
 
+        mov = MOVEMENT_TRACKING(movementId=get_new_movement_id())
+        new_cookies_CID = str(uuid.uuid4())
+
+        if 'Authorization' in request.headers:
+            try:
+                tk = str(request.headers['Authorization']).split(' ')[1]
+                user = USER_INFO.query.filter_by(curr_token=tk).first()
+                if user and user.login_status == '1' and time.time() < float(user.expire_time):
+                    mov.uid = user.uid
+                else:
+                    nothing = True
+            except IndexError:
+                nothing = True
+            except KeyError:
+                nothing = True
+
+        if 'CID' not in request.headers:
+            current_CID = new_cookies_CID
+            mov.cid = current_CID
+        else:
+            current_CID = str(request.headers['CID'])
+            mov.cid = current_CID
+
+        mov.accessDate = str(int(time.time()))
+        mov.searchKeyword = request.args.get('keyword')
+        if 'beds' in request.args and request.args.get('beds') != "" and \
+                request.args.get('beds') != "null" and request.args.get('beds') != "Any":
+            mov.beds = int(request.args.get('beds'))
+        if 'baths' in request.args and request.args.get('baths') != "" and \
+                request.args.get('baths') != "null" and request.args.get('baths') != "Any":
+            mov.baths = int(request.args.get('baths'))
+        if 'carspots' in request.args and request.args.get('carspots') != "" and \
+                request.args.get('carspots') != "null" and request.args.get('carspots') != "Any":
+            mov.baths = int(request.args.get('carspots'))
+
+        db.session.add(mov)
+        db.session.commit()
+
+        #  search function
         searchKeyword = request.args.get('keyword')
         bedroom_req = ''
         bathroom_req = ''
@@ -413,7 +615,8 @@ def property_search():
             if not result_list:
                 return jsonify(error="nothing found, search failed"), 404
             else:
-                return jsonify(resp=result_list), 200
+                return jsonify(cid=current_CID,
+                               resp=result_list), 200
         else:
             return jsonify(message="nothing found", status="failed"), 404
 
