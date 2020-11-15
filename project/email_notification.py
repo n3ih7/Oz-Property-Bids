@@ -7,7 +7,7 @@ from email.header import Header
 content = ''
 if str(sys.argv[1]) == "successToSeller":
     print("trying successToSeller sending... by 1")
-    content = "Hi, " + str(sys.argv[2]) + "\n\nWe are thrilled to let you know that your property (" + \
+    content = "Hi " + str(sys.argv[2]) + ",\n\nWe are thrilled to let you know that your property (" + \
               str(sys.argv[4]) + ") has been sold successfully. The final price is $" + str(sys.argv[5]) + \
               ".\n\nHere are the buyer's details:\n\tName: " + str(sys.argv[6]) + \
               "\n\tPayment Method: " + str(sys.argv[7]) + "\n\tEmail: " + str(sys.argv[8]) + "\n\tMobile: " + \
@@ -17,7 +17,7 @@ if str(sys.argv[1]) == "successToSeller":
                                                                   "contact us.\n\nSincerely\nOz Property Team"
 if str(sys.argv[1]) == "successToBuyer":
     print("trying successToBuyer sending... by 1")
-    content = "Hi, " + str(sys.argv[2]) + "\n\nWe are thrilled to let you know that your bid on property (" + \
+    content = "Hi " + str(sys.argv[2]) + ",\n\nWe are thrilled to let you know that your bid on property (" + \
               str(sys.argv[4]) + ") was successful. The final price is $" + str(
         sys.argv[5]) + " and you choose " + str(
         sys.argv[6]) + " as your payment method.\n\nHere are the seller's details:\n\tName: " + str(

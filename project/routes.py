@@ -469,7 +469,7 @@ def property_search():
             mov.baths = int(request.args.get('baths'))
         if 'carspots' in request.args and request.args.get('carspots') != "" and \
                 request.args.get('carspots') != "null" and request.args.get('carspots') != "Any":
-            mov.baths = int(request.args.get('carspots'))
+            mov.carspots = int(request.args.get('carspots'))
 
         db.session.add(mov)
         db.session.commit()
@@ -1233,7 +1233,7 @@ def bid():
                                                   "project/email_notification.py",
                                                   "successToSeller",
                                                   seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
-                                                  "zack@nono.fi",
+                                                  seller_email,
                                                   property_address,
                                                   str(a.final_price),
                                                   u.firstname + ' ' + u.lastname,
@@ -1246,7 +1246,7 @@ def bid():
                                                   "project/email_notification.py",
                                                   "successToBuyer",
                                                   u.firstname + ' ' + u.lastname,
-                                                  "zack@nono.fi",
+                                                  buyer_email,
                                                   property_address,
                                                   str(a.final_price),
                                                   pm,
@@ -1283,7 +1283,7 @@ def bid():
                                                   "project/email_notification.py",
                                                   "failToSeller",
                                                   seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
-                                                  "zack@nono.fi",
+                                                  seller_email,
                                                   property_address
                                                   ])
                         return jsonify(
@@ -1315,7 +1315,7 @@ def bid():
                                           "project/email_notification.py",
                                           "failToSeller",
                                           seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
-                                          "zack@nono.fi",
+                                          seller_email,
                                           property_address
                                           ])
                 return jsonify(
@@ -1353,7 +1353,7 @@ def bid():
                                           "project/email_notification.py",
                                           "successToSeller",
                                           seller_info_ext.firstname + ' ' + seller_info_ext.lastname,
-                                          "zack@nono.fi",
+                                          seller_email,
                                           property_address,
                                           str(a.final_price),
                                           u.firstname + ' ' + u.lastname,
@@ -1366,7 +1366,7 @@ def bid():
                                           "project/email_notification.py",
                                           "successToBuyer",
                                           u.firstname + ' ' + u.lastname,
-                                          "zack@nono.fi",
+                                          buyer_email,
                                           property_address,
                                           str(a.final_price),
                                           pm,
