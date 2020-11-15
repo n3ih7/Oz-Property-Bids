@@ -48,7 +48,7 @@ class Home extends Component{
       
       if(this.cookies.get('cid') && (this.cookies.get('userType') !== 'seller')){
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
-        axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+        axios.defaults.headers.common['CID'] = `${this.cookies.get('cid')}`;
 
         if(this.cookies.get('token')){
           axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
@@ -172,7 +172,7 @@ class Home extends Component{
     }
 
     if(this.cookies.get('cid')){
-      axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+      axios.defaults.headers.common['CID'] = `${this.cookies.get('cid')}`;
     }
 
     axios.get('/search', {params:{
@@ -211,7 +211,7 @@ class Home extends Component{
           axios.defaults.baseURL = 'http://api.nono.fi:5000';
 
           if(this.cookies.get('token')){
-            axios.defaults.headers.common['CID'] = `Token ${this.cookies.get('cid')}`;
+            axios.defaults.headers.common['CID'] = `${this.cookies.get('cid')}`;
           }
           if(this.cookies.get('token')){
             axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
