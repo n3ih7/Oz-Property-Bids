@@ -6,7 +6,7 @@ from email.header import Header
 
 content = ''
 if str(sys.argv[1]) == "successToSeller":
-    print("trying successToSeller sending... by 1")
+    print("trying successToSeller sending... by 1 to " + str(sys.argv[3]))
     content = "Hi " + str(sys.argv[2]) + ",\n\nWe are thrilled to let you know that your property (" + \
               str(sys.argv[4]) + ") has been sold successfully. The final price is $" + str(sys.argv[5]) + \
               ".\n\nHere are the buyer's details:\n\tName: " + str(sys.argv[6]) + \
@@ -15,8 +15,9 @@ if str(sys.argv[1]) == "successToSeller":
                                                            10]) + "\n\nWe hope you have a nice day. If you have " \
                                                                   "anything concerned, please don't hesitate to " \
                                                                   "contact us.\n\nSincerely\nOz Property Team"
+
 if str(sys.argv[1]) == "successToBuyer":
-    print("trying successToBuyer sending... by 1")
+    print("trying successToBuyer sending... by 1 to " + str(sys.argv[3]))
     content = "Hi " + str(sys.argv[2]) + ",\n\nWe are thrilled to let you know that your bid on property (" + \
               str(sys.argv[4]) + ") was successful. The final price is $" + str(
         sys.argv[5]) + " and you choose " + str(
@@ -24,8 +25,9 @@ if str(sys.argv[1]) == "successToBuyer":
         sys.argv[7]) + "\n\tEmail: " + str(sys.argv[8]) + "\n\tMobile: " + str(
         sys.argv[9]) + "\n\nWe hope you have a nice day. If you have anything concerned, " \
                        "please don't hesitate to contact us.\n\nSincerely\nOz Property Team"
+
 if str(sys.argv[1]) == "failToSeller":
-    print("trying failToSeller sending... by 1")
+    print("trying failToSeller sending... by 1 to " + str(sys.argv[3]))
     content = "Hi, " + str(sys.argv[2]) + "\n\nWe are sorry to let you know that we were unable to find a " \
                                           "buyer for your property (" + str(sys.argv[4]) + \
               ")\n\nWe hope you can give us a secoond chance. If you concern about anything, " \
@@ -46,10 +48,10 @@ if content != '':
         server.login(gmail_user, gmail_password)
         server.send_message(msg)
         server.quit()
-        print("email sent by 1 " + str(sys.argv[1]))
+        print("email sent by 1 " + str(sys.argv[1]) + " to " + str(sys.argv[3]))
 
     except:
-        print("Something went wrong...trying another sending system " + str(sys.argv[1]))
+        print("Something went wrong...trying another sending system " + str(sys.argv[1]) + " to " + str(sys.argv[3]))
         msg = MIMEText(content, "plain", 'utf-8')
         msg["Subject"] = Header("Auction result notice", 'utf-8')
         msg["From"] = "Oz Property Team <n3ih7@foxmail.com>"
@@ -61,4 +63,4 @@ if content != '':
         server.login(tencent_user, tencent_password)
         server.sendmail(tencent_user, str(msg["To"]), msg.as_string())
         server.quit()
-        print("email sent by 2 " + str(sys.argv[1]))
+        print("email sent by 2 " + str(sys.argv[1]) + " to " + str(sys.argv[3]))
