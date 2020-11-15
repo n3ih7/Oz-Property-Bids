@@ -80,7 +80,7 @@ class Account extends Component{
         axios.defaults.baseURL = 'http://api.nono.fi:5000';
         axios.defaults.headers.common['Authorization'] = `Token ${this.cookies.get('token')}`;
 
-        axios.put('/profile_update', {
+        axios.put('/profile', {
             old_password: this.state.oldPassword,
             new_password: this.state.newPassword,
         })
