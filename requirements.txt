@@ -24,3 +24,4 @@ decorator~=4.4.2
 setuptools~=50.3.2
 attrs~=20.2.0
 googlemaps == 4.4.2
+gunicorn==20.0.4
