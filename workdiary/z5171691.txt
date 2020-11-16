@@ -35,3 +35,23 @@ for demo.
 Week 5
 I'm working on spirit 2 and make spirit 1 back end functions fully integrated with front-end till Tuesday night.
 Will keep working for Thursday demo. 
+
+Week 6
+Modify the property API return format and make new API for user to check their RAB status. Form the data table
+for auction instance. Have a try on Google blob storage and make the API the image upload and access it from
+the front end (client) side. It worked as we expected. Fully tested on user profile update.
+
+Week 7
+Make the POST /bid for initial bid use and the real auction instance and GET /bid for bid history and form the
+result for the auction. Have a test on email sending but it was not a success. Will keep working on that in next
+week. And deploy the WSGI server for flask framework to work under the frequency of request for bid history. For 
+next week, will also focus on bid fixing and test from both server and client side. 
+
+Week 8
+More bug fixing work done. Now the initial bid and register as RAB function are working as we expected. Also made
+some changes based on 2rd retrospective demo and meeting. It was a success. For next week, will focus on system 
+stability work.
+
+Week 9
+Done with the work recommendation system. Have a fully system test with Sachin on 15 Nov. We are ready to go.
+Congrats to me and Sachin.
