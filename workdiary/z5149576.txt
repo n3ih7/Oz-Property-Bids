@@ -4,3 +4,13 @@ Week 2:I made additions and changes based on the user stories edited by my group
 
 Week 3: Completed the User stories backlog design required in Proposal, based on a variety of user stories, the UI design of home page, login and registration interface.
 
+Week 4: Discuss the design of API interface, the use of third-party applications, and the work arrangement of specific codes
+
+Week 5: Learn the use of Flask and sqlite, try to create the logout back end function.
+
+Week 6: Discuss the bidding history API, write bidding history and current bidding functions
+
+Week 7: Create a bidding database and write code to add bidding records.
+
+Week 9: Finish editing the user document in the final report
+
