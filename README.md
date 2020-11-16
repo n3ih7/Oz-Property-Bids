@@ -21,7 +21,7 @@ Construct the front-end module in the following way:
 
 If you see a message like 'port has been taken', please enter 'Y' to confirm to use the 
 new port number. After this, you are ready to enjoy our service at http://localhost:3000
-by default or at http://localhost:/<newportnumber\>.
+by default or at http://localhost:<newportnumber\>.
 
 ## Back end (server) 
 **NOT REQUIRED ON CSE MACHINE.** Since our server has been deployed on GCP, no action needed
