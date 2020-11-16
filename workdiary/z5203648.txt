@@ -36,6 +36,6 @@ The project went into the last sprint, and my part is to develop a nearby search
 
 Week 9
 
-We've basically finished all the sprints, and we start test and debug this week, aim to finish the report as well. I did some changes to my code part and contributed to the report with system architecture, and challenges. 
+We've basically finished all the sprints, and we start test and debug this week, aim to finish the report as well. I did some changes to my code part and contributed to the report with system architecture, and implementation challenges. 
 
 
