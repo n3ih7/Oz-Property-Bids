@@ -1,0 +1,10 @@
+.result{
+    z-index: 3;
+    background-color: white;
+    position: relative;
+    padding-left: 5%;
+}
+
+.result:hover{
+    background-color: lightblue;
+}
