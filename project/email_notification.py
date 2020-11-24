@@ -41,8 +41,8 @@ if content != '':
         msg['Subject'] = "Auction result notice"
         msg['To'] = str(sys.argv[3])
         msg.set_content(content)
-        gmail_user = 'nono.z14c@gmail.com'
-        gmail_password = 'XntVXoL9gadkqbJupT'
+        gmail_user = 'YOUR_OWN_GMAIL_ACCOUNT'
+        gmail_password = 'YOUR_OWN_GMAIL_PASSWORD'
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
         server.ehlo()
         server.login(gmail_user, gmail_password)
@@ -54,10 +54,10 @@ if content != '':
         print("Something went wrong...trying another sending system " + str(sys.argv[1]) + " to " + str(sys.argv[3]))
         msg = MIMEText(content, "plain", 'utf-8')
         msg["Subject"] = Header("Auction result notice", 'utf-8')
-        msg["From"] = "Oz Property Team <n3ih7@foxmail.com>"
+        msg["From"] = "Oz Property Team"
         msg["To"] = str(sys.argv[3])
-        tencent_user = 'n3ih7@foxmail.com'
-        tencent_password = 'raqjocxntkpgcbda'
+        tencent_user = 'YOUR_OWN_SMTP_ACCOUNT'
+        tencent_password = 'YOUR_OWN_SMTP_PASSWORD'
         server = smtplib.SMTP_SSL('smtp.qq.com', 465)
         server.ehlo(server)
         server.login(tencent_user, tencent_password)
