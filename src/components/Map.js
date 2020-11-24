@@ -52,7 +52,7 @@ class Map extends Component {
             <Col>
             <div style={{ height: '80vh', width: '100%' }}>
               <GoogleMapReact
-                bootstrapURLKeys={{ key: "AIzaSyBeeHfpZuehFLKU239tacm_j01rmRJlLFk" }}
+                bootstrapURLKeys={{ key: "YOUR_OWN_GOOGLE_MAPS_API_KEY" }}
                 defaultCenter={this.props.houseCenter}
                 defaultZoom={this.state.mapZoom}
               >
