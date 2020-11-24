@@ -1,0 +1,35 @@
+Week 1
+Group formed. I created the Jira account and group chat channel. I was planning to start writing the initial version of the story & sprints section of the proposal. We agreed on a weekly meeting each Monday at 7 pm. 
+However, the outcome was not so good as the proposal was not even started by the end of week 1. I wrote about forty sprints in Jira backlog for the whole project, the format of them yet to be confirmed. I also wrote the 
+test API request with flask and had a try with flask-sqlalchemy (successful) and drew the basic concept of the UI 
+of the homepage, login, register page, search result list and inside the introduction of the property page.
+
+Week 2
+For week 2, we set a goal of finishing our first draft of our project proposal. My part is to list the functional modules and briefly point out the technical keywords I would use in the system diagram. Also, my 
+part of this project is confirmed as the back-end development (API service layer, Data Access Layer and 
+Database). The outcome looks good to me. Our group further detailed the Jira backlog format and specified the task there. I also gave the group a brief about the tech I would use.
+
+Week 3
+Was able to successfully last week goal. For this week, the main job is to finish the proposal on time. 
+I further detailed the technical spec and the inside contents of each layer I will be working on and let others draw the diagram of this whole project architecture. Based on the progress on Friday, we will be able to finish it on time. I will be working on the API programming and the communication between the service layer and database. Also, pay much attention to the logic behind each request, e.g. user authentication.
+
+Week 4
+Last week's goal was not a success due to the long weekend delay. For this week, we've planned to work
+on spirit 1 for user login, signup, logout and primary search function. I assigned the task to each group member
+and wrote sample code for back-end and uploaded on Friday 9 Oct on time. Till Sunday, I made some few fixes, and it worked at local machine. Also, for this week, integrate back-end and front-end with group member A and prepare for demo.
+
+Week 5
+I'm working on spirit two and make spirit one back end functions fully integrated with front-end till Tuesday night. Will keep using for Thursday demo. 
+
+Week 6
+Modify the property API return format and make new API for the user to check their RAB status. Form the data table for auction instance. Had a try on Google blob storage and make the API the image upload and access it from the front end (client) side. It worked as we expected. User profile update function thoroughly tested.
+
+Week 7
+Make the POST /bid for initial bid use and the real auction instance and GET /bid for bid history and form the result for the auction. Have a test on email sending, but it was not a success. Will keep working on that next
+week. And deploy the WSGI server for flask framework to work under the frequency of request for bid history. For next week, will also focus on bid fixing and test from both server and client-side. 
+
+Week 8
+More bug fixing work was done. Now the initial bid and register as RAB function are working as we expected. Also made some changes based on 2nd retrospective demo and meeting. It was a success. For next week, will focus on system stability work.
+
+Week 9
+I've finished with the work recommendation system. Have a full system test with group member A on 15 Nov We are ready to go. Congrats to me and group member A.
