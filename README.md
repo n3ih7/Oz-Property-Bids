@@ -1,17 +1,7 @@
-# capstone-project-comp9900-h16a-last_bus
-
-## Environment Setup
-All the following commands should be run from the CSE system command line.
-
-`unzip h16a-last_bus_FinalSoftwareQuality.zip`
-
-`cd h16a-last_bus_FinalSoftwareQuality`
+# Oz-Property-Bids
 
 ## Front end (client)
-The system is built by Node.JS, CSE machine already has it. Make sure you are under the
-folder of the project, then:
-
-`cd front-end`
+Make sure you are under the folder of the project, then:
 
 `npm install`
 
@@ -19,16 +9,11 @@ Construct the front-end module in the following way:
 
 `npm start`
 
-If you see a message like 'port has been taken', please enter 'Y' to confirm to use the 
-new port number. After this, you are ready to enjoy our service at http://localhost:3000
-by default or at http://localhost:<newportnumber\>.
+After this, you are ready to enjoy it at [http://localhost:3000](http://localhost:3000).
 
 ## Back end (server) 
-**NOT REQUIRED ON CSE MACHINE.** Since our server has been deployed on GCP, no action needed
-in this section. The following commands are for reference only. Make sure you are under
-the folder of the project:
-
-`cd back-end`
+**NOT REQUIRED** Since our server has been deployed on GCP, no action needed
+in this section. The following commands are for reference only:
 
 `pip3 install -r requirements.txt`
 
