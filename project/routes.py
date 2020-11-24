@@ -1455,7 +1455,7 @@ def rab_status():
 @app.route('/mapinfo', methods=['GET'])
 def nearby_returns():
     # Set google map api keys:
-    gmaps = googlemaps.Client(key='AIzaSyBeeHfpZuehFLKU239tacm_j01rmRJlLFk')
+    gmaps = googlemaps.Client(key='YOUR_OWN_GOOGLE_MAPS_API_KEY')
     #
 
     # Get Property id
