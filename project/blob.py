@@ -1,7 +1,7 @@
 from google.cloud import storage
 
 storage_client = storage.Client.from_service_account_json('./project/credential/xxx.json')
-bucket_name = "YOUR_OWN_BUCKET_NAME"
+bucket_name = "xxx"
 bucket = storage_client.bucket(bucket_name)
 
 
