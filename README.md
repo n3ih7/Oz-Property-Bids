@@ -27,7 +27,3 @@ You'll need to use your own Google Cloud Platform API key/ credentials (Google M
 `/project/email_notification.py` Line 44-45 & 57-60, SMTP account
 
 `/project/blob.py` Line 3-4, GCP Cloud Storage json token
-
-
-## Live demo
-Now the project is live at [ozpb.nono.fi](http://ozpb.nono.fi). Will remove it at a later date.
