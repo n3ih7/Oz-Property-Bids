@@ -12,9 +12,6 @@ Construct the front-end module in the following way:
 After this, you are ready to enjoy it at [http://localhost:3000](http://localhost:3000).
 
 ## Back end (server) 
-**NOT REQUIRED** Since our server has been deployed on GCP, no action needed
-in this section. The following commands are for reference only:
-
 `pip3 install -r requirements.txt`
 
 `python3 app.py`
